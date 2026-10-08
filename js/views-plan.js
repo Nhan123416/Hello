@@ -192,15 +192,27 @@
   H.actions['week-next'] = function () { H.ui.weekOffset++; H.ui.day = 'all'; H.render({ keepScroll: true }); };
   H.actions['plan-day'] = function (el) { H.ui.day = el.dataset.v; H.render({ keepScroll: true }); };
   H.actions['goto-shop'] = function () { H.go('plan-shop'); };
-  H.actions['plan-auto'] = function () {
-    var st = H.weekStats(viewStart());
-    var full = st.planned >= st.total;
-    var res = H.autoPlan(viewStart(), full ? 'all' : 'fill');
+  function runAutoPlan(mode) {
+    var res = H.autoPlan(viewStart(), mode);
     var msg = res.filled ? 'Đã xếp ' + res.filled + ' bữa' : 'Không còn ô trống để xếp';
     if (res.repeats) msg += ' (có ' + res.repeats + ' món lặp vì giai đoạn này ít món phù hợp)';
     if (res.missing.length) msg += '. Chưa có món hợp cho ' + res.missing.map(function (s) { return slotInfo(s).label.toLowerCase(); }).join(', ');
     H.toast(msg, { icon: 'sparkle', ms: 4200 });
     H.render({ keepScroll: true });
+  }
+  // Xếp lại cả tuần sẽ thay hết món đang có, nên hỏi lại trước.
+  function confirmRedo(after) {
+    H.confirm({
+      title: 'Xếp lại cả tuần?',
+      text: 'Thực đơn đang có sẽ được thay bằng thực đơn mới, các ô đã đánh dấu “đã nấu” cũng bị xoá.',
+      ok: 'Xếp lại',
+      onOk: function () { runAutoPlan('all'); if (after) after(); }
+    });
+  }
+  H.actions['plan-auto'] = function () {
+    var st = H.weekStats(viewStart());
+    if (st.planned >= st.total) confirmRedo();
+    else runAutoPlan('fill');
   };
   H.actions['plan-auto-go'] = function () { H.autoPlan(viewStart(), 'fill'); H.render({ keepScroll: true }); };
   H.actions.cook = function (el) {
@@ -329,11 +341,7 @@
     H.save();
   };
   H.actions['toggle-snack'] = function () { H.state.snack = !H.state.snack; H.save(); H.sheet.refresh(); };
-  H.actions['plan-redo'] = function () {
-    H.autoPlan(viewStart(), 'all');
-    H.sheet.close();
-    H.toast('Đã xếp lại cả tuần', { icon: 'sparkle' });
-  };
+  H.actions['plan-redo'] = function () { confirmRedo(function () { H.sheet.closeAll(); }); };
   H.actions['plan-wipe'] = function () {
     H.confirm({
       title: 'Xoá cả tuần?', text: 'Toàn bộ món đã xếp trong tuần đang xem sẽ bị xoá.', ok: 'Xoá', danger: true,

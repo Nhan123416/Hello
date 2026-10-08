@@ -14,7 +14,7 @@
   ];
 
   // Màn hình nào thì sáng mục điều hướng nào.
-  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', plan: 'plan', guide: 'guide', community: 'community', rank: 'community' };
+  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', plan: 'plan', guide: 'guide', community: 'community', rank: 'community', about: '' };
 
   function parseHash() {
     var h = (location.hash || '').replace(/^#/, '');
@@ -24,7 +24,7 @@
     if (h === 'plan-shop') return { name: 'plan', tab: 'shop' };
     if (h === 'plan-fridge') return { name: 'plan', tab: 'fridge' };
     if (h.indexOf('guide') === 0) return { name: 'guide', tab: h.slice(6) || 'tra' };
-    if (h === 'explore' || h === 'community' || h === 'rank') return { name: h };
+    if (h === 'explore' || h === 'community' || h === 'rank' || h === 'about') return { name: h };
     return { name: 'home' };
   }
 
@@ -48,7 +48,7 @@
   }
 
   function updateChrome(route) {
-    var cur = NAV_OF[route.name] || 'home';
+    var cur = NAV_OF[route.name] === undefined ? 'home' : NAV_OF[route.name];
     U.$$('[data-nav]').forEach(function (a) {
       if (a.getAttribute('data-nav') === cur) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');

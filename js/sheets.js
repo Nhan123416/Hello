@@ -280,7 +280,7 @@
             H.ui.chip(H.icon('moon', { size: 16 }) + ' Tối', t === 'dark', 'set-theme', { v: 'dark' }) + '</div></section>' +
             '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Kế hoạch, tủ lạnh, bài viết và bảng xếp hạng của bạn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
             '<button type="button" class="btn btn-ghost btn-danger-ghost" data-act="reset-all">' + H.icon('trash', { size: 16 }) + ' Xoá toàn bộ dữ liệu trên máy này</button></section>' +
-            '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món cho sinh viên bị đau dạ dày hoặc viêm loét dạ dày đang tự nấu ăn ở nhà trọ. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p></section>'
+            '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món cho sinh viên bị đau dạ dày hoặc viêm loét dạ dày đang tự nấu ăn ở nhà trọ. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p><a class="btn btn-soft btn-sm" href="#about" data-act="close-sheet">Đọc ý tưởng dự án</a></section>'
         };
       },
       onClose: function () { H.render(); }

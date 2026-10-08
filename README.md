@@ -24,6 +24,7 @@ Giao diện lấy cảm hứng từ các app "chọn món bằng vòng quay" (ca
 - **Tủ lạnh**: chọn nguyên liệu đang có, nhận gợi ý món nấu được ngay hoặc chỉ thiếu 1 đến 2 thứ.
 - **Cẩm nang**: tra 69 nguyên liệu (nên dùng / dùng ít / nên tránh, kèm lý do), **kiểm tra công thức bất kỳ** (dán danh sách nguyên liệu để thấy thành phần cần kiêng và gợi ý thay thế), bảng thay thế, mục **"Tưởng lành mà không lành"**, thói quen ăn uống, dấu hiệu cần đi khám ngay.
 - **Cộng đồng** và **Bảng xếp hạng** món được chốt (xem mục Hạn chế).
+- **Về dự án**: trang trình bày vấn đề, nguyên nhân gốc rễ, câu hỏi thiết kế và cách trang này giải quyết.
 - Giao diện sáng / tối, chạy trên điện thoại và máy tính, lưu dữ liệu trong trình duyệt (`localStorage`).
 
 ## Chạy thử
@@ -57,7 +58,7 @@ js/
   ui.js               ô minh hoạ, sheet / hộp thoại, toast
   wheel.js            vòng quay (SVG)
   sheets.js           bộ lọc, ghim lịch, chọn món, cài đặt, chào mừng
-  views-*.js          các màn hình
+  views-*.js          các màn hình (hôm nay, khám phá, kế hoạch, cẩm nang, cộng đồng, về dự án)
   app.js              điều hướng (hash) và khởi động
 assets/favicon.svg
 ```

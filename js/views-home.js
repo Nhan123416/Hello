@@ -121,7 +121,9 @@
         '<section id="result-box" class="result-box" aria-live="polite">' + resultInner() + '</section>' +
         '<section id="today-box" class="today">' + todayInner() + '</section>' +
         '</div>' +
-        promoCards() + tipCard() + H.ui.disclaimer() + '</div>';
+        promoCards() + tipCard() +
+        '<p class="aboutstrip"><span>Trang này là một ý tưởng thiết kế cho sinh viên đau dạ dày tự nấu ăn.</span><a class="link" href="#about">Đọc ý tưởng dự án ' + H.icon('chev-r', { size: 14 }) + '</a></p>' +
+        H.ui.disclaimer() + '</div>';
     }
   };
 
