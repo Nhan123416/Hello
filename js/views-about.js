@@ -23,7 +23,25 @@
     ['shuffle', 'Gợi ý nguyên liệu thay thế', 'Công thức gốc có thành phần cần kiêng thì đổi sang gì cho vẫn ngon. Dán công thức để mình soi giúp.', '#guide-thaythe'],
     ['warn', 'Cảnh báo “tưởng lành mà không lành”', 'Đồ lên men, nước có gas, đồ đóng hộp và những thứ nghe có vẻ tốt cho sức khoẻ.', '#guide-tuonglanh'],
     ['play', 'Video từ chuyên gia, bác sĩ dinh dưỡng', 'Để người bệnh yên tâm hơn. Mục này đang chờ danh sách video đã kiểm duyệt.', '#guide-video'],
-    ['users', 'Cộng đồng chia sẻ kinh nghiệm', 'Các bạn cùng tình trạng trao đổi món ăn và mẹo nấu. Hiện là bản thử nghiệm.', '#community']
+    ['users', 'Cộng đồng chia sẻ kinh nghiệm', 'Các bạn cùng tình trạng trao đổi món ăn và mẹo nấu. Hiện là bản thử nghiệm.', '#community'],
+    ['bell', 'Nhắc ăn đúng giờ', 'Nhắc đi chợ, chuẩn bị nguyên liệu, nấu và ăn theo giờ bạn đặt. Xuất lịch .ics để điện thoại nhắc kể cả khi đóng trang.', '#plan-remind'],
+    ['fridge', 'Tủ lạnh có số lượng và hạn dùng', 'Báo đồ sắp hỏng, sắp hết, gợi ý món nên nấu trước và nguyên liệu thay thế khi thiếu.', '#plan-fridge'],
+    ['volume', 'Nấu từng bước có giọng đọc và hẹn giờ', 'Chữ to, đọc to từng bước, hẹn giờ theo công thức, dùng được khi tay đang ướt.', '#explore'],
+    ['book', 'Nhật ký ăn uống', 'Ghi cảm giác sau mỗi bữa để tìm ra món hợp và món hay làm bạn khó chịu.', '#community-diary']
+  ];
+
+  // Việc nào làm thật được ngay trên trang này, việc nào cần máy chủ hoặc AI.
+  var REAL = [
+    'Lọc món theo giai đoạn, mức độ, thời gian nấu, ngân sách, độ khó và mức vị (cay, mặn, chua, béo) bị khoá theo hồ sơ dạ dày.',
+    'Xếp thực đơn tuần, danh sách đi chợ trừ đồ trong tủ lạnh, tự trừ nguyên liệu khi đánh dấu “đã nấu”.',
+    'Nhắc giờ khi tab còn mở, thông báo của trình duyệt (nếu bạn cho phép), file lịch .ics cho điện thoại.',
+    'Chấm sao, vuốt chọn món, nhật ký ăn uống: lưu trên thiết bị của bạn.'
+  ];
+  var LATER = [
+    'Kết bạn, bảng xếp hạng và bài viết cho mọi người cùng thấy: cần tài khoản và máy chủ.',
+    'Chụp ảnh tủ lạnh hoặc quét mã để nhập nguyên liệu: cần dịch vụ nhận diện hình ảnh (AI).',
+    'Nhắc đẩy khi đã đóng hẳn trình duyệt: cần máy chủ gửi thông báo (hiện dùng file lịch .ics thay thế).',
+    'Đặt hàng tự động trên Shopee, Tiki, Bách hoá Xanh: hiện chỉ mở trang tìm kiếm của cửa hàng.'
   ];
 
   H.views.about = {
@@ -53,6 +71,11 @@
         '<div class="about-grid">' +
         '<section class="about-card"><h2>Đối tượng hưởng lợi</h2><p>Sinh viên bị đau dạ dày hoặc viêm loét dạ dày, sống một mình hoặc ở trọ, cần tự nấu ăn nhưng thiếu kiến thức y khoa để làm đúng.</p></section>' +
         '<section class="about-card"><h2>Kết quả kỳ vọng</h2><p>Sinh viên tự tin hơn khi tự nấu ăn, giảm nguy cơ tái phát hoặc nặng hơn do ăn sai, và tiết kiệm thời gian tìm hiểu thông tin rời rạc, thiếu tin cậy trên mạng.</p></section>' +
+        '</div>' +
+
+        '<div class="about-grid">' +
+        '<section class="about-card"><h2>Đang làm được thật</h2><ul class="about-list">' + REAL.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></section>' +
+        '<section class="about-card"><h2>Cần máy chủ hoặc AI nên chưa có</h2><ul class="about-list">' + LATER.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></section>' +
         '</div>' +
 
         '<p class="note warn">' + H.icon('warn', { size: 16 }) + '<span>Trang này là bản thử nghiệm của một ý tưởng thiết kế, không phải sản phẩm y tế. Nội dung chỉ để tham khảo và cần bác sĩ hoặc chuyên gia dinh dưỡng thẩm định trước khi dùng rộng rãi.</span></p>' +

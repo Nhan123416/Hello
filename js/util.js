@@ -48,6 +48,7 @@
   };
 
   U.fmtQty = function (qty, unit) {
+    if (unit === 'g' && qty >= 1000) return U.fmtNum(Math.round(qty / 100) / 10) + 'kg';
     return U.fmtNum(qty) + (unit === 'g' ? 'g' : ' ' + unit);
   };
 

@@ -1,47 +1,58 @@
 /*
  * Hôm nay ăn gì? · Design tokens
  *
- * Hướng thiết kế: một "app chọn món" ấm áp trên nền giấy kem, màu cam bếp lửa làm chủ đạo,
- * bo tròn, nhiều màu rực như chiếc vòng quay. Mobile first, có tab dưới (điện thoại) và menu trên (máy tính).
+ * Hướng thiết kế: một "app chọn món" dịu và sạch cho người đau dạ dày. Nền trắng pha xanh ngọc, màu chủ đạo
+ * ngọc lam, điểm nhấn vàng bơ như màu chén cháo. Bo tròn, nhiều màu rực chỉ ở vòng quay. Mobile first.
  *
- * Màu    : kem (nền) · cam (thương hiệu) · xanh lá (nấu tại nhà, "nên dùng") · tím (kế hoạch tuần) · vàng (xếp hạng)
+ * Cách đổi màu: chỉ cần đổi --p-base (màu chủ đạo) và --accent-base (màu nhấn). Mọi màu nền, chữ, viền, trạng thái
+ * hover đều được sinh từ hai màu này bằng color-mix, ở cả giao diện sáng lẫn tối. Có sẵn 4 bộ màu ở cuối file,
+ * chọn trong Cài đặt > Màu giao diện.
+ *
  * Chữ    : Baloo 2 cho tiêu đề (tròn, vui, có tiếng Việt) + Be Vietnam Pro cho nội dung (rõ, thiết kế cho tiếng Việt)
  * Quy tắc: mọi màu đều là token; chế độ tối chỉ khai báo lại token.
  */
 :root {
-  /* nền & mực */
-  --bg: #FFF6E9;
-  --bg-2: #FCEBD3;
+  /* hai màu gốc: đổi hai dòng này là đổi cả giao diện */
+  --p-base: #0E7C86;
+  --accent-base: #FFC93C;
+
+  --p: var(--p-base);
+  --accent: var(--accent-base);
+  --on-accent: #2B2100;
+
+  /* nền & mực (pha một chút màu chủ đạo cho khỏi xám lạnh) */
+  --bg: color-mix(in srgb, var(--p) 6%, #fff);
+  --bg-2: color-mix(in srgb, var(--p) 13%, #fff);
   --surface: #FFFFFF;
-  --surface-2: #FFF9F1;
-  --ink: #2A1708;
-  --ink-2: #5B432D;
-  --muted: #7C5F44;
-  --line: #F0DDC3;
-  --line-2: #E4CBA9;
+  --surface-2: color-mix(in srgb, var(--p) 3.5%, #fff);
+  --ink: color-mix(in srgb, var(--p) 20%, #0B1416);
+  --ink-2: color-mix(in srgb, var(--p) 22%, #3B4A4D);
+  --muted: color-mix(in srgb, var(--p) 20%, #55666A);
+  --line: color-mix(in srgb, var(--p) 15%, #fff);
+  --line-2: color-mix(in srgb, var(--p) 30%, #fff);
 
-  /* thương hiệu cam */
-  --brand: #FF6A13;
-  --brand-ink: #D2480A;
-  --brand-ink-hover: #B83D06;
-  --brand-deep: #9A3205;
-  --brand-100: #FFE4CC;
-  --brand-50: #FFF0E0;
+  /* màu chủ đạo và các biến thể (tên giữ nguyên từ bản trước) */
+  --brand: var(--p);
+  --brand-ink: var(--p);
+  --brand-ink-hover: color-mix(in srgb, var(--p) 82%, #000);
+  --brand-deep: color-mix(in srgb, var(--p) 70%, #000);
+  --brand-100: color-mix(in srgb, var(--p) 18%, #fff);
+  --brand-50: color-mix(in srgb, var(--p) 9%, #fff);
   --on-brand: #FFFFFF;
-  --amber: #FFB020;
-  --on-amber: #3A2200;
+  --amber: var(--accent);
+  --on-amber: var(--on-accent);
 
-  /* xanh lá */
-  --leaf: #0F7B55;
-  --leaf-ink: #0B6644;
-  --leaf-100: #DDF3E8;
+  /* trước đây là xanh lá: nay dùng chung họ màu chủ đạo */
+  --leaf: var(--p);
+  --leaf-ink: color-mix(in srgb, var(--p-base) 84%, #000);
+  --leaf-100: color-mix(in srgb, var(--p) 12%, #fff);
   --on-leaf: #FFFFFF;
 
-  /* tím & vàng cho thẻ giới thiệu */
-  --grape: #6A4DDC;
-  --grape-2: #2B1B73;
-  --gold: #F2B01E;
-  --gold-100: #FFF0C2;
+  /* chàm và vàng cho thẻ giới thiệu, huy hiệu */
+  --grape: #5B5BD6;
+  --grape-2: #25236B;
+  --gold: var(--accent);
+  --gold-100: color-mix(in srgb, var(--accent) 26%, #fff);
 
   /* ngữ nghĩa */
   --good: #0F7B55;
@@ -53,27 +64,32 @@
   --bad-solid: #B42318;
   --on-bad: #FFFFFF;
 
+  /* chữ đặt trên nền trắng cố định (nút trắng, thẻ giới thiệu) nên không đổi theo giao diện */
+  --on-light-ink: #0F2A2E;
+  --on-light-brand: color-mix(in srgb, var(--p-base) 70%, #000);
+  --on-light-muted: #4D6165;
+
   /* vòng quay (màu dữ liệu, dùng chung hai giao diện) */
-  --w1: #6D28D9;
+  --w1: #4F46E5;
   --w2: #0F766E;
-  --w3: #EA580C;
+  --w3: #BE185D;
   --w4: #15803D;
   --w5: #1D4ED8;
-  --w6: #B8420B;
-  --w7: #9D174D;
-  --w8: #0E7490;
-  --wheel-edge: #FF8A3D;
-  --wheel-rim: #FFF6E9;
+  --w6: #7E22CE;
+  --w7: #0E7490;
+  --w8: #A21CAF;
+  --wheel-edge: var(--accent);
+  --wheel-rim: #FFFFFF;
 
-  /* hero cam */
-  --hero-a: #CC4708;
-  --hero-b: #A83606;
-  --hero-glow: rgba(255, 190, 110, .55);
+  /* hero */
+  --hero-a: color-mix(in srgb, var(--p) 94%, #000);
+  --hero-b: color-mix(in srgb, var(--p) 56%, #000);
+  --hero-glow: color-mix(in srgb, var(--accent) 40%, transparent);
 
   /* bóng & bo góc */
-  --shadow-1: 0 1px 2px rgba(120, 60, 10, .08), 0 6px 18px rgba(120, 60, 10, .08);
-  --shadow-2: 0 14px 34px rgba(120, 60, 10, .20);
-  --scrim: rgba(38, 18, 4, .52);
+  --shadow-1: 0 1px 2px color-mix(in srgb, var(--p) 18%, transparent), 0 6px 18px color-mix(in srgb, var(--p) 11%, transparent);
+  --shadow-2: 0 14px 34px color-mix(in srgb, var(--p) 24%, transparent);
+  --scrim: color-mix(in srgb, var(--p) 40%, rgba(0, 12, 14, .66));
   --r-sm: 12px;
   --r-md: 18px;
   --r-lg: 24px;
@@ -94,35 +110,32 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1A110A;
-    --bg-2: #24170D;
-    --surface: #2A1C11;
-    --surface-2: #22160D;
-    --ink: #FCEEDC;
-    --ink-2: #E2CDB0;
-    --muted: #BDA383;
-    --line: #3B2A1A;
-    --line-2: #4F3A24;
+    --p: color-mix(in srgb, var(--p-base) 60%, #fff);
+    --on-accent: #2B2100;
 
-    --brand: #FF8A3D;
-    --brand-ink: #FF8A3D;
-    --brand-ink-hover: #FFA766;
-    --brand-deep: #FFB680;
-    --brand-100: #4A2410;
-    --brand-50: #3A1D0C;
-    --on-brand: #2A1200;
-    --amber: #FFC247;
-    --on-amber: #2E1B00;
+    --bg: color-mix(in srgb, var(--p-base) 9%, #060E10);
+    --bg-2: color-mix(in srgb, var(--p-base) 17%, #060E10);
+    --surface: color-mix(in srgb, var(--p-base) 14%, #0A1416);
+    --surface-2: color-mix(in srgb, var(--p-base) 10%, #081113);
+    --ink: color-mix(in srgb, var(--p-base) 6%, #F2FAFA);
+    --ink-2: color-mix(in srgb, var(--p-base) 12%, #C9D8DA);
+    --muted: color-mix(in srgb, var(--p-base) 14%, #9DB1B4);
+    --line: color-mix(in srgb, var(--p-base) 24%, #0E1B1D);
+    --line-2: color-mix(in srgb, var(--p-base) 36%, #0E1B1D);
 
-    --leaf: #3FCF98;
-    --leaf-ink: #3FCF98;
-    --leaf-100: #123A2B;
-    --on-leaf: #06301F;
+    --brand-ink-hover: color-mix(in srgb, var(--p) 80%, #fff);
+    --brand-deep: color-mix(in srgb, var(--p-base) 40%, #fff);
+    --brand-100: color-mix(in srgb, var(--p-base) 32%, #0B1517);
+    --brand-50: color-mix(in srgb, var(--p-base) 20%, #0B1517);
+    --on-brand: #04181A;
 
-    --grape: #8E78F0;
-    --grape-2: #1E1450;
-    --gold: #F7C34A;
-    --gold-100: #3D2E0A;
+    --leaf-ink: var(--p);
+    --leaf-100: color-mix(in srgb, var(--p-base) 24%, #0B1517);
+    --on-leaf: #04181A;
+
+    --grape: #9A9AF0;
+    --grape-2: #1B1A55;
+    --gold-100: color-mix(in srgb, var(--accent) 22%, #0B1517);
 
     --good: #4ADBA2;
     --good-bg: #123A2B;
@@ -133,50 +146,46 @@
     --bad-solid: #FF8A80;
     --on-bad: #2A0A07;
 
-    --wheel-edge: #FF8A3D;
-    --wheel-rim: #3A271A;
+    --wheel-rim: #1B3236;
 
-    --hero-a: #B8420A;
-    --hero-b: #8F3006;
-    --hero-glow: rgba(255, 150, 70, .35);
+    --hero-a: color-mix(in srgb, var(--p-base) 78%, #000);
+    --hero-b: color-mix(in srgb, var(--p-base) 46%, #000);
+    --hero-glow: color-mix(in srgb, var(--accent) 26%, transparent);
 
-    --shadow-1: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .3);
-    --shadow-2: 0 14px 34px rgba(0, 0, 0, .5);
-    --scrim: rgba(0, 0, 0, .66);
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, .45), 0 6px 18px rgba(0, 0, 0, .3);
+    --shadow-2: 0 14px 34px rgba(0, 0, 0, .55);
+    --scrim: rgba(0, 8, 10, .7);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #1A110A;
-  --bg-2: #24170D;
-  --surface: #2A1C11;
-  --surface-2: #22160D;
-  --ink: #FCEEDC;
-  --ink-2: #E2CDB0;
-  --muted: #BDA383;
-  --line: #3B2A1A;
-  --line-2: #4F3A24;
+  --p: color-mix(in srgb, var(--p-base) 60%, #fff);
+  --on-accent: #2B2100;
 
-  --brand: #FF8A3D;
-  --brand-ink: #FF8A3D;
-  --brand-ink-hover: #FFA766;
-  --brand-deep: #FFB680;
-  --brand-100: #4A2410;
-  --brand-50: #3A1D0C;
-  --on-brand: #2A1200;
-  --amber: #FFC247;
-  --on-amber: #2E1B00;
+  --bg: color-mix(in srgb, var(--p-base) 9%, #060E10);
+  --bg-2: color-mix(in srgb, var(--p-base) 17%, #060E10);
+  --surface: color-mix(in srgb, var(--p-base) 14%, #0A1416);
+  --surface-2: color-mix(in srgb, var(--p-base) 10%, #081113);
+  --ink: color-mix(in srgb, var(--p-base) 6%, #F2FAFA);
+  --ink-2: color-mix(in srgb, var(--p-base) 12%, #C9D8DA);
+  --muted: color-mix(in srgb, var(--p-base) 14%, #9DB1B4);
+  --line: color-mix(in srgb, var(--p-base) 24%, #0E1B1D);
+  --line-2: color-mix(in srgb, var(--p-base) 36%, #0E1B1D);
 
-  --leaf: #3FCF98;
-  --leaf-ink: #3FCF98;
-  --leaf-100: #123A2B;
-  --on-leaf: #06301F;
+  --brand-ink-hover: color-mix(in srgb, var(--p) 80%, #fff);
+  --brand-deep: color-mix(in srgb, var(--p-base) 40%, #fff);
+  --brand-100: color-mix(in srgb, var(--p-base) 32%, #0B1517);
+  --brand-50: color-mix(in srgb, var(--p-base) 20%, #0B1517);
+  --on-brand: #04181A;
 
-  --grape: #8E78F0;
-  --grape-2: #1E1450;
-  --gold: #F7C34A;
-  --gold-100: #3D2E0A;
+  --leaf-ink: var(--p);
+  --leaf-100: color-mix(in srgb, var(--p-base) 24%, #0B1517);
+  --on-leaf: #04181A;
+
+  --grape: #9A9AF0;
+  --grape-2: #1B1A55;
+  --gold-100: color-mix(in srgb, var(--accent) 22%, #0B1517);
 
   --good: #4ADBA2;
   --good-bg: #123A2B;
@@ -187,15 +196,19 @@
   --bad-solid: #FF8A80;
   --on-bad: #2A0A07;
 
-  --wheel-edge: #FF8A3D;
-  --wheel-rim: #3A271A;
+  --wheel-rim: #1B3236;
 
-  --hero-a: #B8420A;
-  --hero-b: #8F3006;
-  --hero-glow: rgba(255, 150, 70, .35);
+  --hero-a: color-mix(in srgb, var(--p-base) 78%, #000);
+  --hero-b: color-mix(in srgb, var(--p-base) 46%, #000);
+  --hero-glow: color-mix(in srgb, var(--accent) 26%, transparent);
 
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .3);
-  --shadow-2: 0 14px 34px rgba(0, 0, 0, .5);
-  --scrim: rgba(0, 0, 0, .66);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .45), 0 6px 18px rgba(0, 0, 0, .3);
+  --shadow-2: 0 14px 34px rgba(0, 0, 0, .55);
+  --scrim: rgba(0, 8, 10, .7);
   color-scheme: dark;
 }
+
+/* ───────────── bộ màu chọn trong Cài đặt (chỉ đổi hai màu gốc) ───────────── */
+:root[data-palette="la-tra"] { --p-base: #2F7D4F; --accent-base: #F2C94C; }
+:root[data-palette="bien-sau"] { --p-base: #2F5DA8; --accent-base: #FFC857; }
+:root[data-palette="man-chin"] { --p-base: #8E3A8C; --accent-base: #FFC857; }

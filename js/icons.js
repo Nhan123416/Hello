@@ -44,6 +44,14 @@
     bowl: '<path d="M3.5 11h17c0 4.7-3.5 8-8.5 8s-8.5-3.3-8.5-8z"/><path d="M8 7c0-1.2 1-1.8 1-3M12 7c0-1.2 1-1.8 1-3M16 7c0-1.2 1-1.8 1-3"/>',
     edit: '<path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
     more: '<circle cx="5.5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+    lock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
+    bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+    star: '<path d="m12 3.6 2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/>',
+    mic: '<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>',
+    volume: '<path d="M4 9.5v5h3.5l5 4v-13l-5 4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+    camera: '<path d="M4.5 8h3l1.5-2.5h6L16.5 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/>',
+    book2: '<path d="M6 4.5h11a1.5 1.5 0 0 1 1.5 1.5v13.5H7.5A1.5 1.5 0 0 1 6 18z"/><path d="M6 18a1.5 1.5 0 0 1 1.5-1.5h11"/>',
+    swap: '<path d="M4 8h13M13.5 4.5 17 8l-3.5 3.5M20 16H7M10.5 12.5 7 16l3.5 3.5"/>',
     list: '<path d="M8.5 6.5H20M8.5 12H20M8.5 17.5H20"/><circle cx="4.5" cy="6.5" r=".8"/><circle cx="4.5" cy="12" r=".8"/><circle cx="4.5" cy="17.5" r=".8"/>'
   };
 
@@ -60,25 +68,26 @@
       '" stroke-linecap="round" stroke-linejoin="round"' + a11y + '>' + path + '</svg>';
   };
 
-  // Mascot "Bé Cháo": tô cháo có mặt cười, hơi nóng bốc lên.
+  // Mascot "Bé Cháo": tô cháo có mặt cười, hơi nóng bốc lên. Màu lấy từ token nên đổi theo bộ màu giao diện.
   H.mascot = function (o) {
     o = o || {};
     var size = o.size || 96;
     var mood = o.mood || 'happy';
+    var ink = '#12292D';
     var mouth = mood === 'wow'
-      ? '<ellipse cx="60" cy="87" rx="5" ry="6" fill="#7A2E0E"/>'
-      : '<path d="M51 84c2.5 6.5 15.5 6.5 18 0" fill="none" stroke="#7A2E0E" stroke-width="3.4" stroke-linecap="round"/>';
+      ? '<ellipse cx="60" cy="87" rx="5" ry="6" fill="' + ink + '"/>'
+      : '<path d="M51 84c2.5 6.5 15.5 6.5 18 0" fill="none" stroke="' + ink + '" stroke-width="3.4" stroke-linecap="round"/>';
     return '<svg class="mascot' + (o.cls ? ' ' + o.cls : '') + '" width="' + size + '" height="' + size + '" viewBox="0 0 120 120" role="img" aria-label="Bé Cháo, mascot của trang">' +
-      '<g fill="none" stroke="#FFB27A" stroke-width="4" stroke-linecap="round" opacity=".9">' +
+      '<g fill="none" style="stroke:var(--m-steam, color-mix(in srgb, var(--p) 45%, #fff))" stroke-width="4" stroke-linecap="round" opacity=".95">' +
       '<path class="steam s1" d="M42 33c-4-5 4-8 0-14"/><path class="steam s2" d="M60 30c-4-5 4-8 0-14"/><path class="steam s3" d="M78 33c-4-5 4-8 0-14"/></g>' +
-      '<path d="M12 56h96c0 30-21 50-48 50S12 86 12 56z" fill="#FF8A3D"/>' +
-      '<path d="M18 74c8 22 25 32 42 32s34-10 42-32c-10 14-26 21-42 21S28 88 18 74z" fill="#E8590C" opacity=".35"/>' +
-      '<ellipse cx="60" cy="56" rx="48" ry="11" fill="#FFE4B8"/>' +
-      '<ellipse cx="60" cy="56" rx="41" ry="7.5" fill="#FFF8E6"/>' +
-      '<ellipse cx="45" cy="75" rx="5" ry="7" fill="#3A1A08"/><ellipse cx="75" cy="75" rx="5" ry="7" fill="#3A1A08"/>' +
+      '<path d="M12 56h96c0 30-21 50-48 50S12 86 12 56z" style="fill:var(--m-bowl, var(--p))"/>' +
+      '<path d="M18 74c8 22 25 32 42 32s34-10 42-32c-10 14-26 21-42 21S28 88 18 74z" fill="#000" opacity=".16"/>' +
+      '<ellipse cx="60" cy="56" rx="48" ry="11" fill="#FFF3C9"/>' +
+      '<ellipse cx="60" cy="56" rx="41" ry="7.5" fill="#FFFDF2"/>' +
+      '<ellipse cx="45" cy="75" rx="5" ry="7" fill="' + ink + '"/><ellipse cx="75" cy="75" rx="5" ry="7" fill="' + ink + '"/>' +
       '<circle cx="46.8" cy="72.4" r="1.9" fill="#fff"/><circle cx="76.8" cy="72.4" r="1.9" fill="#fff"/>' +
-      '<ellipse cx="34" cy="85" rx="6.5" ry="4" fill="#FF6B6B" opacity=".55"/><ellipse cx="86" cy="85" rx="6.5" ry="4" fill="#FF6B6B" opacity=".55"/>' +
+      '<ellipse cx="34" cy="85" rx="6.5" ry="4" fill="#FF7A8A" opacity=".6"/><ellipse cx="86" cy="85" rx="6.5" ry="4" fill="#FF7A8A" opacity=".6"/>' +
       mouth +
-      '<path d="M96 50 112 30" stroke="#C9893D" stroke-width="5" stroke-linecap="round"/><ellipse cx="114" cy="26" rx="6.5" ry="4.2" transform="rotate(-50 114 26)" fill="#E3A957"/></svg>';
+      '<path d="M96 50 112 30" stroke="#B88A4A" stroke-width="5" stroke-linecap="round"/><ellipse cx="114" cy="26" rx="6.5" ry="4.2" transform="rotate(-50 114 26)" fill="#D9B070"/></svg>';
   };
 })(window.HNAG = window.HNAG || {});

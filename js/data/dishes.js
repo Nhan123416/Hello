@@ -14,6 +14,12 @@
  *
  * Chi phí (cost) được tính tự động từ nguyên liệu. Veg (chay = không thịt, không cá) cũng tự suy ra.
  * Năng lượng (kcal) là ước tính cho 1 người / 1 bữa.
+ *
+ * Các trường tự tính thêm (dùng cho bộ lọc):
+ *  - level    : độ khó 1 rất dễ, 2 dễ, 3 công phu (theo số bước và thời gian nấu)
+ *  - proteins : nguyên liệu đạm chính (ga, heo, bo, ca, trung, dauhu). Món ăn ngoài khai báo tay bằng prot: [...]
+ *  - fl       : mức vị 0 đến 3 cho { cay, man, chua, beo }, suy ra từ gừng, muối / nước mắm / nước tương, cà chua, dầu ăn.
+ *               Có thể ghi đè bằng fl: {...} trong món. Mức vị của mọi món luôn nằm trong ngưỡng cho phép của mức "dịu" (care).
  */
 (function (H) {
   'use strict';
@@ -507,7 +513,7 @@
     // ───────────── ĂN NGOÀI (gọi món an toàn) ─────────────
     {
       id: 'out-chao', name: 'Cháo ở quán', emoji: '🥣', kind: 'Ăn ngoài', mode: 'out',
-      meals: ['sang', 'trua', 'toi'], care: 1, costFixed: 30000, kcal: 330, tools: ['khong'], mapQuery: 'quán cháo',
+      meals: ['sang', 'trua', 'toi'], care: 1, costFixed: 30000, kcal: 330, tools: ['khong'], mapQuery: 'quán cháo', prot: ['heo', 'ga'],
       order: [
         'Gọi "cháo thịt bằm" hoặc "cháo gà", nhờ nấu nhừ.',
         'Dặn bỏ hành phi, tiêu, ớt, tỏi phi và không cho quẩy chiên.',
@@ -520,7 +526,7 @@
     },
     {
       id: 'out-pho-ga', name: 'Phở gà ở quán', emoji: '🍜', kind: 'Ăn ngoài', mode: 'out',
-      meals: ['sang', 'trua'], care: 2, costFixed: 45000, kcal: 430, tools: ['khong'], mapQuery: 'phở gà',
+      meals: ['sang', 'trua'], care: 2, costFixed: 45000, kcal: 430, tools: ['khong'], mapQuery: 'phở gà', prot: ['ga'],
       order: [
         'Gọi "phở gà ức", bỏ da, xin ít nước béo.',
         'Dặn bỏ hành sống, ớt, tỏi ngâm giấm, chanh, giá sống và quẩy.',
@@ -533,7 +539,7 @@
     },
     {
       id: 'out-mien-ga', name: 'Miến gà ở quán', emoji: '🍲', kind: 'Ăn ngoài', mode: 'out',
-      meals: ['sang', 'trua', 'toi'], care: 2, costFixed: 40000, kcal: 390, tools: ['khong'], mapQuery: 'miến gà',
+      meals: ['sang', 'trua', 'toi'], care: 2, costFixed: 40000, kcal: 390, tools: ['khong'], mapQuery: 'miến gà', prot: ['ga'],
       order: [
         'Gọi "miến gà ức" (không da, không lòng, không gan).',
         'Dặn bỏ hành phi, tiêu, ớt và nước mắm ớt.',
@@ -546,7 +552,7 @@
     },
     {
       id: 'out-com-ga-luoc', name: 'Cơm gà luộc ở quán', emoji: '🍗', kind: 'Ăn ngoài', mode: 'out',
-      meals: ['trua', 'toi'], care: 2, costFixed: 45000, kcal: 520, tools: ['khong'], mapQuery: 'cơm gà luộc',
+      meals: ['trua', 'toi'], care: 2, costFixed: 45000, kcal: 520, tools: ['khong'], mapQuery: 'cơm gà luộc', prot: ['ga'],
       order: [
         'Xin phần ức gà luộc, bỏ da.',
         'Chọn cơm trắng (không cơm chiên, không cơm mỡ hành).',
@@ -559,7 +565,7 @@
     },
     {
       id: 'out-com-binh-dan', name: 'Cơm bình dân (chọn đúng món)', emoji: '🍱', kind: 'Ăn ngoài', mode: 'out',
-      meals: ['trua', 'toi'], care: 2, costFixed: 35000, kcal: 560, tools: ['khong'], mapQuery: 'cơm bình dân',
+      meals: ['trua', 'toi'], care: 2, costFixed: 35000, kcal: 560, tools: ['khong'], mapQuery: 'cơm bình dân', prot: ['heo', 'ca', 'trung', 'dauhu'],
       order: [
         'Chọn canh rau củ (bí, su su, mướp), thịt hoặc cá luộc/hấp, trứng hấp, đậu hũ hấp hoặc om nhạt.',
         'Xin ít nước canh, ít dầu; ăn cơm vừa phải.',
@@ -574,6 +580,39 @@
 
   // ── hoàn thiện dữ liệu: nguyên liệu, giá, món chay... ──
   function round500(n) { return Math.max(1000, Math.round(n / 500) * 500); }
+
+  // Nguyên liệu đạm chính, độ khó và mức vị: những thứ bộ lọc cần mà không muốn khai báo tay cho từng món.
+  var PROTEIN_OF = { 'uc-ga': 'ga', 'thit-nac': 'heo', 'thit-bo-nac': 'bo', 'ca-phi-le': 'ca', 'trung-ga': 'trung', 'dau-hu': 'dauhu' };
+
+  function qtyOf(d, id) {
+    return d.ing.reduce(function (s, p) { return s + (p[0] === id ? p[1] : 0); }, 0);
+  }
+
+  function finishFilters(d, src) {
+    if (d.mode === 'home') {
+      d.proteins = [];
+      d.ing.forEach(function (p) {
+        var pr = PROTEIN_OF[p[0]];
+        if (pr && d.proteins.indexOf(pr) < 0) d.proteins.push(pr);
+      });
+      d.level = (d.time <= 15 && d.steps.length <= 3) ? 1 : ((d.time >= 45 || d.steps.length >= 5) ? 3 : 2);
+      // mức nêm = tổng thìa muối, nước mắm, nước tương; mức béo = dầu ăn thêm vào; cay = lượng gừng còn lại trong món
+      var salt = qtyOf(d, 'muoi') + qtyOf(d, 'nuoc-mam') + qtyOf(d, 'nuoc-tuong');
+      var oil = qtyOf(d, 'dau-an');
+      d.fl = {
+        cay: qtyOf(d, 'gung') > 3 ? 1 : 0,
+        man: salt <= 0 ? 0 : (salt <= 0.5 ? 1 : (salt <= 1.5 ? 2 : 3)),
+        chua: qtyOf(d, 'ca-chua') > 0 ? 1 : 0,
+        beo: oil <= 0 ? 0 : (oil <= 0.5 ? 1 : (oil <= 1 ? 2 : 3))
+      };
+    } else {
+      d.proteins = (src.prot || []).slice();
+      d.level = 1;
+      // món ăn ngoài: tính theo cách gọi món an toàn đã ghi trong phần "order" (dặn nhạt, ít dầu)
+      d.fl = { cay: 0, man: d.care <= 1 ? 1 : 2, chua: 0, beo: 1 };
+    }
+    if (src.fl) for (var k in src.fl) d.fl[k] = src.fl[k];
+  }
 
   function finalize(src) {
     var d = {
@@ -606,6 +645,7 @@
     }
 
     d.energy = d.kcal < 300 ? 'thap' : (d.kcal <= 450 ? 'tb' : 'cao');
+    finishFilters(d, src);
     var names = d.ing.map(function (p) { return H.INGREDIENTS[p[0]].name; }).join(' ');
     d.searchRaw = [d.name, d.kind, names].join(' ').toLowerCase();
     d.searchText = H.util.norm(d.searchRaw);

@@ -14,17 +14,22 @@
   ];
 
   // Màn hình nào thì sáng mục điều hướng nào.
-  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', plan: 'plan', guide: 'guide', community: 'community', rank: 'community', about: '' };
+  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', guide: 'guide', community: 'community', rank: 'community', about: '' };
 
   function parseHash() {
     var h = (location.hash || '').replace(/^#/, '');
     if (!h || h === 'home') return { name: 'home' };
     if (h.indexOf('dish-') === 0) return { name: 'dish', id: h.slice(5) };
+    if (h.indexOf('cook-') === 0) return { name: 'cook', id: h.slice(5) };
     if (h === 'plan' || h === 'plan-week') return { name: 'plan', tab: 'week' };
     if (h === 'plan-shop') return { name: 'plan', tab: 'shop' };
     if (h === 'plan-fridge') return { name: 'plan', tab: 'fridge' };
+    if (h === 'plan-remind') return { name: 'plan', tab: 'remind' };
     if (h.indexOf('guide') === 0) return { name: 'guide', tab: h.slice(6) || 'tra' };
-    if (h === 'explore' || h === 'community' || h === 'rank' || h === 'about') return { name: h };
+    if (h === 'community' || h === 'community-feed') return { name: 'community', tab: 'feed' };
+    if (h === 'community-diary') return { name: 'community', tab: 'diary' };
+    if (h === 'community-friends') return { name: 'community', tab: 'friends' };
+    if (h === 'explore' || h === 'rank' || h === 'about') return { name: h };
     return { name: 'home' };
   }
 
@@ -40,7 +45,8 @@
       '<nav class="topnav" aria-label="Điều hướng chính">' + NAV.map(function (n) {
         return '<a href="' + n.href + '" data-nav="' + n.id + '">' + H.icon(n.icon, { size: 18 }) + n.label + '</a>';
       }).join('') + '</nav>' +
-      '<div class="topacts"><a class="btn-icon" href="#rank" aria-label="Bảng xếp hạng">' + H.icon('trophy', { size: 22 }) + '</a>' +
+      '<div class="topacts"><a class="btn-icon" href="#plan-remind" aria-label="Nhắc giờ ăn">' + H.icon('bell', { size: 22 }) + '</a>' +
+      '<a class="btn-icon" href="#rank" aria-label="Bảng xếp hạng">' + H.icon('trophy', { size: 22 }) + '</a>' +
       '<button type="button" class="btn-icon" data-act="open-settings" aria-label="Cài đặt">' + H.icon('gear', { size: 22 }) + '</button></div></div>';
     bar.innerHTML = NAV.map(function (n) {
       return '<a href="' + n.href + '" data-nav="' + n.id + '">' + H.icon(n.icon, { size: 22 }) + '<span>' + n.label + '</span></a>';
@@ -65,6 +71,7 @@
     var route = parseHash();
     // Không vẽ lại trang chủ khi vòng quay đang quay.
     if (H.ui.spinning && route.name === 'home' && H.route.name === 'home') return;
+    if (H.route && H.route.name === 'cook' && route.name !== 'cook') H.cook.leave();   // rời chế độ nấu: tắt đọc to, micro, giữ màn hình sáng
     H.route = route;
     var view = H.views[route.name] || H.views.home;
     var y = window.pageYOffset || 0;
@@ -113,6 +120,8 @@
       else if (mq.addListener) mq.addListener(onChange);
     }
     H.render();
+    H.remind.init();
+    H.cook.init();
     if (!H.state.onboarded) setTimeout(H.openWelcome, 450);
     window.addEventListener('pagehide', H.saveNow);
     document.addEventListener('visibilitychange', function () { if (document.hidden) H.saveNow(); });

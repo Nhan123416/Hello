@@ -38,6 +38,16 @@
     return '<button type="button" class="chip' + (extra ? ' ' + extra : '') + '" aria-pressed="' + (pressed ? 'true' : 'false') + '" data-act="' + act + '"' + attrs + '>' + label + '</button>';
   };
 
+  // Các bộ lọc đang bật dưới dạng nhãn có nút xoá. ctx 'plan' chỉ hiện những giới hạn mà kế hoạch tuần dùng.
+  H.ui.filterPills = function (ctx) {
+    var list = H.activeFilters();
+    if (ctx === 'plan') list = list.filter(function (a) { return ['mode', 'energy', 'proteins'].indexOf(a.key) < 0; });
+    if (!list.length) return '';
+    return '<div class="pills" role="group" aria-label="Bộ lọc đang bật">' + list.map(function (a) {
+      return '<button type="button" class="pill" data-act="clear-filter" data-k="' + a.key + '" aria-label="Bỏ bộ lọc: ' + esc(a.label) + '">' + esc(a.label) + H.icon('x', { size: 12, stroke: 3 }) + '</button>';
+    }).join('') + '</div>';
+  };
+
   H.ui.stat = function (icon, label, value) {
     return '<div class="stat">' + H.icon(icon, { size: 18 }) + '<span class="stat-v">' + value + '</span><span class="stat-l">' + label + '</span></div>';
   };
@@ -107,10 +117,12 @@
     if (t === 'light' || t === 'dark') root.setAttribute('data-theme', t);
     else if (H.hostTheme) root.setAttribute('data-theme', H.hostTheme);
     else root.removeAttribute('data-theme');
+    var pal = H.PALETTES.filter(function (p) { return p.id === H.state.palette; })[0] || H.PALETTES[0];
+    if (pal.id === H.PALETTES[0].id) root.removeAttribute('data-palette'); else root.setAttribute('data-palette', pal.id);
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
       var dark = t === 'dark' || (t === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      meta.setAttribute('content', dark ? '#1B120B' : '#FFF6E9');
+      meta.setAttribute('content', dark ? pal.bgDark : pal.bgLight);
     }
   };
 
