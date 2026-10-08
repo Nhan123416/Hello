@@ -1,0 +1,201 @@
+/*
+ * Hôm nay ăn gì? · Design tokens
+ *
+ * Hướng thiết kế: một "app chọn món" ấm áp trên nền giấy kem, màu cam bếp lửa làm chủ đạo,
+ * bo tròn, nhiều màu rực như chiếc vòng quay. Mobile first, có tab dưới (điện thoại) và menu trên (máy tính).
+ *
+ * Màu    : kem (nền) · cam (thương hiệu) · xanh lá (nấu tại nhà, "nên dùng") · tím (kế hoạch tuần) · vàng (xếp hạng)
+ * Chữ    : Baloo 2 cho tiêu đề (tròn, vui, có tiếng Việt) + Be Vietnam Pro cho nội dung (rõ, thiết kế cho tiếng Việt)
+ * Quy tắc: mọi màu đều là token; chế độ tối chỉ khai báo lại token.
+ */
+:root {
+  /* nền & mực */
+  --bg: #FFF6E9;
+  --bg-2: #FCEBD3;
+  --surface: #FFFFFF;
+  --surface-2: #FFF9F1;
+  --ink: #2A1708;
+  --ink-2: #5B432D;
+  --muted: #7C5F44;
+  --line: #F0DDC3;
+  --line-2: #E4CBA9;
+
+  /* thương hiệu cam */
+  --brand: #FF6A13;
+  --brand-ink: #D2480A;
+  --brand-ink-hover: #B83D06;
+  --brand-deep: #9A3205;
+  --brand-100: #FFE4CC;
+  --brand-50: #FFF0E0;
+  --on-brand: #FFFFFF;
+  --amber: #FFB020;
+  --on-amber: #3A2200;
+
+  /* xanh lá */
+  --leaf: #0F7B55;
+  --leaf-ink: #0B6644;
+  --leaf-100: #DDF3E8;
+  --on-leaf: #FFFFFF;
+
+  /* tím & vàng cho thẻ giới thiệu */
+  --grape: #6A4DDC;
+  --grape-2: #2B1B73;
+  --gold: #F2B01E;
+  --gold-100: #FFF0C2;
+
+  /* ngữ nghĩa */
+  --good: #0F7B55;
+  --good-bg: #DDF3E8;
+  --warn: #8A5300;
+  --warn-bg: #FFEFC2;
+  --bad: #B42318;
+  --bad-bg: #FDE3E0;
+  --bad-solid: #B42318;
+  --on-bad: #FFFFFF;
+
+  /* vòng quay (màu dữ liệu, dùng chung hai giao diện) */
+  --w1: #6D28D9;
+  --w2: #0F766E;
+  --w3: #EA580C;
+  --w4: #15803D;
+  --w5: #1D4ED8;
+  --w6: #B8420B;
+  --w7: #9D174D;
+  --w8: #0E7490;
+  --wheel-edge: #FF8A3D;
+  --wheel-rim: #FFF6E9;
+
+  /* hero cam */
+  --hero-a: #CC4708;
+  --hero-b: #A83606;
+  --hero-glow: rgba(255, 190, 110, .55);
+
+  /* bóng & bo góc */
+  --shadow-1: 0 1px 2px rgba(120, 60, 10, .08), 0 6px 18px rgba(120, 60, 10, .08);
+  --shadow-2: 0 14px 34px rgba(120, 60, 10, .20);
+  --scrim: rgba(38, 18, 4, .52);
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+
+  /* chữ */
+  --f-display: "Baloo 2", "Be Vietnam Pro", system-ui, sans-serif;
+  --f-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --f-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+
+  /* kích thước */
+  --gutter: 16px;
+  --tabbar-h: 64px;
+  --topbar-h: 60px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1A110A;
+    --bg-2: #24170D;
+    --surface: #2A1C11;
+    --surface-2: #22160D;
+    --ink: #FCEEDC;
+    --ink-2: #E2CDB0;
+    --muted: #BDA383;
+    --line: #3B2A1A;
+    --line-2: #4F3A24;
+
+    --brand: #FF8A3D;
+    --brand-ink: #FF8A3D;
+    --brand-ink-hover: #FFA766;
+    --brand-deep: #FFB680;
+    --brand-100: #4A2410;
+    --brand-50: #3A1D0C;
+    --on-brand: #2A1200;
+    --amber: #FFC247;
+    --on-amber: #2E1B00;
+
+    --leaf: #3FCF98;
+    --leaf-ink: #3FCF98;
+    --leaf-100: #123A2B;
+    --on-leaf: #06301F;
+
+    --grape: #8E78F0;
+    --grape-2: #1E1450;
+    --gold: #F7C34A;
+    --gold-100: #3D2E0A;
+
+    --good: #4ADBA2;
+    --good-bg: #123A2B;
+    --warn: #FFCB6B;
+    --warn-bg: #3F2E08;
+    --bad: #FF9A90;
+    --bad-bg: #4A1A16;
+    --bad-solid: #FF8A80;
+    --on-bad: #2A0A07;
+
+    --wheel-edge: #FF8A3D;
+    --wheel-rim: #3A271A;
+
+    --hero-a: #B8420A;
+    --hero-b: #8F3006;
+    --hero-glow: rgba(255, 150, 70, .35);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .3);
+    --shadow-2: 0 14px 34px rgba(0, 0, 0, .5);
+    --scrim: rgba(0, 0, 0, .66);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1A110A;
+  --bg-2: #24170D;
+  --surface: #2A1C11;
+  --surface-2: #22160D;
+  --ink: #FCEEDC;
+  --ink-2: #E2CDB0;
+  --muted: #BDA383;
+  --line: #3B2A1A;
+  --line-2: #4F3A24;
+
+  --brand: #FF8A3D;
+  --brand-ink: #FF8A3D;
+  --brand-ink-hover: #FFA766;
+  --brand-deep: #FFB680;
+  --brand-100: #4A2410;
+  --brand-50: #3A1D0C;
+  --on-brand: #2A1200;
+  --amber: #FFC247;
+  --on-amber: #2E1B00;
+
+  --leaf: #3FCF98;
+  --leaf-ink: #3FCF98;
+  --leaf-100: #123A2B;
+  --on-leaf: #06301F;
+
+  --grape: #8E78F0;
+  --grape-2: #1E1450;
+  --gold: #F7C34A;
+  --gold-100: #3D2E0A;
+
+  --good: #4ADBA2;
+  --good-bg: #123A2B;
+  --warn: #FFCB6B;
+  --warn-bg: #3F2E08;
+  --bad: #FF9A90;
+  --bad-bg: #4A1A16;
+  --bad-solid: #FF8A80;
+  --on-bad: #2A0A07;
+
+  --wheel-edge: #FF8A3D;
+  --wheel-rim: #3A271A;
+
+  --hero-a: #B8420A;
+  --hero-b: #8F3006;
+  --hero-glow: rgba(255, 150, 70, .35);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .3);
+  --shadow-2: 0 14px 34px rgba(0, 0, 0, .5);
+  --scrim: rgba(0, 0, 0, .66);
+  color-scheme: dark;
+}
