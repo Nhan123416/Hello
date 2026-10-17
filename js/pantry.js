@@ -141,17 +141,22 @@
     return '<section class="fgroup"><h3>Cần chú ý</h3><ul class="alerts">' + rows + '</ul></section>';
   }
 
+  // Chỉ hiện vài món đầu, phần còn lại gập vào "Xem thêm" cho đỡ dài.
+  function foldList(rows, shown, id) {
+    if (rows.length <= shown) return '<ul class="rows">' + rows.join('') + '</ul>';
+    return '<ul class="rows">' + rows.slice(0, shown).join('') + '</ul>' +
+      '<details class="fold"' + H.ui.foldAttr(id, false) + '><summary>Xem thêm ' + (rows.length - shown) + ' món</summary><ul class="rows">' + rows.slice(shown).join('') + '</ul></details>';
+  }
+
   P.tabHtml = function () {
     var items = H.pantryItems(), inStock = {};
     items.forEach(function (x) { inStock[x.id] = true; });
     var matches = H.fridgeMatches();
-    var h = '<section class="weekcard fridge-head"><h2>Tủ lạnh của tôi</h2>' +
-      '<p>Ghi số lượng và hạn dùng. Mình báo đồ sắp hỏng, đồ sắp hết, gợi ý món nên nấu trước và tự trừ nguyên liệu khi bạn đánh dấu “đã nấu”.</p>' +
+    var h = '<section class="weekcard fridge-head">' +
       '<label class="label" for="quick-q">Nhập nhanh bằng chữ <small>(gõ nhiều món, cách nhau bằng dấu phẩy)</small></label>' +
       '<div class="quickadd"><input id="quick-q" class="input" type="text" placeholder="VD: trứng 6, gạo 1kg" autocomplete="off" enterkeyhint="done">' +
       '<button type="button" class="btn btn-primary" data-act="quick-add">Thêm</button></div>' +
-      '<p class="hint quick-msg" id="quick-msg" role="status" aria-live="polite"></p>' +
-      '<div class="chips"><button type="button" class="btn btn-ghost btn-sm" data-act="scan-info">' + H.icon('camera', { size: 16 }) + 'Chụp ảnh tủ lạnh / quét mã <span class="soon">Sắp có</span></button></div></section>';
+      '<p class="hint quick-msg" id="quick-msg" role="status" aria-live="polite"></p></section>';
 
     h += alertsHtml(matches);
 
@@ -182,10 +187,10 @@
       var near = matches.filter(function (m) { return m.missing.length > 0 && m.missing.length <= 2 && m.have > 0; })
         .sort(function (a, b) { return a.missing.length - b.missing.length || a.dish.care - b.dish.care; }).slice(0, 12);
       h += '<section class="block"><h2>Nấu được ngay <small>' + ready.length + ' món</small></h2>' +
-        (ready.length ? '<ul class="rows">' + ready.map(function (m) { return dishRow(m); }).join('') + '</ul>' :
+        (ready.length ? foldList(ready.map(function (m) { return dishRow(m); }), 5, 'fr-ready') :
           '<p class="hint">Chưa có món nào đủ nguyên liệu. Xem các món thiếu ít bên dưới.</p>') + '</section>';
       if (near.length) {
-        h += '<section class="block"><h2>Chỉ thiếu 1 đến 2 nguyên liệu</h2><ul class="rows">' + near.map(function (m) { return dishRow(m); }).join('') + '</ul></section>';
+        h += '<section class="block"><h2>Chỉ thiếu 1 đến 2 nguyên liệu</h2>' + foldList(near.map(function (m) { return dishRow(m); }), 4, 'fr-near') + '</section>';
       }
     }
 
@@ -200,7 +205,8 @@
         return H.ui.chip(it.emoji + ' ' + esc(it.name), false, 'toggle-fridge-tab', { id: id });
       }).join('') + '</div>';
     });
-    h += '<section class="fgroup cat-add"><h3>Thêm từ danh mục</h3><p class="hint">Chạm để thêm một gói thường mua (sửa số lượng và hạn dùng sau).</p>' + (cat || '<p class="hint">Bạn đã có đủ mọi nguyên liệu trong danh mục.</p>') + '</section>';
+    h += '<details class="fold fold-card cat-add"' + H.ui.foldAttr('fr-cat', !items.length) + '><summary><span class="fold-t">Thêm từ danh mục<small>chạm để thêm một gói thường mua</small></span></summary>' +
+      '<p class="hint">Sửa số lượng và hạn dùng sau khi thêm.</p>' + (cat || '<p class="hint">Bạn đã có đủ mọi nguyên liệu trong danh mục.</p>') + '</details>';
     return h;
   };
 
@@ -222,7 +228,7 @@
       cls = 'low';
       text = shortName(low[0].id) + ' sắp hết' + (low.length > 1 ? ' (cùng ' + (low.length - 1) + ' món khác)' : '') + '. Xem tủ lạnh và danh sách thay thế.';
     }
-    return '<a class="alertcard ' + cls + '" href="#plan-fridge"><span class="ac-e" aria-hidden="true">🧊</span><span class="ac-t">' + esc(text) + '</span>' + H.icon('chev-r', { size: 16 }) + '</a>';
+    return '<a class="alertcard ' + cls + '" href="#fridge"><span class="ac-e" aria-hidden="true">🧊</span><span class="ac-t">' + esc(text) + '</span>' + H.icon('chev-r', { size: 16 }) + '</a>';
   };
 
   // ───────────── hành động ─────────────
@@ -409,22 +415,5 @@
       return H.INGREDIENTS[p[0]] ? { id: p[0], qty: Number(p[1]) || H.packOf(p[0]).qty } : null;
     }).filter(Boolean);
     if (items.length) H.openBuy(items, 'Mua nguyên liệu còn thiếu');
-  };
-
-  // ───────────── nhập bằng ảnh: chưa làm được ─────────────
-  H.actions['scan-info'] = function () {
-    H.sheet.open({
-      title: 'Nhập bằng ảnh (sắp có)',
-      cls: 'overlay-dialog',
-      render: function () {
-        return {
-          body: '<div class="scan-box"><span class="scan-e" aria-hidden="true">📷</span>' +
-            '<p>Ý tưởng: chụp ảnh tủ lạnh hoặc quét mã vạch, mình tự nhận ra nguyên liệu và hạn dùng để bạn khỏi gõ tay.</p></div>' +
-            '<p class="note warn">' + H.icon('info', { size: 16 }) + '<span><strong>Chưa làm được trong bản này.</strong> Nhận diện ảnh cần một dịch vụ AI và máy chủ để xử lý, còn trang này chạy hoàn toàn trên máy bạn. Mình không giả vờ nhận ra đồ ăn bằng cách đoán bừa.</span></p>' +
-            '<p class="hint">Trong lúc chờ, cách nhanh nhất là gõ vào ô <strong>Nhập nhanh</strong> (ví dụ: <em>trứng 6, gạo 1kg, bí đỏ 300g</em>) hoặc chạm vào nguyên liệu trong danh mục.</p>',
-          foot: '<button type="button" class="btn btn-primary btn-block" data-act="close-sheet" data-autofocus>Đã hiểu</button>'
-        };
-      }
-    });
   };
 })(window.HNAG = window.HNAG || {});

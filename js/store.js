@@ -17,7 +17,12 @@
       onboarded: false,
       theme: 'auto',                       // auto | light | dark
       palette: 'ngoc-lam',                 // xem H.PALETTES
-      profile: { stage: 'doi', severity: 'vua', veg: false, tools: ['noi-com', 'bep', 'chao'], flavor: { cay: null, man: null, chua: null, beo: null } },
+      profile: { who: '', stage: 'doi', severity: 'vua', veg: false, tools: ['noi-com', 'bep', 'chao'], flavor: { cay: null, man: null, chua: null, beo: null } },
+      textSize: 'normal',                  // normal | large (chữ to cho người lớn tuổi)
+      tour: { hidden: false, spun: false, shopped: false },   // thẻ "Làm quen trong 3 bước" ở trang chủ
+      cooks: {},                           // { mã món: số lần đã nấu } để nhớ món hay nấu
+      spent: {},                           // { 'YYYY-MM-DD' (thứ Hai đầu tuần): số tiền thực chi khi đi chợ }
+      hints: { budget: 0 },                // mức ngân sách gợi ý mà bạn đã bỏ qua
       filters: defaultFilters(),
       excluded: [],                        // món bị bỏ khỏi vòng quay và kế hoạch
       favs: [],
@@ -68,7 +73,7 @@
         var o = JSON.parse(raw);
         Object.keys(s).forEach(function (k) {
           if (o[k] === undefined || o[k] === null) return;
-          if (k === 'profile' || k === 'filters' || k === 'remind' || k === 'cookPrefs' || k === 'cookAt') s[k] = Object.assign(s[k], o[k]);
+          if (k === 'profile' || k === 'filters' || k === 'remind' || k === 'cookPrefs' || k === 'cookAt' || k === 'tour' || k === 'hints') s[k] = Object.assign(s[k], o[k]);
           else s[k] = o[k];
         });
         // bản cũ chỉ ghi "có / không có" trong tủ lạnh: chuyển thành số lượng gói mặc định
@@ -96,7 +101,19 @@
     s.timers = s.timers.filter(function (t) {
       return t && typeof t.k === 'string' && typeof t.dish === 'string' && isFinite(t.end) && isFinite(t.secs) && t.secs > 0 && t.end > nowMs - 3600000;
     }).slice(0, 12).map(function (t) { return { k: t.k, dish: t.dish, step: Math.max(0, Math.floor(t.step) || 0), label: String(t.label || '').slice(0, 80), end: Number(t.end), secs: Number(t.secs) }; });
-    ['plan', 'cooked', 'picks', 'bought', 'liked', 'remindLog', 'ate', 'pantry', 'consumed', 'ratings'].forEach(function (k) { if (!s[k] || typeof s[k] !== 'object' || Array.isArray(s[k])) s[k] = {}; });
+    ['plan', 'cooked', 'picks', 'bought', 'liked', 'remindLog', 'ate', 'pantry', 'consumed', 'ratings', 'cooks', 'spent'].forEach(function (k) { if (!s[k] || typeof s[k] !== 'object' || Array.isArray(s[k])) s[k] = {}; });
+    Object.keys(s.cooks).forEach(function (id) {
+      var n = s.cooks[id];
+      if (!H.DISH_BY_ID[id] || !(Number.isInteger(n) && n > 0)) delete s.cooks[id];
+    });
+    Object.keys(s.spent).forEach(function (wk) {
+      var n = s.spent[wk];
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(wk) || !(typeof n === 'number' && isFinite(n) && n > 0 && n <= 1e8)) delete s.spent[wk];
+    });
+    s.tour = { hidden: !!(s.tour && s.tour.hidden), spun: !!(s.tour && s.tour.spun), shopped: !!(s.tour && s.tour.shopped) };
+    s.hints = { budget: Math.max(0, Number(s.hints && s.hints.budget) || 0) };
+    if (['normal', 'large'].indexOf(s.textSize) < 0) s.textSize = 'normal';
+    if (['', 'sv', 'dilam', 'caotuoi', 'khoe'].indexOf(s.profile.who) < 0) s.profile.who = '';
     Object.keys(s.ratings).forEach(function (id) {
       var r = s.ratings[id];
       if (!(Number.isInteger(r) && r >= 1 && r <= 5)) delete s.ratings[id];
@@ -110,7 +127,7 @@
     Object.keys(s.bought).forEach(function (k) { var b = s.bought[k]; if (b !== true && !(typeof b === 'number' && b > 0)) delete s.bought[k]; });
     sanitizeRemind(s.remind);
     if (!Array.isArray(s.profile.tools)) s.profile.tools = ['noi-com', 'bep', 'chao'];
-    if (['cap', 'doi', 'on'].indexOf(s.profile.stage) < 0) s.profile.stage = 'doi';
+    if (['cap', 'doi', 'on', 'khoe'].indexOf(s.profile.stage) < 0) s.profile.stage = 'doi';
     if (['nhe', 'vua', 'nang'].indexOf(s.profile.severity) < 0) s.profile.severity = 'vua';
     if (['all', 'home', 'out'].indexOf(s.filters.mode) < 0) s.filters.mode = 'home';
     if (['all', 'thap', 'tb', 'cao'].indexOf(s.filters.energy) < 0) s.filters.energy = 'all';
@@ -210,6 +227,7 @@
   // ───────────── chọn món theo hồ sơ ─────────────
   H.maxCare = function (p) {
     p = p || H.state.profile;
+    if (p.stage === 'khoe') return 3;   // dạ dày khoẻ: món nào trong danh sách cũng ăn được, mức độ bệnh không áp dụng
     var base = { cap: 1, doi: 2, on: 3 }[p.stage] || 2;
     var shift = { nhe: 1, vua: 0, nang: -1 }[p.severity] || 0;
     return U.clamp(base + shift, 1, 3);
@@ -234,7 +252,10 @@
 
   // ───────────── mức vị: bị khoá theo hồ sơ dạ dày ─────────────
   // Mức tối đa được phép của một vị (cay, man, chua, beo) với hồ sơ hiện tại.
-  H.flavorCap = function (k, p) { return H.FLAVOR_CAPS[H.maxCare(p)][k]; };
+  H.flavorCap = function (k, p) {
+    p = p || H.state.profile;
+    return p.stage === 'khoe' ? 3 : H.FLAVOR_CAPS[H.maxCare(p)][k];
+  };
   // Mức bạn đặt (không thể vượt mức được phép). Chưa chỉnh thì lấy luôn mức tối đa được phép.
   H.flavorLimit = function (k, p) {
     p = p || H.state.profile;
@@ -334,7 +355,12 @@
     if (!pool.length) return null;
     var p = H.state.profile;
     var key = (dateISO || U.iso(new Date())) + meal + p.stage + p.severity;
-    return pool[U.hash(key) % pool.length];
+    // Món bạn hay chọn, hay nấu có nhiều "phiếu" hơn nên được gợi ý thường hơn (vẫn đổi theo ngày).
+    var weights = pool.map(function (d) { return 1 + Math.min(3, H.habitCount(d.id)); });
+    var total = weights.reduce(function (a, b) { return a + b; }, 0);
+    var r = U.hash(key) % total, i = 0;
+    while (i < pool.length - 1 && r >= weights[i]) { r -= weights[i]; i++; }
+    return pool[i];
   };
 
   H.countFit = function () {
@@ -369,6 +395,60 @@
     return b;
   };
 
+  // ───────────── thói quen: nhớ món hay chọn, hay nấu ─────────────
+  // Số lần bạn chủ động chốt món (vòng quay, chọn tay) cộng số lần đã nấu. Món tự xếp mà chưa nấu thì không tính.
+  H.habitCount = function (id) { return (H.state.picks[id] || 0) + (H.state.cooks[id] || 0); };
+  H.habitBonus = function (id) {
+    var n = H.habitCount(id);
+    return n ? 0.3 + 0.2 * Math.min(n, 3) : 0;   // tối đa 0,9: đủ để món quen được ưu tiên nhưng không lặp món trong tuần
+  };
+  // Vài món bạn hay chọn nhất cho một bữa (chỉ món còn hợp hồ sơ), dùng cho hàng "Bạn hay chọn" khi chọn món.
+  H.favoriteDishes = function (slot, limit) {
+    return H.DISHES.filter(function (d) {
+      return H.habitCount(d.id) > 0 && (!slot || d.meals.indexOf(slot) >= 0) && H.fitsProfile(d) && !H.isExcluded(d.id);
+    }).sort(function (a, b) {
+      return H.habitCount(b.id) - H.habitCount(a.id) || H.ratingOf(b.id) - H.ratingOf(a.id) || a.name.localeCompare(b.name, 'vi');
+    }).slice(0, limit || 5);
+  };
+
+  // ───────────── đối tượng dùng: cài đặt gợi ý, người dùng vẫn chỉnh được từng mục ─────────────
+  H.applyPersona = function (id) {
+    var ps = H.PERSONAS.filter(function (x) { return x.id === id; })[0];
+    if (!ps) return null;
+    var S = H.state;
+    S.profile.who = id;
+    S.filters.maxCost = ps.maxCost;
+    S.filters.maxTime = ps.maxTime;
+    S.filters.mode = ps.mode;
+    S.profile.tools = ps.tools.slice();
+    S.remind.times = Object.assign({}, S.remind.times, ps.times);
+    S.textSize = ps.text;
+    if (ps.stage) S.profile.stage = ps.stage;
+    else if (S.profile.stage === 'khoe') S.profile.stage = 'doi';   // bỏ nhóm "ăn lành mạnh" thì quay về hồ sơ đang đỡ dần
+    var saltCap = H.flavorCap('man');   // tính sau khi đã đặt giai đoạn
+    S.profile.flavor.man = ps.salt != null && ps.salt < saltCap ? ps.salt : null;   // người lớn tuổi: mặc định nêm nhạt hơn
+    H.save();
+    return ps;
+  };
+
+  // ───────────── hướng dẫn 3 bước cho người mới ─────────────
+  H.tourSteps = function () {
+    var S = H.state;
+    var steps = [
+      { id: 'spin', done: S.tour.spun || S.log.length > 0, text: 'Quay và chốt một món', href: '' },
+      { id: 'plan', done: H.weekStats(H.weekStartOf(0)).planned > 0, text: 'Xếp thực đơn cả tuần', href: '#plan' },
+      { id: 'shop', done: S.tour.shopped, text: 'Xem danh sách đi chợ', href: '#plan-shop' }
+    ];
+    return steps;
+  };
+  H.tourVisible = function () {
+    var S = H.state;
+    return S.onboarded && !S.tour.hidden && H.tourSteps().some(function (s) { return !s.done; });
+  };
+  H.tourMark = function (k) {
+    if (!H.state.tour[k]) { H.state.tour[k] = true; H.save(); }
+  };
+
   // ───────────── kế hoạch ─────────────
   H.slotsOn = function () { return H.state.snack ? ['sang', 'trua', 'toi', 'phu'] : ['sang', 'trua', 'toi']; };
   H.getMeal = function (dateISO, slot) {
@@ -397,6 +477,7 @@
     if (on && !S.cooked[k]) {
       S.cooked[k] = true;
       var id = H.getMeal(dateISO, slot), d = id && H.DISH_BY_ID[id];
+      if (d) S.cooks[id] = (S.cooks[id] || 0) + 1;   // nhớ món hay nấu
       if (d && d.mode === 'home') {
         var used = {};
         d.ing.forEach(function (p) {
@@ -409,6 +490,8 @@
       H.save();
     } else if (!on && S.cooked[k]) {
       delete S.cooked[k];
+      var was = H.getMeal(dateISO, slot);
+      if (was && S.cooks[was]) { S.cooks[was]--; if (S.cooks[was] <= 0) delete S.cooks[was]; }
       var back = S.consumed[k];
       if (back) {
         Object.keys(back).forEach(function (id2) { H.addStock(id2, back[id2][0], H.stockOf(id2) ? {} : { exp: back[id2][1] }); });
@@ -464,6 +547,13 @@
     return st;
   };
 
+  // Thực đơn tuần theo "Cách ăn" trong bộ lọc: mặc định chỉ món nấu tại nhà; chọn "Tất cả" (ví dụ nhóm người đi làm)
+  // thì có cả bữa ăn ngoài, chọn "Ăn ngoài" thì chỉ món ăn ngoài.
+  H.planKind = function (d) {
+    var m = H.state.filters.mode;
+    return m === 'all' || d.mode === m;
+  };
+
   // Xếp thực đơn tuần. mode 'fill' chỉ điền ô trống, 'all' xếp lại cả tuần.
   H.autoPlan = function (start, mode) {
     var S = H.state;
@@ -487,7 +577,7 @@
     var pools = {}, loose = {};
     slots.forEach(function (s) {
       var all = H.DISHES.filter(function (d) {
-        return d.mode === 'home' && d.meals.indexOf(s) >= 0 && H.fitsProfile(d) && !H.isExcluded(d.id);
+        return H.planKind(d) && d.meals.indexOf(s) >= 0 && H.fitsProfile(d) && !H.isExcluded(d.id);
       });
       loose[s] = all;
       pools[s] = all.filter(function (d) { return H.fitsLimits(d); });
@@ -516,6 +606,7 @@
           if (prev === d.id) score -= 2;                  // không trùng bữa cùng giờ hôm qua
           score += Math.min(2, H.urgencyOf(d).score) * 0.4;   // ưu tiên món dùng nguyên liệu sắp hết hạn
           score += H.tasteBonus(d.id);                        // món bạn chấm cao hoặc yêu thích được ưu tiên
+          score += H.habitBonus(d.id);                        // món bạn hay chọn, hay nấu được ưu tiên nhẹ (vẫn không lặp trong tuần)
           if (S.budget && dayCost + d.cost > S.budget) score -= 1 + (dayCost + d.cost - S.budget) / 6000;   // vượt càng nhiều càng bị trừ điểm
           if (score > bestScore) { bestScore = score; best = d; }
         });
@@ -542,7 +633,7 @@
       H.slotsOn().forEach(function (s) { var id = H.getMeal(U.iso(d), s); if (id) inWeek[id] = true; });
     });
     var pool = H.DISHES.filter(function (d) {
-      return d.mode === 'home' && d.meals.indexOf(slot) >= 0 && H.fitsProfile(d) && !H.isExcluded(d.id) && d.id !== cur;
+      return H.planKind(d) && d.meals.indexOf(slot) >= 0 && H.fitsProfile(d) && !H.isExcluded(d.id) && d.id !== cur;
     });
     var inLimits = pool.filter(function (d) { return H.fitsLimits(d); });
     if (inLimits.length) pool = inLimits;
@@ -551,6 +642,63 @@
     var pick = U.pick(fresh.length ? fresh : pool);
     H.setMeal(dateISO, slot, pick.id);
     return pick;
+  };
+
+  // Chép thực đơn của một tuần sang tuần khác: chỉ điền ô trống, bỏ món không còn hợp hồ sơ, đã bị bỏ hoặc bạn chấm 1 đến 2 sao.
+  H.copyWeek = function (fromStart, toStart) {
+    var from = H.weekDays(fromStart).map(U.iso), to = H.weekDays(toStart).map(U.iso), res = { copied: 0, skipped: 0 };
+    from.forEach(function (fd, i) {
+      H.slotsOn().forEach(function (s) {
+        var id = H.getMeal(fd, s);
+        if (!id || H.getMeal(to[i], s)) return;
+        var r = H.ratingOf(id);
+        if (!H.fitsProfile(H.DISH_BY_ID[id]) || H.isExcluded(id) || (r && r <= 2)) { res.skipped++; return; }
+        var day = H.state.plan[to[i]] || (H.state.plan[to[i]] = {});
+        day[s] = id;
+        res.copied++;
+      });
+    });
+    H.save();
+    return res;
+  };
+
+  // ───────────── ngân sách thực tế ─────────────
+  // Số tiền thực chi cả tuần mà bạn nhập ở danh sách đi chợ.
+  H.setSpent = function (weekISO, amount) {
+    amount = Math.round(Number(amount) || 0);
+    if (amount > 0 && amount <= 1e8) H.state.spent[weekISO] = amount; else delete H.state.spent[weekISO];
+    H.save();
+  };
+  // Mức chi thực tế của bạn mỗi ngày, ưu tiên số tiền thực chi khi đi chợ (tối đa 3 tuần gần nhất),
+  // không có thì lấy giá các bữa đã nấu trong 14 ngày qua. null nếu chưa đủ dữ liệu.
+  H.realBudget = function () {
+    var S = H.state;
+    var weeks = Object.keys(S.spent).sort().slice(-3);
+    if (weeks.length) {
+      var sum = weeks.reduce(function (t, w) { return t + S.spent[w]; }, 0);
+      return { perDay: sum / (7 * weeks.length), source: 'spent', n: weeks.length };
+    }
+    var from = U.iso(U.addDays(U.parse(H.today()), -13)), cost = 0, meals = 0;
+    Object.keys(S.cooked).forEach(function (k) {
+      var date = k.slice(0, 10), slot = k.slice(11);
+      if (date < from || date > H.today()) return;
+      var id = H.getMeal(date, slot), d = id && H.DISH_BY_ID[id];
+      if (!d) return;
+      cost += d.cost; meals++;
+    });
+    if (meals < 4) return null;
+    return { perDay: cost / meals * H.slotsOn().length, perMeal: cost / meals, source: 'cooked', n: meals };
+  };
+  // Gợi ý ngân sách ngày từ mức chi thực tế (làm tròn lên 5.000đ). null nếu chưa có gợi ý đáng nói
+  // (chưa đủ dữ liệu, gần bằng mức đang đặt, hoặc bạn đã bỏ qua đúng mức này).
+  H.budgetHint = function () {
+    var rb = H.realBudget();
+    if (!rb) return null;
+    var sug = Math.max(10000, Math.min(150000, Math.ceil(rb.perDay / 5000) * 5000));
+    var cur = H.state.budget, dis = H.state.hints.budget;
+    if (cur && Math.abs(cur - sug) / sug < 0.15) return null;
+    if (dis && Math.abs(dis - sug) / sug < 0.25) return null;
+    return { suggest: sug, rb: rb };
   };
 
   // ───────────── tủ lạnh: số lượng và hạn dùng ─────────────

@@ -30,6 +30,7 @@
     { id: 'heo', name: 'Thịt heo', emoji: '🥩' },
     { id: 'bo', name: 'Thịt bò', emoji: '🍖' },
     { id: 'ca', name: 'Cá', emoji: '🐟' },
+    { id: 'tom', name: 'Tôm', emoji: '🦐' },
     { id: 'trung', name: 'Trứng', emoji: '🥚' },
     { id: 'dauhu', name: 'Đậu hũ', emoji: '🫘' }
   ];
@@ -54,6 +55,24 @@
     3: { cay: 1, man: 2, chua: 1, beo: 2 }
   };
 
+  // ───────────── Đối tượng dùng ─────────────
+  // Chọn một nhóm là đặt sẵn ngân sách, thời gian nấu, giờ ăn, cỡ chữ cho hợp. Mọi thứ vẫn chỉnh lại được trong Bộ lọc và Cài đặt.
+  // Ngân sách và thời gian phải nằm trong COST_STEPS / TIME_STEPS. salt = mức mặn tối đa mặc định (1 = nhạt).
+  H.PERSONAS = [
+    { id: 'sv', emoji: '🎒', name: 'Sinh viên', desc: 'Tự nấu ở nhà trọ, ngân sách eo hẹp',
+      maxCost: 20000, maxTime: 30, mode: 'home', tools: ['noi-com', 'bep', 'chao'], text: 'normal',
+      times: { sang: '07:00', trua: '11:45', toi: '18:30', phu: '15:30' } },
+    { id: 'dilam', emoji: '💼', name: 'Người đi làm', desc: 'Bận rộn, cần món nhanh, có bữa ăn ngoài',
+      maxCost: 50000, maxTime: 30, mode: 'all', tools: ['noi-com', 'bep', 'chao'], text: 'normal',
+      times: { sang: '06:45', trua: '12:00', toi: '19:00', phu: '15:30' } },
+    { id: 'caotuoi', emoji: '🧓', name: 'Người lớn tuổi', desc: 'Món mềm, nêm nhạt, chữ to dễ đọc',
+      maxCost: 30000, maxTime: 45, mode: 'home', tools: ['noi-com', 'bep'], text: 'large', salt: 1,
+      times: { sang: '06:30', trua: '11:30', toi: '18:00', phu: '15:00' } },
+    { id: 'khoe', emoji: '🥗', name: 'Ăn lành mạnh', desc: 'Không đau dạ dày, muốn ăn nhẹ bụng, ít dầu mỡ',
+      maxCost: 30000, maxTime: 30, mode: 'home', tools: ['noi-com', 'bep', 'chao'], text: 'normal', stage: 'khoe',
+      times: { sang: '07:00', trua: '12:00', toi: '18:30', phu: '15:30' } }
+  ];
+
   // ───────────── Nguyên liệu thay thế khi thiếu hoặc phải kiêng ─────────────
   // [mã nguyên liệu thay thế, ghi chú ngắn]
   H.SUBS = {
@@ -63,9 +82,18 @@
     'ca-phi-le': [['dau-hu', 'đậu hũ non hấp'], ['uc-ga', 'ức gà luộc']],
     'trung-ga': [['dau-hu', 'đậu hũ non thay đạm']],
     'dau-hu': [['trung-ga', 'trứng hấp'], ['thit-nac', 'thịt nạc băm']],
-    'bi-xanh': [['su-su', 'su su nấu mềm'], ['muop', 'mướp']],
-    'su-su': [['bi-xanh', 'bí xanh'], ['muop', 'mướp']],
-    'muop': [['bi-xanh', 'bí xanh'], ['su-su', 'su su']],
+    'bi-xanh': [['su-su', 'su su nấu mềm'], ['bau', 'bầu'], ['muop', 'mướp']],
+    'su-su': [['bi-xanh', 'bí xanh'], ['bau', 'bầu'], ['muop', 'mướp']],
+    'muop': [['bi-xanh', 'bí xanh'], ['bau', 'bầu'], ['su-su', 'su su']],
+    'bau': [['bi-xanh', 'bí xanh'], ['muop', 'mướp'], ['su-su', 'su su']],
+    'mong-toi': [['bau', 'bầu nấu mềm, ít xơ hơn'], ['bi-xanh', 'bí xanh']],
+    'rau-ngot': [['bau', 'bầu nấu mềm, ít xơ hơn'], ['bi-xanh', 'bí xanh']],
+    'khoai-mon': [['khoai-tay', 'khoai tây nấu nhừ'], ['bi-do', 'bí đỏ']],
+    'bap-ngo': [['bi-do', 'bí đỏ nghiền, ngọt dịu và ít xơ hơn'], ['ca-rot', 'cà rốt nấu nhừ']],
+    'dau-xanh': [['gao', 'tăng thêm gạo, nấu cháo thịt bằm thường'], ['bi-do', 'bí đỏ nấu nhừ']],
+    'tom': [['ca-phi-le', 'cá phi lê'], ['uc-ga', 'ức gà băm nếu bạn dị ứng hải sản']],
+    'bun': [['banh-pho', 'bánh phở'], ['banh-canh', 'bánh canh'], ['mien-dong', 'miến dong']],
+    'banh-canh': [['bun', 'bún tươi'], ['banh-pho', 'bánh phở'], ['nui', 'nui']],
     'bi-do': [['ca-rot', 'cà rốt nấu nhừ'], ['khoai-lang', 'khoai lang']],
     'ca-rot': [['bi-do', 'bí đỏ nấu nhừ']],
     'bap-cai': [['su-su', 'su su ít gây đầy hơi hơn'], ['bi-xanh', 'bí xanh']],
@@ -76,8 +104,8 @@
     'khoai-lang': [['khoai-tay', 'khoai tây hấp']],
     'ca-chua': [['ca-rot', 'cà rốt + bí đỏ nấu nhừ, không chua'], ['bi-do', 'bí đỏ nghiền']],
     'dua-leo': [['ca-rot', 'cà rốt luộc']],
-    'mien-dong': [['banh-pho', 'bánh phở'], ['nui', 'nui']],
-    'banh-pho': [['mien-dong', 'miến dong'], ['nui', 'nui']],
+    'mien-dong': [['bun', 'bún tươi'], ['banh-pho', 'bánh phở'], ['nui', 'nui']],
+    'banh-pho': [['bun', 'bún tươi'], ['mien-dong', 'miến dong'], ['nui', 'nui']],
     'nui': [['mien-dong', 'miến dong'], ['banh-pho', 'bánh phở']],
     'chuoi': [['du-du', 'đu đủ chín'], ['tao', 'táo hấp']],
     'du-du': [['chuoi', 'chuối chín'], ['tao', 'táo hấp']],
@@ -97,7 +125,9 @@
     'uc-ga': 2, 'thit-nac': 2, 'thit-bo-nac': 2, 'ca-phi-le': 2, 'trung-ga': 21, 'dau-hu': 3,
     'bi-do': 14, 'bi-xanh': 7, 'ca-rot': 14, 'su-su': 7, 'muop': 4, 'bap-cai': 7, 'cai-ngot': 3, 'bong-cai': 4,
     'nam': 4, 'ca-chua': 5, 'dua-leo': 5, 'hanh-la': 4, 'rau-thom': 3, 'gung': 14,
-    'chuoi': 3, 'du-du': 3, 'tao': 10, 'sua-dau-nanh': 90, 'sua-chua': 10
+    'chuoi': 3, 'du-du': 3, 'tao': 10, 'sua-dau-nanh': 90, 'sua-chua': 10,
+    'bun': 2, 'banh-canh': 2, 'khoai-mon': 10, 'dau-xanh': 0, 'bap-ngo': 3,
+    'tom': 2, 'bau': 5, 'mong-toi': 3, 'rau-ngot': 3
   };
 
   // Gói thường mua cho từng nguyên liệu: qty = lượng mặc định khi bấm thêm vào tủ lạnh, low = dưới mức này thì báo "sắp hết",
@@ -114,7 +144,10 @@
     'ca-chua': { qty: 3, low: 1, step: 1 }, 'dua-leo': { qty: 300, low: 80, step: 50 }, 'hanh-la': { qty: 50, low: 10, step: 10 },
     'rau-thom': { qty: 30, low: 10, step: 10 }, 'gung': { qty: 50, low: 10, step: 10 },
     'chuoi': { qty: 5, low: 1, step: 1 }, 'du-du': { qty: 400, low: 100, step: 100 }, 'tao': { qty: 3, low: 1, step: 1 },
-    'sua-dau-nanh': { qty: 4, low: 1, step: 1 }, 'sua-chua': { qty: 4, low: 1, step: 1 }
+    'sua-dau-nanh': { qty: 4, low: 1, step: 1 }, 'sua-chua': { qty: 4, low: 1, step: 1 },
+    'bun': { qty: 400, low: 100, step: 100 }, 'banh-canh': { qty: 400, low: 100, step: 100 }, 'khoai-mon': { qty: 500, low: 150, step: 100 },
+    'dau-xanh': { qty: 300, low: 50, step: 50 }, 'bap-ngo': { qty: 200, low: 50, step: 50 }, 'tom': { qty: 200, low: 80, step: 50 },
+    'bau': { qty: 500, low: 150, step: 100 }, 'mong-toi': { qty: 300, low: 80, step: 50 }, 'rau-ngot': { qty: 200, low: 50, step: 50 }
   };
   H.packOf = function (id) {
     return H.PACK[id] || { qty: 1, low: 0, step: 1 };
@@ -132,7 +165,9 @@
     'muop': ['mướp'], 'bap-cai': ['bắp cải', 'cải bắp'], 'cai-ngot': ['cải ngọt'], 'bong-cai': ['bông cải', 'súp lơ'],
     'nam': ['nấm'], 'ca-chua': ['cà chua'], 'dua-leo': ['dưa leo', 'dưa chuột'], 'hanh-la': ['hành lá'],
     'rau-thom': ['rau thơm', 'ngò', 'húng quế'], 'gung': ['gừng'], 'chuoi': ['chuối'], 'du-du': ['đu đủ'],
-    'tao': ['táo'], 'sua-dau-nanh': ['sữa đậu nành'], 'sua-chua': ['sữa chua']
+    'tao': ['táo'], 'sua-dau-nanh': ['sữa đậu nành'], 'sua-chua': ['sữa chua'],
+    'bun': ['bún tươi', 'bún'], 'banh-canh': ['bánh canh'], 'khoai-mon': ['khoai môn', 'khoai sọ'], 'dau-xanh': ['đậu xanh'],
+    'bap-ngo': ['ngô ngọt', 'bắp ngô', 'ngô'], 'tom': ['tôm thẻ', 'tôm'], 'bau': ['bầu'], 'mong-toi': ['mồng tơi'], 'rau-ngot': ['rau ngót']
   };
 
   // ───────────── Sắp xếp danh sách món ─────────────

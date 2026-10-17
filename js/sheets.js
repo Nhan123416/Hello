@@ -35,9 +35,11 @@
     return '<p class="note warn">' + H.icon('warn', { size: 16 }) + '<span>Đang đau cấp: nếu đau dữ dội, nôn nhiều hoặc không ăn uống được, hãy đi khám thay vì tự xử lý tại nhà. <a href="#guide-luuy">Xem dấu hiệu cần đi khám</a>.</span></p>';
   }
 
+  // Phần "Lọc thêm" tự mở nếu bạn đang dùng một trong các bộ lọc nằm trong đó.
   function hasMoreActive() {
     var f = H.state.filters;
-    return !!(f.maxLevel || f.proteins.length || f.mode !== 'home' || f.energy !== 'all' || H.state.profile.veg);
+    var flavorOn = H.FLAVORS.some(function (fv) { return H.flavorLimit(fv.id) < H.flavorCap(fv.id); });
+    return !!(f.maxLevel || f.proteins.length || f.energy !== 'all' || H.state.profile.veg || flavorOn || (filterCtx === 'plan' && f.mode !== 'home'));
   }
 
   // Thang mức vị: bốn nấc, nấc nào vượt mức hồ sơ cho phép thì bị khoá (vẫn bấm được để đọc lý do).
@@ -65,17 +67,27 @@
     return h;
   }
 
+  // Tình trạng dạ dày dạng nhãn gọn (thay cho 4 thẻ lớn), kèm một dòng mô tả cho lựa chọn đang chọn.
+  function stageGroup(p) {
+    var st = H.STAGES.filter(function (x) { return x.id === p.stage; })[0];
+    var h = '<section class="fgroup"><h3>Tình trạng dạ dày</h3><div class="chips" role="radiogroup" aria-label="Tình trạng dạ dày">' + H.STAGES.map(function (s2) {
+      return '<button type="button" class="chip" role="radio" aria-checked="' + (p.stage === s2.id) + '" data-act="set-stage" data-v="' + s2.id + '">' + s2.emoji + ' ' + esc(s2.short) + '</button>';
+    }).join('') + '</div><p class="hint stage-desc">' + esc(st.desc) + '</p>' + acuteNote(p);
+    if (p.stage !== 'khoe') {
+      h += '<p class="label">Mức độ</p><div class="chips cols-3">' + H.SEVERITIES.map(function (s3) {
+        return H.ui.chip(esc(s3.name) + '<small>' + esc(s3.desc) + '</small>', p.severity === s3.id, 'set-sev', { v: s3.id }, 'chip-2l');
+      }).join('') + '</div><p class="hint">Mức càng nặng, mình càng ưu tiên món mềm, ít kích thích.</p>';
+    }
+    return h + '</section>';
+  }
+
   function filterBody() {
     var S = H.state, p = S.profile, f = S.filters;
     var plan = filterCtx === 'plan';
     var mealList = [{ id: 'all', short: 'Tất cả', emoji: '' }].concat(H.SLOTS);
     var curMeal = filterCtx === 'explore' ? H.ui.exploreMeal : H.ui.meal;
     if (filterCtx !== 'explore') mealList = H.SLOTS;
-    var h = '';
-    h += '<section class="fgroup"><h3>Giai đoạn dạ dày</h3>' + optCards(H.STAGES.map(function (s) { return { id: s.id, name: s.name, emoji: s.emoji, desc: s.desc }; }), p.stage, 'set-stage') + acuteNote(p) + '</section>';
-    h += '<section class="fgroup"><h3>Mức độ</h3><div class="chips cols-3">' + H.SEVERITIES.map(function (s) {
-      return H.ui.chip(esc(s.name) + '<small>' + esc(s.desc) + '</small>', p.severity === s.id, 'set-sev', { v: s.id }, 'chip-2l');
-    }).join('') + '</div><p class="hint">Mức càng nặng, mình càng ưu tiên món mềm, ít kích thích.</p></section>';
+    var h = stageGroup(p);
     if (!plan) {
       h += '<section class="fgroup"><h3>Loại bữa</h3><div class="chips">' + mealList.map(function (m) {
         return H.ui.chip((m.emoji ? m.emoji + ' ' : '') + m.short, curMeal === m.id, 'set-meal', { v: m.id });
@@ -86,26 +98,27 @@
     }).join('') + '</div><p class="hint">Chỉ tính thời gian đứng bếp. Món ăn ngoài không có thời gian nấu nên không bị lọc ở mục này.</p></section>';
     h += '<section class="fgroup"><h3>' + H.icon('coin', { size: 16 }) + ' Ngân sách cho một bữa</h3><div class="chips">' + H.COST_STEPS.map(function (n) {
       return H.ui.chip(esc(H.costLabel(n)), f.maxCost === n, 'set-cost', { v: n });
-    }).join('') + '</div><p class="hint">Giá nguyên liệu ước tính cho 1 người. Ngân sách cả ngày dùng để xếp thực đơn tuần thì đặt trong <a href="#plan" data-act="close-sheet">Kế hoạch</a>.</p></section>';
-    h += flavorGroup();
+    }).join('') + '</div><p class="hint">Giá nguyên liệu ước tính cho 1 người. Ngân sách cả ngày dùng để xếp thực đơn tuần thì đặt trong <a href="#plan" data-act="close-sheet">Thực đơn</a>.</p></section>';
 
     h += '<button type="button" class="more-toggle" data-act="toggle-more" aria-expanded="' + !!H.ui.filterMore + '"><span>Lọc thêm <small>' +
-      (plan ? 'độ khó, món chay, dụng cụ' : 'độ khó, nguyên liệu chính, cách ăn, năng lượng, dụng cụ') + '</small></span>' +
+      (plan ? 'mức vị, độ khó, cách ăn, món chay, dụng cụ' : 'mức vị, độ khó, nguyên liệu chính, cách ăn, năng lượng, dụng cụ') + '</small></span>' +
       H.icon(H.ui.filterMore ? 'chev-d' : 'chev-r', { size: 18 }) + '</button>';
     if (H.ui.filterMore) {
       h += '<div class="more-body">';
+      h += flavorGroup();
       h += '<section class="fgroup"><h3>Độ khó tối đa</h3><div class="chips">' +
         H.ui.chip('Bất kỳ', !f.maxLevel, 'set-level', { v: 0 }) +
         H.LEVELS.map(function (l) { return H.ui.chip(esc(l.name), f.maxLevel === l.id, 'set-level', { v: l.id }); }).join('') + '</div>' +
         '<p class="hint">' + H.LEVELS.map(function (l) { return '<strong>' + esc(l.name) + ':</strong> ' + esc(l.hint.charAt(0).toLowerCase() + l.hint.slice(1)); }).join('. ') + '.</p></section>';
+      h += '<section class="fgroup"><h3>Cách ăn</h3><div class="chips">' +
+        H.ui.chip('Tất cả', f.mode === 'all', 'set-mode', { v: 'all' }) +
+        H.ui.chip('Nấu tại nhà', f.mode === 'home', 'set-mode', { v: 'home' }, 'chip-green') +
+        H.ui.chip('Ăn ngoài', f.mode === 'out', 'set-mode', { v: 'out' }) + '</div>' +
+        (plan ? '<p class="hint">Chọn “Tất cả” hoặc “Ăn ngoài” thì thực đơn tuần có cả bữa ăn ngoài (không tính vào danh sách đi chợ).</p>' : '') + '</section>';
       if (!plan) {
         h += '<section class="fgroup"><h3>Nguyên liệu chính</h3><div class="chips">' + H.PROTEINS.map(function (pr) {
           return H.ui.chip(pr.emoji + ' ' + esc(pr.name), f.proteins.indexOf(pr.id) >= 0, 'toggle-protein', { v: pr.id });
         }).join('') + '</div><p class="hint">Chọn nhiều loại cùng lúc được. Không chọn gì nghĩa là món nào cũng được.</p></section>';
-        h += '<section class="fgroup"><h3>Cách ăn</h3><div class="chips">' +
-          H.ui.chip('Tất cả', f.mode === 'all', 'set-mode', { v: 'all' }) +
-          H.ui.chip('Nấu tại nhà', f.mode === 'home', 'set-mode', { v: 'home' }, 'chip-green') +
-          H.ui.chip('Ăn ngoài', f.mode === 'out', 'set-mode', { v: 'out' }) + '</div></section>';
         h += '<section class="fgroup"><h3>Mức năng lượng</h3><div class="chips">' +
           [['all', 'Tất cả'], ['thap', 'Thấp'], ['tb', 'Trung bình'], ['cao', 'Cao']].map(function (e) {
             return H.ui.chip(e[1], f.energy === e[0], 'set-energy', { v: e[0] });
@@ -114,7 +127,7 @@
       h += '<section class="fgroup"><h3>Món chay</h3><div class="chips">' +
         H.ui.chip(H.icon('leaf', { size: 16 }) + ' Chỉ món chay', p.veg, 'toggle-veg') + '</div>' +
         '<p class="hint">Món chay ở đây là không thịt, không cá (có thể có trứng hoặc sữa, mình ghi rõ trên từng món).</p></section>';
-      h += '<section class="fgroup"><h3>Phòng trọ của tôi có</h3><div class="chips">' + H.TOOLS.map(function (t) {
+      h += '<section class="fgroup"><h3>Dụng cụ nấu của tôi</h3><div class="chips">' + H.TOOLS.map(function (t) {
         return H.ui.chip(t.emoji + ' ' + t.name, p.tools.indexOf(t.id) >= 0, 'toggle-tool', { v: t.id });
       }).join('') + '</div><p class="hint">Món chỉ hiện khi bạn có ít nhất một dụng cụ nó cần.</p></section>';
       h += '</div>';
@@ -132,8 +145,8 @@
       render: function () {
         var n, label;
         if (filterCtx === 'plan') {
-          n = H.DISHES.filter(function (d) { return d.mode === 'home' && H.fitsProfile(d) && H.fitsLimits(d) && !H.isExcluded(d.id); }).length;
-          label = 'Còn ' + n + ' món nấu tại nhà để xếp thực đơn';
+          n = H.DISHES.filter(function (d) { return H.planKind(d) && H.fitsProfile(d) && H.fitsLimits(d) && !H.isExcluded(d.id); }).length;
+          label = 'Còn ' + n + ' món để xếp thực đơn';
         } else {
           n = filterCtx === 'explore' ? H.exploreList().length : H.wheelPool(H.ui.meal).length;
           label = 'Xem ' + n + ' món phù hợp';
@@ -325,6 +338,13 @@
           .map(function (x) { return x.d; });
         var body = '<div class="search"><span class="search-ic">' + H.icon('search', { size: 18 }) + '</span>' +
           '<input id="picker-q" type="search" placeholder="Tìm món…" autocomplete="off" value="' + esc(q) + '" data-input="picker-q" aria-label="Tìm món"></div>';
+        // Món bạn hay chọn và hay nấu cho bữa này lên đầu để chọn nhanh (chỉ hiện khi chưa gõ tìm kiếm).
+        var often = q ? [] : H.favoriteDishes(slot, 4);
+        if (often.length) {
+          body += '<p class="label often-l">Bạn hay chọn</p><div class="chips often scroller" role="group" aria-label="Món bạn hay chọn">' + often.map(function (d) {
+            return '<button type="button" class="chip" data-act="pick-dish" data-id="' + d.id + '">' + d.emoji + ' ' + esc(d.name) + '</button>';
+          }).join('') + '</div>';
+        }
         body += list.length ? '<ul class="rows">' + list.map(function (d) {
           return '<li><button type="button" class="row pick" data-act="pick-dish" data-id="' + d.id + '">' + H.ui.tile(d, 'sm') +
             '<span class="row-main"><strong>' + esc(d.name) + '</strong><small>' + esc(d.kind) + ' · ' + U.vnd(d.cost) + (d.time ? ' · ' + d.time + ' phút' : '') + '</small>' +
@@ -364,26 +384,33 @@
       render: function () {
         var t = H.state.theme;
         var pl = H.ui.profileLabel();
+        var who = H.state.profile.who;
         return {
           body:
+            '<section class="fgroup"><h3>Tôi là</h3><div class="chips" role="radiogroup" aria-label="Nhóm người dùng">' + H.PERSONAS.map(function (ps) {
+              return '<button type="button" class="chip" role="radio" aria-checked="' + (who === ps.id) + '" data-act="set-persona" data-v="' + ps.id + '">' + ps.emoji + ' ' + esc(ps.name) + '</button>';
+            }).join('') + '</div><p class="hint">Chọn nhóm của bạn, mình đặt sẵn ngân sách, thời gian nấu, giờ ăn và cỡ chữ cho hợp. Bạn vẫn đổi từng mục được.</p></section>' +
             '<section class="fgroup"><h3>Hồ sơ dạ dày</h3>' +
-            '<button type="button" class="opt" data-act="settings-profile"><span class="opt-emoji">' + pl.stage.emoji + '</span><span class="opt-text"><strong>' + esc(pl.text) + '</strong><small>Chạm để đổi giai đoạn, mức độ và dụng cụ</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></button></section>' +
+            '<button type="button" class="opt" data-act="settings-profile"><span class="opt-emoji">' + pl.stage.emoji + '</span><span class="opt-text"><strong>' + esc(pl.text) + '</strong><small>Chạm để đổi tình trạng, mức độ và dụng cụ</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></button></section>' +
             '<section class="fgroup"><h3>Nhắc giờ ăn</h3>' +
-            '<a class="opt" href="#plan-remind" data-act="close-sheet"><span class="opt-emoji" aria-hidden="true">⏰</span><span class="opt-text"><strong>' + (H.state.remind.on ? 'Đang bật' : 'Đang tắt') + '</strong><small>Đổi giờ ăn, loại nhắc, thông báo và xuất lịch</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></a></section>' +
+            '<a class="opt" href="#remind" data-act="close-sheet"><span class="opt-emoji" aria-hidden="true">⏰</span><span class="opt-text"><strong>' + (H.state.remind.on ? 'Đang bật' : 'Đang tắt') + '</strong><small>Đổi giờ ăn, loại nhắc, thông báo và xuất lịch</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></a></section>' +
+            '<section class="fgroup"><h3>Cỡ chữ</h3><div class="chips" role="radiogroup" aria-label="Cỡ chữ">' +
+            '<button type="button" class="chip" role="radio" aria-checked="' + (H.state.textSize !== 'large') + '" data-act="set-text" data-v="normal">Chữ thường</button>' +
+            '<button type="button" class="chip chip-big" role="radio" aria-checked="' + (H.state.textSize === 'large') + '" data-act="set-text" data-v="large">Chữ to</button></div></section>' +
             '<section class="fgroup"><h3>Giao diện</h3><div class="chips">' +
             H.ui.chip(H.icon('sparkle', { size: 16 }) + ' Theo thiết bị', t === 'auto', 'set-theme', { v: 'auto' }) +
             H.ui.chip(H.icon('sun', { size: 16 }) + ' Sáng', t === 'light', 'set-theme', { v: 'light' }) +
-            H.ui.chip(H.icon('moon', { size: 16 }) + ' Tối', t === 'dark', 'set-theme', { v: 'dark' }) + '</div></section>' +
-            '<section class="fgroup"><h3>Màu giao diện</h3><div class="swatches" role="radiogroup" aria-label="Màu giao diện">' + H.PALETTES.map(function (pl2) {
+            H.ui.chip(H.icon('moon', { size: 16 }) + ' Tối', t === 'dark', 'set-theme', { v: 'dark' }) + '</div>' +
+            '<p class="label">Màu giao diện</p><div class="swatches" role="radiogroup" aria-label="Màu giao diện">' + H.PALETTES.map(function (pl2) {
               var on = pl2.id === H.state.palette;
               return '<button type="button" class="swatch" role="radio" aria-checked="' + on + '" data-act="set-palette" data-v="' + pl2.id + '">' +
                 '<span class="swatch-dot" style="--sw-a:' + pl2.p + ';--sw-b:' + pl2.accent + '" aria-hidden="true"></span>' +
                 '<span class="swatch-name">' + esc(pl2.name) + '</span>' +
                 (on ? '<span class="swatch-tick" aria-hidden="true">' + H.icon('check', { size: 14, stroke: 3 }) + '</span>' : '') + '</button>';
             }).join('') + '</div></section>' +
-            '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Kế hoạch, tủ lạnh, bài viết và bảng xếp hạng của bạn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
+            '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Thực đơn, tủ lạnh, nhật ký, bài viết và những món bạn hay chọn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
             '<button type="button" class="btn btn-ghost btn-danger-ghost" data-act="reset-all">' + H.icon('trash', { size: 16 }) + ' Xoá toàn bộ dữ liệu trên máy này</button></section>' +
-            '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món cho sinh viên bị đau dạ dày hoặc viêm loét dạ dày đang tự nấu ăn ở nhà trọ. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p><a class="btn btn-soft btn-sm" href="#about" data-act="close-sheet">Đọc ý tưởng dự án</a></section>'
+            '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món lành cho người bị đau dạ dày hoặc viêm loét dạ dày và cho bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p><a class="btn btn-soft btn-sm" href="#about" data-act="close-sheet">Đọc ý tưởng dự án</a></section>'
         };
       },
       onClose: function () { H.render(); }
@@ -391,6 +418,29 @@
   };
   H.actions['open-settings'] = function () { H.openSettings(); };
   H.actions['settings-profile'] = function () { H.sheet.close(); setTimeout(function () { H.openFilters('home'); }, 230); };
+  H.actions['set-text'] = function (el) {
+    H.state.textSize = el.dataset.v === 'large' ? 'large' : 'normal';
+    H.applyTheme();
+    H.save();
+    H.sheet.refresh();
+  };
+  // Đổi nhóm người dùng sẽ thay ngân sách, thời gian, giờ ăn và cỡ chữ nên hỏi lại trước.
+  H.actions['set-persona'] = function (el) {
+    var ps = H.PERSONAS.filter(function (x) { return x.id === el.dataset.v; })[0];
+    if (!ps || H.state.profile.who === ps.id) return;
+    H.confirm({
+      title: 'Đặt theo nhóm “' + ps.name + '”?',
+      text: 'Mình sẽ đặt lại ngân sách mỗi bữa (' + (ps.maxCost ? 'tối đa ' + U.vnd(ps.maxCost) : 'không giới hạn') + '), thời gian nấu (' + (ps.maxTime ? 'tối đa ' + ps.maxTime + ' phút' : 'không giới hạn') + '), giờ ăn và cỡ chữ cho hợp. Thực đơn đã xếp được giữ nguyên.',
+      ok: 'Đặt theo nhóm này',
+      onOk: function () {
+        H.applyPersona(ps.id);
+        H.applyTheme();
+        H.ui.result = null;
+        H.toast('Đã đặt theo nhóm ' + ps.name.toLowerCase(), { icon: 'check' });
+        H.sheet.refresh();
+      }
+    });
+  };
   H.actions['set-theme'] = function (el) { H.state.theme = el.dataset.v; H.applyTheme(); H.save(); H.sheet.refresh(); };
   H.actions['set-palette'] = function (el) {
     if (!H.PALETTES.some(function (p) { return p.id === el.dataset.v; })) return;
@@ -417,43 +467,64 @@
   };
 
   // ───────────── Chào mừng ─────────────
-  // Chỉ hỏi ba điều: dạ dày đang thế nào, mỗi bữa muốn chi tối đa bao nhiêu và có bao nhiêu thời gian nấu.
-  // Dụng cụ nấu để mặc định (nồi cơm điện, bếp, chảo) và đổi sau trong Bộ lọc.
-  var WELCOME_COST = [0, 10000, 15000, 20000, 30000];
-  var WELCOME_TIME = [0, 15, 30, 45];
+  // Hai bước ngắn: (1) bạn thuộc nhóm nào, (2) dạ dày đang thế nào. Ngân sách, thời gian nấu, giờ ăn, cỡ chữ
+  // được đặt sẵn theo nhóm (xem H.PERSONAS) và đổi sau trong Bộ lọc, Cài đặt.
+  var wstep = 1;
+  function welcomeSummary() {
+    var f = H.state.filters, rm = H.state.remind;
+    var parts = [f.maxCost ? 'tối đa ' + U.vnd(f.maxCost) + '/bữa' : 'không giới hạn giá', f.maxTime ? 'nấu tối đa ' + f.maxTime + ' phút' : 'không giới hạn thời gian',
+      rm.on ? 'nhắc giờ ăn đang bật' : 'nhắc giờ ăn đang tắt'];
+    if (H.state.textSize === 'large') parts.push('chữ to');
+    return parts.join(' · ');
+  }
   H.openWelcome = function () {
     filterCtx = 'home';
+    wstep = 1;
     H.sheet.open({
       title: 'Chào bạn!',
       cls: 'overlay-welcome',
       dismissible: false,
       right: '<button type="button" class="sheet-link" data-act="welcome-skip">Bỏ qua</button>',
       render: function () {
-        var p = H.state.profile, f = H.state.filters, rm = H.state.remind;
+        var p = H.state.profile;
+        var dots = '<div class="wsteps" role="img" aria-label="Bước ' + wstep + ' trên 2"><i class="' + (wstep === 1 ? 'on' : 'done') + '"></i><i class="' + (wstep === 2 ? 'on' : '') + '"></i></div>';
+        if (wstep === 1) {
+          return {
+            body: dots + '<div class="welcome-hero">' + H.mascot({ size: 84 }) +
+              '<p>Mình là <strong>Bé Cháo</strong>. Cho mình biết bạn là ai để gợi ý món vừa sức nhé.</p></div>' +
+              '<section class="fgroup"><h3>Bạn thuộc nhóm nào?</h3>' + optCards(H.PERSONAS.map(function (ps) { return { id: ps.id, name: ps.name, emoji: ps.emoji, desc: ps.desc }; }), p.who, 'welcome-who') + '</section>',
+            foot: '<button type="button" class="btn btn-primary btn-block btn-lg" data-act="welcome-next" data-autofocus' + (p.who ? '' : ' disabled') + '>' + (p.who ? 'Tiếp tục' : 'Chọn một nhóm để tiếp tục') + '</button>'
+          };
+        }
         return {
-          body:
-            '<div class="welcome-hero">' + H.mascot({ size: 84 }) +
-            '<p>Mình là <strong>Bé Cháo</strong>. Trả lời nhanh ba câu để mình chọn món vừa sức nhé.</p></div>' +
-            '<section class="fgroup"><h3>1. Dạ dày bạn đang thế nào?</h3>' + optCards(H.STAGES.map(function (s) { return { id: s.id, name: s.name, emoji: s.emoji, desc: s.desc }; }), p.stage, 'set-stage') + acuteNote(p) +
-            '<p class="label w-lab">Mức độ</p><div class="chips cols-3 w-sev">' + H.SEVERITIES.map(function (s) {
+          body: dots +
+            '<section class="fgroup"><h3>Dạ dày bạn đang thế nào?</h3>' + optCards(H.STAGES.map(function (s) { return { id: s.id, name: s.name, emoji: s.emoji, desc: s.desc }; }), p.stage, 'set-stage') + acuteNote(p) +
+            (p.stage !== 'khoe' ? '<p class="label w-lab">Mức độ</p><div class="chips cols-3 w-sev">' + H.SEVERITIES.map(function (s) {
               return H.ui.chip(esc(s.name) + '<small>' + esc(s.desc) + '</small>', p.severity === s.id, 'set-sev', { v: s.id }, 'chip-2l');
-            }).join('') + '</div></section>' +
-            '<section class="fgroup"><h3>2. Mỗi bữa bạn muốn chi tối đa</h3><div class="chips">' + WELCOME_COST.map(function (n) {
-              return H.ui.chip(esc(H.costLabel(n)), f.maxCost === n, 'set-cost', { v: n });
-            }).join('') + '</div></section>' +
-            '<section class="fgroup"><h3>3. Thời gian nấu tối đa</h3><div class="chips">' + WELCOME_TIME.map(function (n) {
-              return H.ui.chip(esc(H.timeLabel(n)), f.maxTime === n, 'set-time', { v: n });
-            }).join('') + '</div></section>' +
-            '<section class="fgroup"><div class="rm-row"><div><strong>Nhắc tôi ăn đúng giờ</strong><small>Người đau dạ dày nên ăn đều đặn. Mình nhắc đi chợ, nấu và ăn.</small></div>' +
-            '<button type="button" class="switch" role="switch" aria-checked="' + !!rm.on + '" data-act="welcome-remind" aria-label="Nhắc tôi ăn đúng giờ"><i></i></button></div></section>' +
-            '<p class="hint">Mình tạm coi bạn có nồi cơm điện, bếp và chảo. Muốn đổi dụng cụ hay lọc kỹ hơn, vào <strong>Bộ lọc</strong> sau.</p>' +
+            }).join('') + '</div>' : '') + '</section>' +
+            '<p class="note ok">' + H.icon('check', { size: 16, stroke: 3 }) + '<span><strong>Mình đã đặt sẵn:</strong> ' + esc(welcomeSummary()) + '. Đổi lại bất cứ lúc nào trong Bộ lọc và Cài đặt.</span></p>' +
             '<p class="hint"><strong>Lưu ý:</strong> đây là gợi ý tham khảo, không thay thế bác sĩ. Nếu nôn ra máu, đi ngoài phân đen hoặc đau dữ dội, hãy đi khám ngay.</p>',
-          foot: '<button type="button" class="btn btn-primary btn-block btn-lg" data-act="welcome-done" data-autofocus>Bắt đầu chọn món</button>'
+          foot: '<div class="foot-actions"><button type="button" class="btn btn-ghost" data-act="welcome-back">Quay lại</button>' +
+            '<button type="button" class="btn btn-primary" data-act="welcome-done" data-autofocus>Bắt đầu</button></div>'
         };
       }
     });
   };
-  H.actions['welcome-remind'] = function () { H.state.remind.on = !H.state.remind.on; H.save(); H.sheet.refresh(); };
+  // Chọn nhóm: đặt luôn các giá trị gợi ý. Nhóm "ăn lành mạnh" chọn sẵn giai đoạn "không đau dạ dày" ở bước sau.
+  H.actions['welcome-who'] = function (el) {
+    H.applyPersona(el.dataset.v);
+    H.applyTheme();
+    H.ui.result = null;
+    H.sheet.refresh();
+  };
+  H.actions['welcome-next'] = function () {
+    if (!H.state.profile.who) return;
+    wstep = 2;
+    H.sheet.refresh();
+    var body = document.querySelector('.overlay-welcome .sheet-body');
+    if (body) body.scrollTop = 0;
+  };
+  H.actions['welcome-back'] = function () { wstep = 1; H.sheet.refresh(); };
   H.actions['welcome-done'] = function () { H.state.onboarded = true; H.save(); H.sheet.closeAll(); H.ui.result = null; H.render(); };
   H.actions['welcome-skip'] = H.actions['welcome-done'];
 })(window.HNAG = window.HNAG || {});

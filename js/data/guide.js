@@ -40,10 +40,10 @@
       alias: ['yến mạch', 'oat', 'oats', 'oatmeal'],
       why: 'Chất xơ hoà tan khi nấu mềm khá dễ chịu, no lâu, hợp cho bữa sáng.',
       tip: 'Chọn yến mạch cán dẹt nấu nhừ. Tránh loại có đường, hương liệu.' },
-    { id: 'khoai', name: 'Khoai tây, khoai lang (luộc, hấp)', emoji: '🥔', group: 'tinhbot', v: 'good',
-      alias: ['khoai tây', 'khoai lang', 'khoai', 'khoai sọ'],
+    { id: 'khoai', name: 'Khoai tây, khoai lang, khoai môn (luộc, hấp, nấu canh)', emoji: '🥔', group: 'tinhbot', v: 'good',
+      alias: ['khoai tây', 'khoai lang', 'khoai môn', 'khoai mỡ', 'khoai', 'khoai sọ'],
       why: 'Tinh bột mềm khi hấp hoặc luộc, không dầu mỡ.',
-      tip: 'Tránh khoai chiên và khoai nướng cháy cạnh. Khoai lang có thể gây đầy hơi ở vài người, nên ăn lượng vừa.' },
+      tip: 'Tránh khoai chiên và khoai nướng cháy cạnh. Khoai lang có thể gây đầy hơi ở vài người, nên ăn lượng vừa. Khoai môn phải nấu thật chín mềm.' },
     { id: 'banh-quy-lat', name: 'Bánh quy lạt (cracker)', emoji: '🍘', group: 'tinhbot', v: 'good',
       alias: ['bánh quy lạt', 'cracker', 'bánh cracker', 'bánh quy khô lạt'],
       why: 'Khô, nhạt, ít béo, ăn lót dạ khi bụng cồn cào.',
@@ -144,10 +144,10 @@
       alias: ['bắp cải', 'cải bắp', 'súp lơ', 'bông cải', 'bông cải xanh', 'súp lơ xanh', 'cải thảo', 'su hào'],
       why: 'Dân gian hay khen bắp cải tốt cho dạ dày nhưng chưa có đủ bằng chứng. Nhóm này dễ gây đầy hơi.',
       tip: 'Hấp hoặc nấu thật mềm, ăn lượng vừa. Ngưng nếu bạn thấy đầy bụng.' },
-    { id: 'rau-la', name: 'Cải ngọt, mồng tơi, rau dền (nấu canh)', emoji: '🥬', group: 'rau', v: 'limit',
-      alias: ['cải ngọt', 'cải thìa', 'mồng tơi', 'rau dền', 'rau cải', 'rau lang'],
+    { id: 'rau-la', name: 'Cải ngọt, mồng tơi, rau ngót, rau dền (nấu canh)', emoji: '🥬', group: 'rau', v: 'limit',
+      alias: ['cải ngọt', 'cải thìa', 'mồng tơi', 'rau ngót', 'rau dền', 'rau cải', 'rau lang'],
       why: 'Lá non nấu mềm thì ổn. Rau già nhiều xơ khó tiêu khi đang đau.',
-      tip: 'Chỉ dùng khi đã đỡ. Chọn lá non, nấu mềm, nhai kỹ.' },
+      tip: 'Chỉ dùng khi đã đỡ. Chọn lá non, nấu mềm, nhai kỹ. Rau ngót chỉ ăn khi đã nấu chín, không xay ép uống sống.' },
     { id: 'rau-nhieu-xo', name: 'Rau muống, măng, cần tây (nhiều xơ)', emoji: '🌿', group: 'rau', v: 'limit',
       alias: ['rau muống', 'măng', 'cần tây', 'cải xoong'],
       why: 'Nhiều xơ và dai, nấu không kỹ dễ làm bụng khó chịu.',
@@ -306,7 +306,7 @@
       tip: 'Nấu nhanh tại nhà: trứng hấp, yến mạch, nui thịt bằm.' },
     { id: 'do-vat', name: 'Đồ ăn vặt chua cay (bánh tráng trộn, mực khô...)', emoji: '🥢', group: 'vat', v: 'avoid',
       alias: ['bánh tráng trộn', 'bánh tráng nướng', 'mực khô', 'khô gà', 'khô bò', 'snack cay', 'đồ ăn vặt', 'ốc xào', 'khô heo cháy tỏi'],
-      why: 'Vừa cay, vừa chua, vừa mặn, tức là gần như mọi tác nhân kích thích gộp lại. Quen thuộc với sinh viên nhưng rất dễ gây đau.',
+      why: 'Vừa cay, vừa chua, vừa mặn, tức là gần như mọi tác nhân kích thích gộp lại. Rất quen thuộc với giới trẻ nhưng rất dễ gây đau.',
       tip: 'Thèm vặt thì chọn chuối, đu đủ, bánh quy lạt, sữa đậu nành ấm.' },
     { id: 'lau-nhau', name: 'Lẩu cay, đồ nhậu', emoji: '🍲', group: 'vat', v: 'avoid',
       alias: ['lẩu', 'lẩu cay', 'lẩu thái', 'lẩu mắm', 'bún đậu mắm tôm', 'đồ nhậu', 'mồi nhậu', 'nhậu', 'bún bò cay'],
@@ -414,7 +414,7 @@
     { emoji: '🌡️', title: 'Ăn uống ấm vừa miệng', text: 'Tránh quá nóng hoặc quá lạnh. Để món ăn nguội bớt trước khi ăn.' },
     { emoji: '🚭', title: 'Hạn chế rượu bia và thuốc lá', text: 'Cả hai đều làm niêm mạc dạ dày lâu lành hơn.' },
     { emoji: '📝', title: 'Ghi lại món gây khó chịu', text: 'Mỗi người có “tác nhân” riêng. Ghi lại sau mỗi bữa để biết món nào hợp, món nào không.' },
-    { emoji: '😴', title: 'Ngủ đủ, giảm căng thẳng', text: 'Stress học tập, thức khuya đều làm triệu chứng dạ dày nặng hơn.' },
+    { emoji: '😴', title: 'Ngủ đủ, giảm căng thẳng', text: 'Áp lực học tập, công việc và thức khuya đều làm triệu chứng dạ dày nặng hơn.' },
     { emoji: '🧪', title: 'Hỏi bác sĩ về vi khuẩn HP', text: 'Vi khuẩn H. pylori là nguyên nhân thường gặp của viêm loét. Đau kéo dài thì nên hỏi bác sĩ về xét nghiệm.' }
   ];
 
@@ -438,7 +438,9 @@
     { id: 'doi', name: 'Đang đỡ dần', short: 'Đang đỡ', emoji: '🌤️',
       desc: 'Triệu chứng giảm. Có thể ăn cơm mềm, rau củ chín, đạm nạc.' },
     { id: 'on', name: 'Ổn định (mãn tính)', short: 'Ổn định', emoji: '🌿',
-      desc: 'Ít triệu chứng. Muốn ăn đa dạng hơn nhưng vẫn tránh tác nhân kích thích.' }
+      desc: 'Ít triệu chứng. Muốn ăn đa dạng hơn nhưng vẫn tránh tác nhân kích thích.' },
+    { id: 'khoe', name: 'Không đau dạ dày', short: 'Ăn lành mạnh', emoji: '🥗',
+      desc: 'Dạ dày khoẻ, chỉ muốn ăn nhẹ bụng, ít dầu mỡ và đủ chất.' }
   ];
 
   H.SEVERITIES = [

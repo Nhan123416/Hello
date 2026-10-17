@@ -1,4 +1,4 @@
-/* Kế hoạch tuần, danh sách đi chợ và tủ lạnh. */
+/* Thực đơn tuần và danh sách đi chợ. (Tủ lạnh và nhắc giờ nằm trong mục "Thêm".) */
 (function (H) {
   'use strict';
 
@@ -24,7 +24,7 @@
       '<span class="mealrow-t"><span class="tag ' + H.ui.kindClass(d.kind) + '">' + esc(d.kind) + '</span><strong>' + esc(d.name) + '</strong>' +
       '<small>' + U.vnd(d.cost) + (d.time ? ' · ' + d.time + ' phút' : '') + ' · ' + d.kcal + ' kcal</small></span></a>' +
       '<div class="mealrow-act">' +
-      '<button type="button" class="btn-icon round' + (cooked ? ' on' : '') + '" data-act="cook" data-date="' + iso + '" data-slot="' + sid + '" aria-pressed="' + cooked + '" aria-label="Đánh dấu đã nấu ' + esc(d.name) + '">' + H.icon('check', { size: 16, stroke: 3 }) + '</button>' +
+      '<button type="button" class="btn-icon round' + (cooked ? ' on' : '') + '" data-act="cook" data-date="' + iso + '" data-slot="' + sid + '" aria-pressed="' + cooked + '" aria-label="Đánh dấu ' + (d.mode === 'out' ? 'đã ăn ' : 'đã nấu ') + esc(d.name) + '">' + H.icon('check', { size: 16, stroke: 3 }) + '</button>' +
       '<button type="button" class="btn-icon round" data-act="meal-menu" data-date="' + iso + '" data-slot="' + sid + '" aria-label="Thêm tuỳ chọn cho ' + esc(d.name) + '">' + H.icon('more', { size: 18 }) + '</button>' +
       '</div></div></div>';
   }
@@ -47,6 +47,29 @@
       '<button type="button" class="link-btn" data-act="open-filters" data-ctx="plan">' + (pills ? 'Sửa' : 'Đặt giới hạn') + '</button></p>' + pills + '</div>';
   }
 
+  // Gợi ý đặt ngân sách ngày theo mức chi thực tế của bạn (số tiền nhập khi đi chợ, hoặc giá các bữa đã nấu).
+  function budgetHintHtml() {
+    var bh = H.budgetHint();
+    if (!bh) return '';
+    var rb = bh.rb;
+    var why = rb.source === 'spent'
+      ? (rb.n > 1 ? 'Trung bình ' + rb.n + ' tuần gần nhất bạn chi thật' : 'Tuần gần nhất bạn chi thật') + ' khoảng ' + U.vnd(rb.perDay) + ' mỗi ngày.'
+      : 'Từ ' + rb.n + ' bữa bạn đã nấu gần đây, mỗi bữa khoảng ' + U.vnd(rb.perMeal) + '.';
+    return '<div class="hintcard" role="note"><span class="hc-e" aria-hidden="true">💡</span><div class="hc-t"><strong>Đặt ngân sách ' + U.vnd(bh.suggest) + '/ngày?</strong>' +
+      '<small>' + esc(why) + ' ' + (H.state.budget ? 'Bạn đang đặt ' + U.vnd(H.state.budget) + '/ngày.' : 'Bạn chưa đặt ngân sách ngày.') + '</small></div>' +
+      '<div class="hc-acts"><button type="button" class="btn btn-soft btn-sm" data-act="budget-apply" data-v="' + bh.suggest + '">Đặt ' + U.vnd(bh.suggest) + '</button>' +
+      '<button type="button" class="link-btn" data-act="budget-skip" data-v="' + bh.suggest + '">Để sau</button></div></div>';
+  }
+
+  // Nút lặp lại thực đơn tuần trước: chỉ hiện khi tuần trước có ít nhất 3 bữa và tuần này còn ô trống.
+  function repeatBtn(start, st) {
+    if (st.planned >= st.total) return '';
+    var prev = U.addDays(start, -7);
+    var ps = H.weekStats(prev);
+    if (ps.planned < 3) return '';
+    return '<button type="button" class="btn btn-soft" data-act="plan-repeat">' + H.icon('refresh', { size: 18 }) + 'Lặp lại thực đơn tuần trước</button>';
+  }
+
   function weekTab() {
     var start = viewStart();
     var st = H.weekStats(start);
@@ -57,17 +80,18 @@
     var n = st.total;
     var h = '<section class="weekcard" aria-labelledby="week-title">' +
       '<div class="weekcard-top"><div><h2 id="week-title">Tuần bắt đầu ' + U.fmtDM(start) + '</h2>' +
-      '<p>Đã xếp <strong>' + st.planned + '/' + n + '</strong> bữa (' + st.cooked + ' đã nấu)</p></div>' +
+      '<p>Đã xếp <strong>' + st.planned + '/' + n + '</strong> bữa (' + st.cooked + ' đã nấu hoặc đã ăn)</p></div>' +
       '<div class="weeknav"><button type="button" class="btn-icon round" data-act="week-prev" aria-label="Tuần trước">' + H.icon('chev-l', { size: 18 }) + '</button>' +
       '<button type="button" class="btn-icon round" data-act="week-next" aria-label="Tuần sau">' + H.icon('chev-r', { size: 18 }) + '</button>' +
-      '<button type="button" class="btn-icon round gear" data-act="plan-settings" aria-label="Tuỳ chỉnh kế hoạch">' + H.icon('gear', { size: 18 }) + '</button></div></div>' +
+      '<button type="button" class="btn-icon round gear" data-act="plan-settings" aria-label="Tuỳ chỉnh thực đơn">' + H.icon('gear', { size: 18 }) + '</button></div></div>' +
       '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="' + n + '" aria-valuenow="' + st.planned + '" aria-label="Số bữa đã xếp"><i style="width:' + pct + '%"></i></div>' +
       '<div class="weekcard-actions">' +
       '<button type="button" class="btn btn-green" data-act="plan-auto">' + H.icon('sparkle', { size: 18 }) + (st.planned >= n ? 'Xếp lại cả tuần' : 'Tự xếp thực đơn') + '</button>' +
-      '<button type="button" class="btn btn-orange" data-act="goto-shop">' + H.icon('cart', { size: 18 }) + 'Đi chợ</button></div>' +
+      '<button type="button" class="btn btn-orange" data-act="goto-shop">' + H.icon('cart', { size: 18 }) + 'Đi chợ</button>' +
+      repeatBtn(start, st) + '</div>' +
       limitsLine() +
       (st.planned ? '<p class="weekcard-sum">Tổng chi phí tuần khoảng <strong>' + U.vnd(st.cost) + '</strong> · trung bình ' + U.vnd(st.cost / 7) + '/ngày · ~' + fmtK(st.kcal / 7) + ' kcal/ngày</p>' : '') +
-      '</section>';
+      '</section>' + budgetHintHtml();
     h += '<div class="daychips scroller" role="group" aria-label="Chọn ngày">' +
       '<button type="button" class="chip chip-green" aria-pressed="' + (H.ui.day === 'all') + '" data-act="plan-day" data-v="all">Tất cả</button>' +
       days.map(function (d) {
@@ -79,6 +103,15 @@
   }
 
   // ───────────── Tab 2: đi chợ ─────────────
+  // Ô nhập số tiền thực chi: mình ghi nhớ để lần sau gợi ý ngân sách sát thực tế.
+  function spentBox(week) {
+    var cur = H.state.spent[week];
+    return '<section class="fgroup spent"><label class="label" for="spent-in">Đi chợ xong, bạn chi thật hết bao nhiêu? <small>(không bắt buộc)</small></label>' +
+      '<div class="quickadd"><input id="spent-in" class="input" type="text" inputmode="numeric" placeholder="VD: 180000" value="' + (cur ? cur : '') + '" autocomplete="off" enterkeyhint="done">' +
+      '<button type="button" class="btn btn-soft" data-act="spent-save" data-week="' + week + '">Lưu</button></div>' +
+      '<p class="hint">' + (cur ? 'Đã ghi nhớ ' + U.vnd(cur) + ' cho tuần này. ' : '') + 'Mình nhớ số này để gợi ý ngân sách mỗi ngày sát với thực tế của bạn.</p></section>';
+  }
+
   function shopText(sh) {
     var lines = ['Danh sách đi chợ (tuần ' + U.fmtDMY(viewStart()) + ')'];
     H.CATEGORIES.forEach(function (c) {
@@ -107,7 +140,7 @@
       '<p>Cho ' + sh.meals + ' bữa nấu tại nhà chưa nấu, tuần bắt đầu ' + U.fmtDM(start) + '</p></div>' +
       '<div class="weeknav"><button type="button" class="btn-icon round" data-act="week-prev" aria-label="Tuần trước">' + H.icon('chev-l', { size: 18 }) + '</button>' +
       '<button type="button" class="btn-icon round" data-act="week-next" aria-label="Tuần sau">' + H.icon('chev-r', { size: 18 }) + '</button></div></div>' +
-      '<div class="shop-total"><span>Ước tính</span><strong>' + U.vnd(sh.total) + '</strong><small>đã trừ đồ có trong tủ lạnh · mua ' + done + '/' + toBuy.length + '</small></div>' +
+      '<div class="shop-total"><span>Ước tính</span><strong>' + U.vnd(sh.total) + '</strong><small>đã trừ đồ có trong <a href="#fridge">tủ lạnh</a> · mua ' + done + '/' + toBuy.length + '</small></div>' +
       '<div class="weekcard-actions"><button type="button" class="btn btn-green" data-act="shop-copy">' + H.icon('copy', { size: 18 }) + 'Sao chép danh sách</button>' +
       '<button type="button" class="btn btn-soft" data-act="shop-buy">' + H.icon('ext', { size: 18 }) + 'Mua online</button>' +
       '<button type="button" class="btn btn-ghost" data-act="shop-clear">Bỏ tick hết</button></div></section>';
@@ -127,30 +160,31 @@
           '<span class="ing-p">' + (x.inFridge ? '' : U.vnd(x.cost)) + '</span></button></li>';
       }).join('') + '</ul></section>';
     });
+    h += spentBox(sh.week);
     h += '<p class="hint">Giá chỉ là ước tính theo lượng dùng. Khi đi chợ bạn thường mua theo gói nên thực tế có thể nhiều hơn, phần dư dùng cho các bữa sau.</p>';
     return h;
   }
 
   // ───────────── khung chung ─────────────
   H.views.plan = {
-    title: 'Kế hoạch tuần',
+    title: 'Thực đơn tuần',
     render: function (r) {
-      var tab = r.tab || 'week';
+      var tab = r.tab === 'shop' ? 'shop' : 'week';
       var n = H.slotsOn().length * 7;
-      var tabs = [['week', 'Kế hoạch', 'calendar', 'plan'], ['shop', 'Đi chợ', 'cart', 'plan-shop'], ['fridge', 'Tủ lạnh', 'fridge', 'plan-fridge'], ['remind', 'Nhắc giờ', 'bell', 'plan-remind']];
+      var tabs = [['week', 'Thực đơn', 'calendar', 'plan'], ['shop', 'Đi chợ', 'cart', 'plan-shop']];
       return '<div class="plan">' +
-        H.ui.pageHead('<span class="k-ic">' + H.icon('calendar', { size: 14 }) + '</span>THỰC ĐƠN 7 NGÀY AN TOÀN', 'Kế hoạch bữa ăn trong tuần',
-          'Tự động lập ' + n + ' bữa không lặp món, hợp với giai đoạn dạ dày và ngân sách của bạn.') +
-        '<div class="seg four" role="tablist" aria-label="Chọn mục">' + tabs.map(function (t) {
+        H.ui.pageHead('<span class="k-ic">' + H.icon('calendar', { size: 14 }) + '</span>THỰC ĐƠN 7 NGÀY AN TOÀN', 'Thực đơn trong tuần',
+          'Tự động lập ' + n + ' bữa không lặp món, hợp với tình trạng dạ dày và ngân sách của bạn.') +
+        '<div class="seg two" role="tablist" aria-label="Chọn mục">' + tabs.map(function (t) {
           return '<a role="tab" class="seg-i' + (tab === t[0] ? ' on' : '') + '" aria-selected="' + (tab === t[0]) + '" href="#' + t[3] + '">' + H.icon(t[2], { size: 16 }) + '<span>' + t[1] + '</span></a>';
         }).join('') + '</div>' +
-        '<div class="plan-body">' + (tab === 'shop' ? shopTab() : tab === 'fridge' ? H.pantry.tabHtml() : tab === 'remind' ? H.remind.tabHtml() : weekTab()) + '</div>' +
+        '<div class="plan-body">' + (tab === 'shop' ? shopTab() : weekTab()) + '</div>' +
         H.ui.disclaimer() + '</div>';
     },
     mount: function (r) {
       H.centerActive('.daychips', '.chip[aria-pressed="true"]');
-      // Lần đầu mở tab kế hoạch: tự xếp sẵn để người dùng thấy ngay một tuần đầy đủ.
-      if ((r.tab || 'week') === 'week' && H.ui.weekOffset === 0 && !H.state.planSeeded) {
+      // Lần đầu mở thực đơn: tự xếp sẵn để người dùng thấy ngay một tuần đầy đủ.
+      if (r.tab !== 'shop' && H.ui.weekOffset === 0 && !H.state.planSeeded) {
         H.state.planSeeded = true;
         var res = H.autoPlan(viewStart(), 'fill');   // chỉ điền ô trống, giữ nguyên món người dùng đã ghim
         H.save();
@@ -159,6 +193,7 @@
           H.render({ keepScroll: true });
         }
       }
+      if (r.tab === 'shop' && H.shopping(viewStart()).items.length) H.tourMark('shopped');
     }
   };
 
@@ -167,6 +202,36 @@
   H.actions['week-next'] = function () { H.ui.weekOffset++; H.ui.day = 'all'; H.render({ keepScroll: true }); };
   H.actions['plan-day'] = function (el) { H.ui.day = el.dataset.v; H.render({ keepScroll: true }); };
   H.actions['goto-shop'] = function () { H.go('plan-shop'); };
+  H.actions['plan-repeat'] = function () {
+    var start = viewStart(), prev = U.addDays(start, -7);
+    var res = H.copyWeek(prev, start);
+    if (!res.copied) { H.toast('Tuần trước chưa có món nào dùng lại được', { icon: 'info' }); return; }
+    var fill = H.autoPlan(start, 'fill');   // ô nào không chép được thì xếp món mới cho đủ tuần
+    var msg = 'Đã lặp lại ' + res.copied + ' bữa của tuần trước';
+    if (fill.filled) msg += ' và xếp thêm ' + fill.filled + ' bữa mới';
+    H.toast(msg, { icon: 'refresh', ms: 3600 });
+    H.render({ keepScroll: true });
+  };
+  H.actions['budget-apply'] = function (el) {
+    H.state.budget = Number(el.dataset.v) || 0;
+    H.save();
+    H.toast('Đã đặt ngân sách ' + U.vnd(H.state.budget) + ' mỗi ngày', { icon: 'coin' });
+    H.render({ keepScroll: true });
+  };
+  H.actions['budget-skip'] = function (el) {
+    H.state.hints.budget = Number(el.dataset.v) || 0;
+    H.save();
+    H.render({ keepScroll: true });
+  };
+  H.actions['spent-save'] = function (el) {
+    var box = document.getElementById('spent-in');
+    var raw = box ? box.value.trim().toLowerCase() : '';
+    var n = Number(raw.replace(/[^\d]/g, '')) || 0;
+    if (/k$/.test(raw) && n > 0 && n < 10000) n *= 1000;   // "180k" là 180.000đ
+    H.setSpent(el.dataset.week, n);
+    H.toast(n ? 'Đã ghi nhớ ' + U.vnd(n) + '. Lần sau mình gợi ý ngân sách sát hơn' : 'Đã xoá số tiền đã ghi', { icon: 'check' });
+    H.render({ keepScroll: true });
+  };
   function runAutoPlan(mode) {
     var res = H.autoPlan(viewStart(), mode);
     var msg = res.filled ? 'Đã xếp ' + res.filled + ' bữa' : 'Không còn ô trống để xếp';

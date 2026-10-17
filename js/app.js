@@ -5,16 +5,20 @@
   var U = H.util;
   var main;
 
+  // Năm mục chính. Tủ lạnh, nhắc giờ, nhật ký, cộng đồng, xếp hạng nằm trong "Thêm" cho đỡ rối.
   var NAV = [
     { id: 'home', label: 'Hôm nay', icon: 'wheel', href: '#home' },
-    { id: 'explore', label: 'Khám phá', icon: 'compass', href: '#explore' },
-    { id: 'plan', label: 'Kế hoạch', icon: 'calendar', href: '#plan' },
+    { id: 'explore', label: 'Món ăn', icon: 'compass', href: '#explore' },
+    { id: 'plan', label: 'Thực đơn', icon: 'calendar', href: '#plan' },
     { id: 'guide', label: 'Cẩm nang', icon: 'book', href: '#guide' },
-    { id: 'community', label: 'Cộng đồng', icon: 'users', href: '#community' }
+    { id: 'more', label: 'Thêm', icon: 'grid', href: '#more' }
   ];
 
   // Màn hình nào thì sáng mục điều hướng nào.
-  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', guide: 'guide', community: 'community', rank: 'community', about: '' };
+  var NAV_OF = {
+    home: 'home', explore: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', guide: 'guide',
+    more: 'more', fridge: 'more', remind: 'more', diary: 'more', community: 'more', rank: 'more', about: 'more'
+  };
 
   function parseHash() {
     var h = (location.hash || '').replace(/^#/, '');
@@ -23,13 +27,13 @@
     if (h.indexOf('cook-') === 0) return { name: 'cook', id: h.slice(5) };
     if (h === 'plan' || h === 'plan-week') return { name: 'plan', tab: 'week' };
     if (h === 'plan-shop') return { name: 'plan', tab: 'shop' };
-    if (h === 'plan-fridge') return { name: 'plan', tab: 'fridge' };
-    if (h === 'plan-remind') return { name: 'plan', tab: 'remind' };
+    // địa chỉ cũ của các mục đã chuyển vào "Thêm"
+    if (h === 'fridge' || h === 'plan-fridge') return { name: 'fridge' };
+    if (h === 'remind' || h === 'plan-remind') return { name: 'remind' };
+    if (h === 'diary' || h === 'community-diary') return { name: 'diary' };
     if (h.indexOf('guide') === 0) return { name: 'guide', tab: h.slice(6) || 'tra' };
-    if (h === 'community' || h === 'community-feed') return { name: 'community', tab: 'feed' };
-    if (h === 'community-diary') return { name: 'community', tab: 'diary' };
-    if (h === 'community-friends') return { name: 'community', tab: 'friends' };
-    if (h === 'explore' || h === 'rank' || h === 'about') return { name: h };
+    if (h === 'community' || h === 'community-feed' || h === 'community-friends') return { name: 'community' };
+    if (h === 'explore' || h === 'rank' || h === 'about' || h === 'more') return { name: h };
     return { name: 'home' };
   }
 
@@ -45,8 +49,7 @@
       '<nav class="topnav" aria-label="Điều hướng chính">' + NAV.map(function (n) {
         return '<a href="' + n.href + '" data-nav="' + n.id + '">' + H.icon(n.icon, { size: 18 }) + n.label + '</a>';
       }).join('') + '</nav>' +
-      '<div class="topacts"><a class="btn-icon" href="#plan-remind" aria-label="Nhắc giờ ăn">' + H.icon('bell', { size: 22 }) + '</a>' +
-      '<a class="btn-icon" href="#rank" aria-label="Bảng xếp hạng">' + H.icon('trophy', { size: 22 }) + '</a>' +
+      '<div class="topacts"><a class="btn-icon" href="#remind" aria-label="Nhắc giờ ăn">' + H.icon('bell', { size: 22 }) + '</a>' +
       '<button type="button" class="btn-icon" data-act="open-settings" aria-label="Cài đặt">' + H.icon('gear', { size: 22 }) + '</button></div></div>';
     bar.innerHTML = NAV.map(function (n) {
       return '<a href="' + n.href + '" data-nav="' + n.id + '">' + H.icon(n.icon, { size: 22 }) + '<span>' + n.label + '</span></a>';

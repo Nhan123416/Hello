@@ -1,4 +1,4 @@
-/* Cộng đồng (bảng tin, nhật ký ăn uống, bạn bè) và bảng xếp hạng món được chốt. */
+/* Cộng đồng (bảng tin), nhật ký ăn uống và bảng xếp hạng món được chốt. Cả ba nằm trong mục "Thêm". */
 (function (H) {
   'use strict';
 
@@ -196,37 +196,22 @@
       '<div class="diary-grid">' + formHtml() + insightsHtml() + historyHtml() + '</div>';
   }
 
-  // ───────────── Bạn bè ─────────────
-  function friendsTab() {
-    return '<section class="friends"><div class="fr-hero"><span class="fr-e" aria-hidden="true">🤝</span><div><h2>Kết nối bạn cùng tình trạng <span class="soon">Sắp có</span></h2>' +
-      '<p>Tìm bạn cùng giai đoạn dạ dày hoặc cùng sở thích nấu ăn, trao đổi công thức, cùng nhắc nhau ăn đúng giờ và thi đua nấu món lành.</p></div></div>' +
-      '<p class="note warn">' + H.icon('info', { size: 16 }) + '<span><strong>Chưa làm được trong bản này.</strong> Kết bạn cần tài khoản đăng nhập và máy chủ lưu danh sách bạn bè. Trang này đang chạy hoàn toàn trên máy bạn nên mình không làm giả tính năng này.</span></p>' +
-      '<h3 class="fr-h">Dự kiến có</h3><ul class="fr-list">' +
-      '<li><span aria-hidden="true">🔎</span><div><strong>Tìm bạn cùng giai đoạn</strong><small>Gợi ý người cùng mức độ và cùng sở thích nấu ăn.</small></div></li>' +
-      '<li><span aria-hidden="true">📅</span><div><strong>Chia sẻ thực đơn tuần</strong><small>Gửi kế hoạch cho bạn, cùng đi chợ và nấu chung.</small></div></li>' +
-      '<li><span aria-hidden="true">⏰</span><div><strong>Nhắc nhau ăn đúng giờ</strong><small>Bạn quên bữa, người thân được báo.</small></div></li>' +
-      '<li><span aria-hidden="true">🏆</span><div><strong>Bảng xếp hạng thật</strong><small>Món được chốt nhiều nhất trong nhóm bạn.</small></div></li></ul>' +
-      '<h3 class="fr-h">Làm được ngay bây giờ</h3><div class="stack">' +
-      '<button type="button" class="btn btn-primary" data-act="share-site">' + H.icon('users', { size: 18 }) + 'Mời bạn bè dùng thử</button>' +
-      '<button type="button" class="btn btn-soft" data-act="plan-copy-share">' + H.icon('copy', { size: 18 }) + 'Gửi thực đơn tuần này cho bạn</button></div>' +
-      '<p class="hint">Mình chỉ mở hộp chia sẻ của điện thoại hoặc sao chép nội dung để bạn tự gửi qua Zalo, Messenger... Không có gì được tải lên máy chủ.</p></section>';
-  }
-
-  var TABS = [['feed', 'Bảng tin', 'users', 'community'], ['diary', 'Nhật ký', 'book', 'community-diary'], ['friends', 'Bạn bè', 'heart', 'community-friends']];
-
+  // ───────────── hai trang con của "Thêm": Cộng đồng và Nhật ký ─────────────
   H.views.community = {
-    title: function (r) { return r.tab === 'diary' ? 'Nhật ký ăn uống' : (r.tab === 'friends' ? 'Bạn bè' : 'Cộng đồng'); },
-    render: function (r) {
-      var tab = r.tab || 'feed';
-      var head = tab === 'diary' ? H.ui.pageHead('NHẬT KÝ', 'Hôm nay bụng bạn thế nào?', 'Ghi cảm giác sau mỗi bữa để tìm ra món hợp với riêng bạn.')
-        : tab === 'friends' ? H.ui.pageHead('BẠN BÈ', 'Cùng nhau ăn lành', 'Kết nối với những bạn cùng cảnh ngộ.')
-        : H.ui.pageHead('CỘNG ĐỒNG', 'Cùng chia sẻ cho dạ dày vui', 'Nơi các bạn sinh viên cùng tình trạng trao đổi món ăn, mẹo nấu và kinh nghiệm.');
-      return '<div class="community">' + head +
-        '<div class="seg three" role="tablist" aria-label="Chọn mục">' + TABS.map(function (t) {
-          return '<a role="tab" class="seg-i' + (tab === t[0] ? ' on' : '') + '" aria-selected="' + (tab === t[0]) + '" href="#' + t[3] + '">' + H.icon(t[2], { size: 16 }) + '<span>' + t[1] + (t[0] === 'friends' ? ' <i class="soon-dot">sắp có</i>' : '') + '</span></a>';
-        }).join('') + '</div>' +
-        (tab === 'diary' ? diaryTab() : tab === 'friends' ? friendsTab() : feedTab()) +
-        H.ui.disclaimer() + '</div>';
+    title: 'Cộng đồng',
+    render: function () {
+      return '<div class="community">' +
+        H.ui.subHead('CỘNG ĐỒNG', 'Cùng chia sẻ cho dạ dày vui', 'Nơi mọi người cùng tình trạng trao đổi món ăn, mẹo nấu và kinh nghiệm.') +
+        feedTab() + H.ui.disclaimer() + '</div>';
+    }
+  };
+
+  H.views.diary = {
+    title: 'Nhật ký ăn uống',
+    render: function () {
+      return '<div class="community">' +
+        H.ui.subHead('NHẬT KÝ', 'Hôm nay bụng bạn thế nào?', 'Ghi cảm giác sau mỗi bữa để tìm ra món hợp với riêng bạn.') +
+        diaryTab() + H.ui.disclaimer() + '</div>';
     }
   };
 
@@ -320,7 +305,7 @@
       onOk: function () { H.deleteDiary(id); H.render({ keepScroll: true }); } });
   };
 
-  // bạn bè: chỉ chia sẻ nội dung, không có gì lên máy chủ
+  // mời bạn bè: chỉ mở hộp chia sẻ hoặc sao chép nội dung, không có gì lên máy chủ
   H.actions['share-site'] = function () {
     var data = { title: 'Hôm nay ăn gì?', text: 'Web gợi ý món lành cho người đau dạ dày, có vòng quay chọn món, nhắc ăn đúng giờ và danh sách đi chợ.', url: location.href.split('#')[0] };
     var text = data.text + (/^https?:/.test(data.url) ? ' ' + data.url : '');
@@ -337,7 +322,6 @@
     }
     copyIt();
   };
-  H.actions['plan-copy-share'] = function () { if (H.actions['plan-copy']) { H.ui.weekOffset = 0; H.actions['plan-copy'](); } };
 
   // ───────────── Bảng xếp hạng ─────────────
   function rankRows(list, unit) {
@@ -384,5 +368,5 @@
     }
   };
   H.actions['rank-tab'] = function (el) { H.ui.rankTab = el.dataset.v; H.render({ keepScroll: true }); };
-  H.actions['back-rank'] = function () { H.back('home'); };
+  H.actions['back-rank'] = function () { H.back('more'); };
 })(window.HNAG = window.HNAG || {});

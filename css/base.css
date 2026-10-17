@@ -2,13 +2,15 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* chữ to cho người lớn tuổi (Cài đặt > Cỡ chữ): mọi cỡ chữ đều tính theo rem nên tăng theo */
+html[data-text="large"] { font-size: 118.75%; }
 html.has-sheet { overflow: hidden; }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 16px/1.55 var(--f-body);
+  font: 400 1rem/1.55 var(--f-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;

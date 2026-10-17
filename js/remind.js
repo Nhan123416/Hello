@@ -337,7 +337,7 @@
       }
       return '<div class="alarm-foot"><div class="feelbar" role="group" aria-label="Bụng bạn thấy sao">' + H.FEELS.map(function (f) {
         return '<button type="button" class="feel-btn" data-act="alarm-feel" data-v="' + f.id + '"' + k + '><span aria-hidden="true">' + f.emoji + '</span><small>' + esc(f.label) + '</small></button>';
-      }).join('') + '</div>' + snooze + '<a class="link center" href="#community-diary" data-act="alarm-go"' + k + '>Mở nhật ký để ghi chi tiết</a></div>';
+      }).join('') + '</div>' + snooze + '<a class="link center" href="#diary" data-act="alarm-go"' + k + '>Mở nhật ký để ghi chi tiết</a></div>';
     }
     if (e.type === 'shop') {
       return '<div class="alarm-foot"><a class="btn btn-primary btn-lg" href="#plan-shop" data-act="alarm-go" data-autofocus' + k + '>' + H.icon('cart', { size: 18 }) + 'Xem danh sách đi chợ</a>' +
@@ -467,11 +467,12 @@
     var u = R.nextUp(), S = H.state, now = H.now();
     var sum = R.daySummary(U.iso(now));
     var progress = '<span class="nu-prog">Hôm nay đã ăn <strong>' + sum.ate + '/' + sum.total + '</strong> bữa' + (sum.onTime ? ' · ' + sum.onTime + ' đúng giờ' : '') + '</span>';
-    var link = '<a class="link" href="#plan-remind">Lịch nhắc ' + H.icon('chev-r', { size: 14 }) + '</a>';
+    var link = '<a class="link" href="#remind">Lịch nhắc ' + H.icon('chev-r', { size: 14 }) + '</a>';
     if (u.kind === 'off') {
       return '<div class="nextup off"><span class="nu-e" aria-hidden="true">⏰</span><div class="nu-main"><strong>Nhắc giờ ăn đang tắt</strong>' +
         '<p>Ăn đúng giờ rất quan trọng với dạ dày. Bật lên để mình nhắc đi chợ, chuẩn bị, nấu và ăn.</p></div>' +
-        '<div class="nu-acts"><button type="button" class="btn btn-primary btn-sm" data-act="nextup-on">Bật nhắc giờ</button></div></div>';
+        '<div class="nu-acts"><button type="button" class="btn btn-primary btn-sm" data-act="nextup-on">Bật nhắc giờ</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-act="nextup-later">Để sau</button></div></div>';
     }
     if (u.kind === 'overdue') {
       var e = u.e, s = slotInfo(e.slot), d = e.dish;
@@ -517,6 +518,12 @@
   };
 
   H.actions['nextup-on'] = function () { H.state.remind.on = true; H.save(); H.toast('Đã bật nhắc giờ ăn', { icon: 'bell' }); H.render({ keepScroll: true }); R.tick(); };
+  // "Để sau": ẩn thẻ gợi ý bật nhắc giờ đến hết hôm nay.
+  H.actions['nextup-later'] = function () {
+    H.state.remind.bannerHiddenOn = H.today();
+    H.save();
+    H.render({ keepScroll: true });
+  };
   H.actions['nextup-ate'] = function (el) {
     var a = R.markAte(el.dataset.date, el.dataset.slot);
     H.toast(R.isOnTime(a) ? 'Đúng giờ rồi, giỏi quá!' : 'Đã ghi nhận bữa ăn. Ăn chậm, nhai kỹ nhé.', { icon: 'check' });
@@ -627,8 +634,8 @@
     var S = H.state, now = H.now(), nowMs = +now, today = U.iso(now);
     var evs = R.events(today), firstNext = null;
     evs.forEach(function (e) { if (!firstNext && +e.at >= nowMs) firstNext = e.key; });
-    if (!evs.length) return '<p class="hint" id="rm-timeline">Hôm nay chưa có lời nhắc nào. Bật các loại nhắc ở trên hoặc chọn món trong kế hoạch.</p>';
-    return '<ol class="rm-line" id="rm-timeline">' + evs.map(function (e) {
+    if (!evs.length) return '<p class="hint" id="rm-timeline">Hôm nay chưa có lời nhắc nào. Bật các loại nhắc ở trên hoặc chọn món trong thực đơn.</p>';
+    function row(e) {
       var info = R.describe(e), log = S.remindLog[e.key], past = +e.at < nowMs;
       var ate = e.slot !== 'all' && S.ate[e.date + ':' + e.slot];
       var done = (log && log.d && !log.skip) || (ate && e.type === 'eat');
@@ -641,7 +648,16 @@
         ? '<button type="button" class="btn-icon round' + (ate ? ' on' : '') + '" data-act="remind-ate" data-date="' + e.date + '" data-slot="' + e.slot + '" aria-pressed="' + !!ate + '" aria-label="' + (ate ? 'Bỏ đánh dấu đã ăn ' : 'Đánh dấu đã ăn ') + esc(slotInfo(e.slot).label.toLowerCase()) + '">' + H.icon('check', { size: 15, stroke: 3 }) + '</button>' : '';
       return '<li class="rm-ev' + (done ? ' done' : '') + (e.key === firstNext ? ' next' : '') + (e.type === 'eat' ? ' eat' : '') + '"><time>' + fmtMin(e.min) + '</time>' +
         '<span class="rm-ev-e" aria-hidden="true">' + info.emoji + '</span><span class="rm-ev-t"><strong>' + esc(main) + '</strong>' + state + '</span>' + ateBtn + '</li>';
-    }).join('') + '</ol>';
+    }
+    // Chỉ hiện các lời nhắc sắp tới cho gọn (hết ngày thì hiện 3 lời nhắc cuối); những lời nhắc đã qua gập vào "Xem".
+    var idx = firstNext ? evs.map(function (e) { return e.key; }).indexOf(firstNext) : evs.length;
+    var shown = idx < evs.length ? evs.slice(idx) : evs.slice(-3);
+    var hidden = idx < evs.length ? evs.slice(0, idx) : evs.slice(0, -3);
+    var h = '';
+    if (hidden.length) {
+      h += '<details class="fold"' + H.ui.foldAttr('rm-past', false) + '><summary>Xem ' + hidden.length + ' lời nhắc đã qua</summary><ol class="rm-line">' + hidden.map(row).join('') + '</ol></details>';
+    }
+    return '<div id="rm-timeline">' + h + '<ol class="rm-line">' + shown.map(row).join('') + '</ol></div>';
   }
 
   function weekHtml() {
@@ -671,9 +687,7 @@
 
   R.tabHtml = function () {
     var rm = H.state.remind, S = H.state;
-    var h = '<section class="rm-hero"><span class="rm-hero-e" aria-hidden="true">⏰</span><div><h2>Ăn đúng giờ cũng là điều trị</h2>' +
-      '<p>Người đau dạ dày thường được dặn ăn đều đặn, chia nhỏ bữa và đừng để bụng đói quá lâu. Mình nhắc bạn đi chợ, chuẩn bị nguyên liệu, nấu và ăn đúng giờ theo thực đơn.</p></div></section>';
-    h += '<div class="rm-row master"><div><strong>Nhắc tôi ăn đúng giờ</strong><small>' + (rm.on ? 'Đang bật' : 'Đang tắt') + '</small></div>' + sw(rm.on, 'remind-toggle', '', 'Bật tắt nhắc giờ ăn') + '</div>';
+    var h = '<div class="rm-row master"><div><strong>Nhắc tôi ăn đúng giờ</strong><small>' + (rm.on ? 'Đang bật' : 'Đang tắt') + '</small></div>' + sw(rm.on, 'remind-toggle', '', 'Bật tắt nhắc giờ ăn') + '</div>';
 
     h += '<section class="fgroup"><h3>Giờ ăn của bạn</h3><ul class="rm-times">' + H.slotsOn().map(function (slot) {
       var s = slotInfo(slot);
@@ -683,7 +697,11 @@
       '<div class="chips"><button type="button" class="btn btn-ghost btn-sm" data-act="remind-defaults">Dùng giờ gợi ý</button>' +
       H.ui.chip(S.snack ? 'Có bữa phụ' : 'Thêm bữa phụ', S.snack, 'remind-snack') + '</div></section>';
 
-    h += '<section class="fgroup"><h3>Nhắc những gì</h3><ul class="rm-kinds">' +
+    h += '<section class="fgroup"><h3>Lịch nhắc hôm nay</h3>' + timelineHtml() + '</section>';
+    h += '<section class="fgroup"><h3>Tuần này bạn ăn đúng giờ chưa?</h3>' + weekHtml() + '</section>';
+
+    // Phần tuỳ chỉnh kỹ gập lại cho đỡ rối: người mới chỉ cần bật nhắc và đặt giờ ăn ở trên.
+    h += '<details class="fold fold-card"' + H.ui.foldAttr('rm-kinds', false) + '><summary><span class="fold-t">Chọn loại lời nhắc<small>đi chợ, chuẩn bị, nấu, ăn, hỏi cảm giác</small></span></summary><ul class="rm-kinds">' +
       [['shop', '🛒', 'Đi chợ', 'Tối hôm trước, nhắc những nguyên liệu còn thiếu cho ngày mai'],
        ['prep', '🥕', 'Chuẩn bị nguyên liệu', 'Trước giờ nấu ' + rm.prepLead + ' phút: lấy ra, rửa, sơ chế'],
        ['cook', '🍳', 'Bắt đầu nấu', 'Đúng lúc để kịp giờ ăn, tính theo thời gian nấu của từng món'],
@@ -695,20 +713,17 @@
       '<p class="label">Chuẩn bị nguyên liệu trước giờ nấu</p><div class="chips" role="group" aria-label="Số phút chuẩn bị trước">' + [5, 10, 15, 20, 30].map(function (n) {
         return H.ui.chip(n + ' phút', rm.prepLead === n, 'remind-lead', { v: n });
       }).join('') + '</div>' +
-      '<label class="label" for="rt-shop">Giờ nhắc đi chợ <small>(tối hôm trước)</small></label><input id="rt-shop" type="time" class="input rm-time" value="' + esc(rm.shopAt) + '" data-input="remind-shop-time" required></section>';
+      '<label class="label" for="rt-shop">Giờ nhắc đi chợ <small>(tối hôm trước)</small></label><input id="rt-shop" type="time" class="input rm-time" value="' + esc(rm.shopAt) + '" data-input="remind-shop-time" required></details>';
 
-    h += '<section class="fgroup"><h3>Cách nhận lời nhắc</h3><div class="rm-rows">' +
+    h += '<details class="fold fold-card"' + H.ui.foldAttr('rm-how', false) + '><summary><span class="fold-t">Cách nhận lời nhắc<small>hộp nhắc, thông báo, âm báo, rung</small></span></summary><div class="rm-rows">' +
       '<div class="rm-row"><div><strong>Hộp nhắc trên màn hình</strong><small>Luôn có khi trang đang mở, kể cả khi bạn ở tab khác rồi quay lại</small></div><span class="rm-fixed">' + H.icon('check', { size: 16, stroke: 3 }) + '</span></div>' +
       notifyBlock() +
       '<div class="rm-row"><div><strong>Âm báo</strong><small>Ba tiếng bíp nhẹ khi hộp nhắc hiện ra</small></div>' + sw(rm.sound, 'remind-sound', '', 'Âm báo') + '</div>' +
       '<div class="rm-row"><div><strong>Rung (điện thoại)</strong><small>Nếu thiết bị hỗ trợ</small></div>' + sw(rm.vibrate, 'remind-vibrate', '', 'Rung') + '</div></div>' +
-      '<div class="chips"><button type="button" class="btn btn-soft btn-sm" data-act="remind-test">' + H.icon('bell', { size: 16 }) + 'Thử một lời nhắc</button></div></section>';
-
-    h += '<section class="fgroup"><h3>Lịch nhắc hôm nay</h3>' + timelineHtml() + '</section>';
-    h += '<section class="fgroup"><h3>Tuần này bạn ăn đúng giờ chưa?</h3>' + weekHtml() + '</section>';
+      '<div class="chips"><button type="button" class="btn btn-soft btn-sm" data-act="remind-test">' + H.icon('bell', { size: 16 }) + 'Thử một lời nhắc</button></div></details>';
 
     var viewer = R.inViewer();
-    h += '<section class="fgroup"><h3>Nhắc kể cả khi đóng trang</h3>' +
+    h += '<details class="fold fold-card"' + H.ui.foldAttr('rm-cal', false) + '><summary><span class="fold-t">Nhắc cả khi đóng trang<small>Google Calendar, file lịch .ics</small></span></summary>' +
       '<p class="note">' + H.icon('info', { size: 16 }) + '<span><strong>Nói thật:</strong> trang web chỉ tự nhắc được khi tab này còn mở. Muốn điện thoại nhắc dù bạn không mở trang, hãy đưa giờ ăn vào ứng dụng Lịch của máy: Google Calendar (nút bên dưới) hoặc file .ics cho Lịch của iPhone và các app khác.</span></p>' +
       '<p class="label">Google Calendar <small>(lặp mỗi ngày đúng giờ ăn)</small></p><div class="chips" id="rm-gcal">' + H.slotsOn().map(function (slot) {
         var sl = slotInfo(slot);
@@ -718,7 +733,7 @@
       '<p class="label">File lịch 7 ngày <small>(.ics, gồm cả nhắc nấu và chuẩn bị)</small></p>' +
       '<div class="stack">' + (viewer ? '' : '<button type="button" class="btn btn-primary" data-act="remind-ics">' + H.icon('calendar', { size: 18 }) + 'Tải file lịch 7 ngày (.ics)</button>') +
       '<button type="button" class="btn ' + (viewer ? 'btn-primary' : 'btn-ghost') + '" data-act="remind-ics-copy">' + H.icon('copy', { size: 18 }) + 'Sao chép nội dung file</button></div>' +
-      '<p class="hint">' + (viewer ? 'Khung xem này không cho tải file về. ' : 'Nếu trình duyệt chặn việc tải file, ') + 'hãy bấm “Sao chép nội dung file”, dán vào ứng dụng Ghi chú rồi lưu với tên <strong>nhac-gio-an.ics</strong> để mở bằng ứng dụng Lịch. Khi thực đơn đổi, xuất lại nhé.</p></section>';
+      '<p class="hint">' + (viewer ? 'Khung xem này không cho tải file về. ' : 'Nếu trình duyệt chặn việc tải file, ') + 'hãy bấm “Sao chép nội dung file”, dán vào ứng dụng Ghi chú rồi lưu với tên <strong>nhac-gio-an.ics</strong> để mở bằng ứng dụng Lịch. Khi thực đơn đổi, xuất lại nhé.</p></details>';
     return h;
   };
 

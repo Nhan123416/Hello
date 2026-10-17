@@ -63,7 +63,7 @@
 }
 .chip:hover { border-color: var(--brand); }
 .chip:active { transform: scale(.97); }
-.chip[aria-pressed="true"] { background: var(--brand-ink); border-color: var(--brand-ink); color: var(--on-brand); }
+.chip[aria-pressed="true"], .chip[aria-checked="true"] { background: var(--brand-ink); border-color: var(--brand-ink); color: var(--on-brand); }
 .chip-green[aria-pressed="true"] { background: var(--leaf-ink); border-color: var(--leaf-ink); color: var(--on-leaf); }
 .chip.is-today:not([aria-pressed="true"]) { border-color: var(--leaf-ink); color: var(--leaf-ink); }
 .chips.cols-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -206,6 +206,7 @@ a.row:hover, button.row:hover { border-color: var(--brand); }
   display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: 18px; text-align: left;
   background: var(--surface); border: 1.5px solid var(--line-2); color: var(--ink);
 }
+a.opt { text-decoration: none; }
 .opt[aria-checked="true"] { border-color: var(--brand-ink); background: var(--brand-50); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 22%, transparent); }
 .opt-emoji { font: 1.6rem/1 var(--f-emoji); }
 .opt-text { flex: 1; min-width: 0; display: grid; }

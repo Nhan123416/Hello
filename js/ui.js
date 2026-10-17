@@ -41,12 +41,23 @@
   // Các bộ lọc đang bật dưới dạng nhãn có nút xoá. ctx 'plan' chỉ hiện những giới hạn mà kế hoạch tuần dùng.
   H.ui.filterPills = function (ctx) {
     var list = H.activeFilters();
-    if (ctx === 'plan') list = list.filter(function (a) { return ['mode', 'energy', 'proteins'].indexOf(a.key) < 0; });
+    if (ctx === 'plan') list = list.filter(function (a) { return ['energy', 'proteins'].indexOf(a.key) < 0; });
     if (!list.length) return '';
     return '<div class="pills" role="group" aria-label="Bộ lọc đang bật">' + list.map(function (a) {
       return '<button type="button" class="pill" data-act="clear-filter" data-k="' + a.key + '" aria-label="Bỏ bộ lọc: ' + esc(a.label) + '">' + esc(a.label) + H.icon('x', { size: 12, stroke: 3 }) + '</button>';
     }).join('') + '</div>';
   };
+
+  // Hộp gập (details) nhớ trạng thái mở/đóng để không bị đóng lại mỗi khi trang được vẽ lại.
+  H.ui.fold = {};
+  H.ui.foldAttr = function (id, defOpen) {
+    if (H.ui.fold[id] === undefined) H.ui.fold[id] = !!defOpen;   // ghi nhớ mặc định để lần vẽ lại sau không tự đổi trạng thái
+    return ' data-fold="' + id + '"' + (H.ui.fold[id] ? ' open' : '');
+  };
+  document.addEventListener('toggle', function (e) {
+    var d = e.target;
+    if (d && d.getAttribute && d.tagName === 'DETAILS' && d.getAttribute('data-fold')) H.ui.fold[d.getAttribute('data-fold')] = d.open;
+  }, true);
 
   H.ui.stat = function (icon, label, value) {
     return '<div class="stat">' + H.icon(icon, { size: 18 }) + '<span class="stat-v">' + value + '</span><span class="stat-l">' + label + '</span></div>';
@@ -87,7 +98,7 @@
     var p = H.state.profile;
     var st = H.STAGES.filter(function (s) { return s.id === p.stage; })[0];
     var sv = H.SEVERITIES.filter(function (s) { return s.id === p.severity; })[0];
-    return { stage: st, sev: sv, text: st.short + ' · Mức ' + sv.name.toLowerCase() };
+    return { stage: st, sev: sv, text: p.stage === 'khoe' ? st.short : st.short + ' · Mức ' + sv.name.toLowerCase() };
   };
 
   // Cuộn ngang một dải chip để mục đang chọn nằm giữa (không cuộn cả trang).
@@ -119,6 +130,7 @@
     else root.removeAttribute('data-theme');
     var pal = H.PALETTES.filter(function (p) { return p.id === H.state.palette; })[0] || H.PALETTES[0];
     if (pal.id === H.PALETTES[0].id) root.removeAttribute('data-palette'); else root.setAttribute('data-palette', pal.id);
+    if (H.state.textSize === 'large') root.setAttribute('data-text', 'large'); else root.removeAttribute('data-text');
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
       var dark = t === 'dark' || (t === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);

@@ -17,7 +17,7 @@
  *
  * Các trường tự tính thêm (dùng cho bộ lọc):
  *  - level    : độ khó 1 rất dễ, 2 dễ, 3 công phu (theo số bước và thời gian nấu)
- *  - proteins : nguyên liệu đạm chính (ga, heo, bo, ca, trung, dauhu). Món ăn ngoài khai báo tay bằng prot: [...]
+ *  - proteins : nguyên liệu đạm chính (ga, heo, bo, ca, tom, trung, dauhu). Món ăn ngoài khai báo tay bằng prot: [...]
  *  - fl       : mức vị 0 đến 3 cho { cay, man, chua, beo }, suy ra từ gừng, muối / nước mắm / nước tương, cà chua, dầu ăn.
  *               Có thể ghi đè bằng fl: {...} trong món. Mức vị của mọi món luôn nằm trong ngưỡng cho phép của mức "dịu" (care).
  */
@@ -98,6 +98,34 @@
       why: 'Trứng chín kỹ mềm, dễ tiêu và giàu đạm. Cháo nhừ giúp dạ dày nhẹ việc.',
       tip: 'Trứng phải chín hẳn, không ăn lòng đào. Không thêm tiêu, nước mắm cay hay ruốc.',
       swaps: []
+    },
+    {
+      id: 'chao-dau-xanh-thit-nac', name: 'Cháo đậu xanh thịt nạc', emoji: '🥣', kind: 'Cháo',
+      meals: ['sang', 'toi'], care: 3, time: 40, kcal: 340, tools: ['noi-com', 'bep'],
+      ing: [['gao', 40], ['dau-xanh', 30], ['thit-nac', 50], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Ngâm đậu xanh bóc vỏ trong nước ấm 15–20 phút cho nở, vo sạch. Vo gạo rồi trộn chung với đậu.',
+        'Cho gạo và đậu vào nồi cùng khoảng 600ml nước, nấu lửa vừa (hoặc chế độ cháo của nồi cơm điện) 30 phút, thỉnh thoảng khuấy đến khi đậu tan mềm và cháo sánh.',
+        'Thịt nạc băm nhỏ, ướp ¼ thìa cà phê muối. Khi cháo đã nhừ, cho thịt vào khuấy tơi, nấu thêm 8–10 phút đến khi thịt chín kỹ.',
+        'Nêm nhạt, rắc hành lá, để nguội bớt rồi ăn.'
+      ],
+      why: 'Đậu xanh bóc vỏ nấu nhừ gần như tan trong cháo, vị bùi nhẹ và thanh mát. Thịt nạc băm bổ sung đạm mà ít mỡ.',
+      tip: 'Các loại đậu hạt dễ gây đầy hơi nên chỉ hợp khi dạ dày đã ổn định: thử một lượng nhỏ và nấu thật nhừ cho đậu tan. Không dùng đậu còn vỏ.',
+      swaps: [['Đậu xanh', 'Cháo thịt bằm thường (không đậu)', 'Nếu bạn thấy đầy hơi sau khi ăn đậu']]
+    },
+    {
+      id: 'chao-tom-bi-do', name: 'Cháo tôm bí đỏ', emoji: '🦐', kind: 'Cháo',
+      meals: ['sang', 'trua', 'toi'], care: 3, time: 35, kcal: 310, tools: ['noi-com', 'bep'],
+      ing: [['gao', 50], ['tom', 70], ['bi-do', 100], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        CHAO,
+        'Tôm bóc vỏ, bỏ chỉ đen trên lưng, rửa sạch rồi băm thô hoặc thái miếng nhỏ, ướp ¼ thìa cà phê muối 5 phút. Bí đỏ gọt vỏ, cắt hạt lựu nhỏ.',
+        'Khi cháo đã nở, cho bí đỏ vào nấu 10 phút đến mềm tan, dằm nhẹ cho cháo sánh.',
+        'Thả tôm vào, nấu thêm 3–4 phút đến khi tôm chuyển màu đỏ cam và chín kỹ. Nêm nhạt, rắc hành lá.'
+      ],
+      why: 'Tôm băm nhỏ nấu chín mềm trong cháo, ngọt tự nhiên nên không cần hạt nêm. Bí đỏ nấu nhừ vị ngọt dịu, làm cháo sánh mịn.',
+      tip: 'Hải sản có thể gây đầy bụng hoặc dị ứng ở một số người: lần đầu ăn ít, nấu thật chín và ngưng nếu thấy ngứa, đau hay đầy bụng. Không dùng nước mắm ớt, tiêu hay chanh.',
+      swaps: [['Tôm', 'Thịt nạc băm hoặc ức gà băm', 'Nếu bạn dị ứng hải sản hoặc thấy đầy bụng sau khi ăn tôm']]
     },
     {
       id: 'yen-mach-chuoi', name: 'Yến mạch nấu chuối', emoji: '🌾', kind: 'Điểm tâm',
@@ -220,6 +248,86 @@
       tip: 'Rau lá nhiều xơ nên chưa hợp khi đang đau cấp. Chọn lá non, nấu mềm và nhai kỹ.',
       swaps: [['Cải ngọt', 'Bí xanh hoặc su su', 'Khi đang đau, ưu tiên rau củ ít xơ']]
     },
+    {
+      id: 'canh-bau-thit-bam', name: 'Canh bầu thịt bằm', emoji: '🥒', kind: 'Món canh', base: 'com',
+      meals: ['trua', 'toi'], care: 1, time: 25, kcal: 340, tools: ['noi-com', 'bep'],
+      ing: [['bau', 150], ['thit-nac', 60], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Bầu gọt vỏ, bỏ phần ruột có hạt, thái miếng mỏng vừa ăn. Thịt nạc băm, ướp chút muối rồi vo viên nhỏ.',
+        'Đun sôi khoảng 400ml nước, thả thịt viên vào nấu 5 phút, vớt bọt.',
+        'Cho bầu vào nấu 5–7 phút đến khi bầu trong và mềm. Nêm nhạt, rắc hành lá rồi tắt bếp.'
+      ],
+      why: 'Bầu nhiều nước, mềm và ngọt thanh, nấu chín nhanh nên giữ được vị ngọt mà không cần nêm. Canh không dầu mỡ, không gia vị kích thích.',
+      tip: 'Chọn bầu non (vỏ xanh nhạt, còn lông tơ). Không phi hành tỏi, không tiêu. Thịt nạc có thể thay bằng ức gà băm.',
+      swaps: [['Bầu', 'Bí xanh hoặc mướp', 'Nếu chợ gần nhà không có bầu']]
+    },
+    {
+      id: 'canh-mong-toi-muop', name: 'Canh mồng tơi mướp thịt bằm', emoji: '🥬', kind: 'Món canh', base: 'com',
+      meals: ['trua', 'toi'], care: 3, time: 25, kcal: 335, tools: ['noi-com', 'bep'],
+      ing: [['mong-toi', 100], ['muop', 60], ['thit-nac', 60], ['muoi', 0.25]],
+      steps: [
+        'Mồng tơi tuốt lấy lá và ngọn non, bỏ cọng già, rửa nhiều nước, cắt khúc ngắn. Mướp gọt vỏ, thái lát mỏng. Thịt nạc băm, ướp chút muối.',
+        'Đun sôi khoảng 400ml nước, cho thịt băm vào nấu 5 phút, vớt bọt, thêm mướp nấu 3 phút.',
+        'Cho mồng tơi vào nấu 3–4 phút đến khi lá mềm hẳn. Nêm nhạt rồi tắt bếp.'
+      ],
+      why: 'Mồng tơi nấu mềm có chất nhầy mát, dễ nuốt. Kết hợp mướp ngọt thanh và thịt băm nên canh đủ vị mà không cần nêm đậm.',
+      tip: 'Rau lá nhiều xơ nên chưa hợp khi đang đau cấp: chọn lá non, bỏ cọng già, nấu mềm và nhai kỹ. Không ăn kèm mắm tôm, cà pháo hay dưa muối.',
+      swaps: [['Mồng tơi', 'Bầu hoặc bí xanh', 'Khi đang đau, ưu tiên rau củ ít xơ']]
+    },
+    {
+      id: 'canh-rau-ngot-thit-bam', name: 'Canh rau ngót thịt bằm', emoji: '🌿', kind: 'Món canh', base: 'com',
+      meals: ['trua', 'toi'], care: 3, time: 20, kcal: 340, tools: ['noi-com', 'bep'],
+      ing: [['rau-ngot', 80], ['thit-nac', 60], ['muoi', 0.25]],
+      steps: [
+        'Rau ngót tuốt lấy lá non, rửa sạch, vò nhẹ cho dập. Thịt nạc băm, ướp chút muối rồi vo viên nhỏ.',
+        'Đun sôi khoảng 400ml nước, thả thịt viên vào nấu 5–6 phút, vớt bọt.',
+        'Cho rau ngót vào nấu 2–3 phút đến khi lá mềm. Nêm nhạt rồi tắt bếp.'
+      ],
+      why: 'Rau ngót lá mềm, ngọt dịu và nấu rất nhanh. Canh trong, không dầu mỡ nên dễ ăn khi dạ dày đã ổn định.',
+      tip: 'Chỉ ăn rau ngót đã nấu chín, ăn lượng vừa, không xay ép lấy nước uống sống. Phụ nữ mang thai nên hỏi bác sĩ trước khi ăn nhiều rau ngót. Chọn lá non, nhai kỹ.',
+      swaps: [['Rau ngót', 'Bầu hoặc bí xanh', 'Nếu bạn thấy đầy hơi hoặc đang đau']]
+    },
+    {
+      id: 'canh-khoai-mon-thit-bam', name: 'Canh khoai môn thịt bằm', emoji: '🥔', kind: 'Món canh', base: 'com',
+      meals: ['trua', 'toi'], care: 2, time: 35, kcal: 430, tools: ['noi-com', 'bep'],
+      ing: [['khoai-mon', 120], ['thit-nac', 60], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Khoai môn gọt vỏ (đeo găng hoặc ngâm tay nước muối loãng để đỡ ngứa), rửa sạch, cắt miếng vừa. Thịt nạc băm, ướp chút muối rồi vo viên nhỏ.',
+        'Đun sôi khoảng 450ml nước, thả thịt viên vào nấu 5 phút, vớt bọt. Cho khoai môn vào nấu lửa vừa 15–18 phút đến khi khoai mềm bở, nước canh hơi sánh.',
+        'Nêm nhạt, rắc hành lá rồi tắt bếp.'
+      ],
+      why: 'Khoai môn nấu nhừ bở, tinh bột mềm và làm nước canh sánh tự nhiên nên không cần gia vị đậm. Thịt viên nạc thêm đạm mà ít mỡ.',
+      tip: 'Khoai môn phải nấu thật chín mềm (nấu sơ có thể gây ngứa họng). Bỏ rau răm, tiêu, ớt khi đang đau. Khoai no lâu nên ăn cơm vừa phải.',
+      swaps: [['Khoai môn', 'Khoai tây hoặc bí đỏ', 'Nếu bạn khó tiêu hoặc không có khoai môn']]
+    },
+    {
+      id: 'canh-bap-cai-cuon-thit', name: 'Canh bắp cải cuộn thịt', emoji: '🥬', kind: 'Món canh', base: 'com',
+      meals: ['trua', 'toi'], care: 2, time: 40, kcal: 370, tools: ['bep'],
+      ing: [['bap-cai', 150], ['thit-nac', 70], ['ca-rot', 30], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Tách lá bắp cải còn nguyên, chần trong nước sôi 1–2 phút cho mềm, vớt để ráo, cắt bỏ phần cuống cứng ở gốc lá. Cà rốt bào nhỏ.',
+        'Thịt nạc băm nhuyễn, trộn với cà rốt bào và ¼ thìa cà phê muối. Chia thành từng phần nhỏ, đặt vào mép lá bắp cải, cuộn chặt và gấp hai bên lại như cuốn chả giò.',
+        'Đun sôi khoảng 450ml nước, xếp các cuốn vào (mép lá úp xuống), hạ lửa nhỏ nấu 15–20 phút đến khi thịt chín kỹ và lá mềm.',
+        'Nêm nhạt, rắc hành lá. Ăn ấm cùng cơm mềm.'
+      ],
+      why: 'Bắp cải chần mềm rồi nấu trong nước dùng, thịt nạc bên trong chín bằng hơi nước nên không cần dầu mỡ. Vị ngọt tự nhiên đến từ thịt và cà rốt.',
+      tip: 'Có thể buộc cuốn bằng cọng hành lá nếu sợ bung. Bắp cải dễ gây đầy hơi ở vài người: ăn lượng vừa, nấu thật mềm. Không chấm nước mắm ớt.',
+      swaps: [['Bắp cải', 'Su su thái lát nấu cùng viên thịt', 'Nếu bạn hay đầy hơi với bắp cải']]
+    },
+    {
+      id: 'sup-ga-ngo', name: 'Súp gà ngô non', emoji: '🌽', kind: 'Món canh',
+      meals: ['trua', 'toi', 'phu'], care: 3, time: 30, kcal: 260, tools: ['bep'],
+      ing: [['bap-ngo', 80], ['uc-ga', 70], ['trung-ga', 1], ['muoi', 0.25]],
+      steps: [
+        'Luộc ức gà trong khoảng 500ml nước 12–15 phút đến chín kỹ. Vớt gà ra, để nguội rồi xé thật nhỏ. Gạn nước luộc qua rây, vớt bọt và mỡ.',
+        'Cho hạt ngô vào nước luộc gà, nấu lửa vừa 12–15 phút đến khi hạt mềm. Dùng máy xay cầm tay (hoặc muỗng dằm) xay dập khoảng một nửa số hạt cho súp sánh.',
+        'Đánh tan trứng. Khi súp sôi nhẹ, đổ trứng thành dòng mỏng, khuấy nhẹ cho thành sợi và nấu thêm 2 phút để trứng chín hẳn.',
+        'Cho gà xé vào, nêm nhạt rồi tắt bếp. Ăn ấm.'
+      ],
+      why: 'Ngô nấu mềm và xay dập làm súp sánh tự nhiên, vị ngọt dịu. Gà xé và trứng chín kỹ cho đạm nạc, ít béo.',
+      tip: 'Ngô nhiều xơ và dễ sinh hơi nên chỉ hợp khi dạ dày đã ổn định. Dùng ngô ngọt non nấu nhừ, không dùng ngô hộp ngâm muối. Không thêm bơ, kem béo hay tiêu.',
+      swaps: [['Ngô', 'Bí đỏ nghiền', 'Nếu bạn hay đầy hơi với ngô']]
+    },
 
     // ───────────── MÓN MẶN ─────────────
     {
@@ -329,7 +437,7 @@
         'Xếp gà, nấm, cà rốt lên mặt gạo, thêm nửa thìa cà phê dầu ăn, đậy nắp và nấu như cơm thường.',
         'Khi cơm chín, ủ thêm 5 phút rồi xới đều, rắc hành lá.'
       ],
-      why: 'Món một nồi, không chiên xào, cơm mềm mà đủ đạm và rau. Rất tiện cho phòng trọ chỉ có nồi cơm điện.',
+      why: 'Món một nồi, không chiên xào, cơm mềm mà đủ đạm và rau. Rất tiện khi bếp chỉ có nồi cơm điện.',
       tip: 'Nước tương dùng rất ít, không thêm tiêu, ớt, tỏi phi. Nếu cơm còn cứng, thêm chút nước ấm và ủ lại.',
       swaps: [['Nước tương', 'Muối nhạt', 'Giảm vị mặn']]
     },
@@ -358,6 +466,84 @@
       why: 'Món có chút dầu nhưng rất ít. Trứng chín mềm, cà rốt thêm vị ngọt. Hợp khi dạ dày đã ổn định và bạn muốn đổi vị.',
       tip: 'Dùng chảo chống dính và lửa nhỏ, không để cháy cạnh. Khi đang đau cấp hãy chọn trứng hấp thay vì trứng chiên.',
       swaps: [['Trứng chiên', 'Trứng hấp', 'Khi đang đau cấp, tránh dầu mỡ']]
+    },
+    {
+      id: 'thit-luoc-rau-cu', name: 'Thịt nạc luộc rau củ luộc', emoji: '🥩', kind: 'Món mặn', base: 'com',
+      meals: ['trua', 'toi'], care: 1, time: 30, kcal: 420, tools: ['bep'],
+      ing: [['thit-nac', 100], ['bi-do', 60], ['su-su', 80], ['muoi', 0.25]],
+      steps: [
+        'Rửa thịt nạc thăn nguyên miếng, cho vào nồi nước lạnh vừa ngập thịt, thêm ¼ thìa cà phê muối. Đun sôi, vớt bọt, hạ lửa nhỏ luộc 15–20 phút đến khi chọc đũa không còn nước hồng. Tắt bếp, để thịt nguội trong nước 5–10 phút rồi vớt ra, thái lát mỏng ngang thớ.',
+        'Bí đỏ và su su gọt vỏ (su su bỏ ruột), cắt miếng vừa. Luộc chung trong nước luộc thịt đã vớt bọt 8–10 phút đến khi mềm.',
+        'Xếp thịt và rau củ ra đĩa, ăn kèm cơm mềm. Chấm chút nước luộc ấm thay nước mắm chấm.'
+      ],
+      why: 'Luộc là cách nấu nhẹ nhất: không dầu mỡ, giữ vị ngọt tự nhiên của thịt. Rau củ luộc chung trong nước luộc thịt nên ngọt đậm mà không cần nêm.',
+      tip: 'Chọn thịt thăn hoặc nạc mông, cắt bỏ phần mỡ. Không chấm mắm tôm, nước mắm ớt, tỏi sống hay chanh. Thái xong nên ăn ngay khi còn ấm kẻo thịt khô.',
+      swaps: [['Thịt heo', 'Ức gà', 'Nếu bạn thích gà hơn hoặc muốn ít béo hơn']]
+    },
+    {
+      id: 'bi-xanh-nhoi-thit-hap', name: 'Bí xanh nhồi thịt hấp', emoji: '🥒', kind: 'Món mặn', base: 'com',
+      meals: ['trua', 'toi'], care: 1, time: 30, kcal: 360, tools: ['noi-com', 'bep'],
+      ing: [['bi-xanh', 150], ['thit-nac', 70], ['nam', 20], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Bí xanh gọt vỏ, cắt khoanh dày khoảng 2cm, khoét bỏ phần ruột có hạt ở giữa. Nấm rửa sạch, thái nhỏ.',
+        'Thịt nạc băm nhuyễn, trộn với nấm, hành lá thái nhỏ và ¼ thìa cà phê muối. Nhồi vào giữa các khoanh bí, nén nhẹ.',
+        'Xếp vào đĩa sâu lòng, hấp 15–18 phút (đặt trên vỉ trong nồi cơm điện khi cơm đã sôi, hoặc dùng nồi hấp) đến khi thịt chín kỹ và bí mềm trong. Rưới phần nước tiết ra từ đĩa lên trên và ăn cùng cơm.'
+      ],
+      why: 'Hấp bằng hơi nước nên không cần dầu; bí xanh mềm ngọt thấm nước thịt. Thịt nạc băm chín kỹ ngay bên trong khoanh bí.',
+      tip: 'Nén thịt vừa phải để thịt chín đều. Không chấm nước mắm ớt hay tương ớt vì nước tiết ra từ món hấp đã đủ vị. Có thể thay bí xanh bằng bầu hoặc mướp.',
+      swaps: [['Bí xanh', 'Bầu hoặc su su', 'Nếu không có bí xanh']]
+    },
+    {
+      id: 'ca-kho-nhat', name: 'Cá phi lê kho nhạt', emoji: '🐟', kind: 'Món mặn', base: 'com',
+      meals: ['trua', 'toi'], care: 2, time: 30, kcal: 380, tools: ['bep'],
+      ing: [['ca-phi-le', 130], ['ca-rot', 50], ['gung', 3], ['hanh-la', 3], ['nuoc-mam', 1], ['duong', 0.5]],
+      steps: [
+        'Cá phi lê rửa sạch, thấm khô, cắt miếng vừa ăn. Ướp 1 thìa cà phê nước mắm, nửa thìa cà phê đường và vài sợi gừng thái nhỏ trong 10 phút. Cà rốt cắt khối nhỏ.',
+        'Xếp cá và cà rốt vào nồi nhỏ, thêm khoảng 120ml nước (vừa ngập nửa miếng cá), đun sôi rồi hạ lửa nhỏ. Không làm nước màu, không cho ớt, tiêu.',
+        'Kho nhỏ lửa 12–15 phút, múc nước kho rưới lên cá cho ngấm đều, không lật nhiều kẻo cá nát. Khi nước hơi sệt thì rắc hành lá, tắt bếp.'
+      ],
+      why: 'Cá phi lê kho bằng nước với lửa nhỏ nên mềm, không chiên trước và không cần nước màu cháy. Vị ngọt của cá và cà rốt giúp món vẫn đậm đà dù nêm nhạt.',
+      tip: 'Nước mắm dùng ít, không ớt, không tiêu, không kho keo đen. Gỡ kỹ xương nhỏ trước khi ăn. Món kho để qua bữa nên cất tủ lạnh và hâm thật kỹ.',
+      swaps: [['Nước mắm', 'Muối nhạt', 'Nếu nước mắm làm bạn xót'], ['Gừng', 'Bỏ hẳn', 'Nếu bạn thấy nóng rát']]
+    },
+    {
+      id: 'ga-kho-gung-nhat', name: 'Gà kho gừng nhạt', emoji: '🍗', kind: 'Món mặn', base: 'com',
+      meals: ['trua', 'toi'], care: 2, time: 35, kcal: 420, tools: ['bep'],
+      ing: [['uc-ga', 120], ['ca-rot', 40], ['gung', 4], ['hanh-la', 3], ['nuoc-mam', 1], ['duong', 0.5]],
+      steps: [
+        'Ức gà bỏ da, thái miếng vuông vừa ăn. Ướp 1 thìa cà phê nước mắm và nửa thìa cà phê đường trong 10 phút. Gừng thái sợi nhỏ, cà rốt cắt khối.',
+        'Cho gà, cà rốt, gừng và khoảng 150ml nước vào nồi nhỏ, đun sôi rồi hạ lửa nhỏ. Không làm nước màu, không phi hành tỏi.',
+        'Kho 15–20 phút đến khi gà mềm và nước kho sệt nhẹ, thỉnh thoảng khuấy để không cháy cạnh. Vớt bỏ gừng, rắc hành lá.'
+      ],
+      why: 'Ức gà kho bằng nước với lửa nhỏ nên mềm và ít mỡ. Gừng chỉ dùng vài sợi để át mùi, vớt bỏ trước khi ăn nên ít gây nóng rát.',
+      tip: 'Kho nhạt, không ớt, không tiêu, không nước màu cháy. Bỏ hẳn gừng nếu thấy nóng rát. Ăn kèm cơm mềm và một bát canh rau củ.',
+      swaps: [['Gừng', 'Bỏ hẳn', 'Nếu bạn thấy nóng rát'], ['Nước mắm', 'Muối nhạt', 'Nếu nước mắm làm bạn xót']]
+    },
+    {
+      id: 'tom-hap-gung', name: 'Tôm hấp gừng', emoji: '🦐', kind: 'Món mặn', base: 'com',
+      meals: ['trua', 'toi'], care: 3, time: 20, kcal: 330, tools: ['noi-com', 'bep'],
+      ing: [['tom', 100], ['ca-rot', 40], ['gung', 4], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Tôm rửa sạch, bóc vỏ, bỏ chỉ đen trên lưng. Ướp ¼ thìa cà phê muối và vài sợi gừng thái nhỏ trong 5 phút. Cà rốt thái lát mỏng.',
+        'Xếp cà rốt lót đáy đĩa, đặt tôm lên trên. Hấp 6–8 phút (đặt trên vỉ trong nồi cơm điện hoặc nồi hấp) đến khi tôm chuyển màu đỏ cam và chín kỹ.',
+        'Bỏ gừng, rắc hành lá. Ăn kèm cơm mềm, chấm một chút nước hấp, không chấm nước mắm ớt.'
+      ],
+      why: 'Hấp giữ vị ngọt tự nhiên của tôm, không dầu mỡ. Gừng chỉ dùng ít để bớt tanh và được bỏ ra trước khi ăn.',
+      tip: 'Hải sản không hợp với mọi người: lần đầu ăn ít, nấu thật chín và ngưng nếu thấy ngứa hoặc đau bụng. Không ăn tôm sống, tôm chua, mắm tôm hay chấm muối tiêu chanh.',
+      swaps: [['Gừng', 'Bỏ hẳn', 'Nếu bạn thấy nóng rát'], ['Tôm', 'Cá phi lê hấp', 'Nếu bạn dị ứng hải sản hoặc muốn món rẻ hơn']]
+    },
+    {
+      id: 'com-bi-do-noi-com', name: 'Cơm bí đỏ nồi cơm điện', emoji: '🎃', kind: 'Món mặn',
+      meals: ['trua', 'toi'], care: 1, time: 40, kcal: 420, tools: ['noi-com'],
+      ing: [['gao', 80], ['bi-do', 120], ['trung-ga', 1], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Vo gạo, cho vào nồi cơm điện, thêm nước nhiều hơn bình thường khoảng 15% để cơm mềm. Bí đỏ gọt vỏ, bỏ hạt, cắt khối nhỏ.',
+        'Trải bí đỏ lên mặt gạo, rắc ¼ thìa cà phê muối. Đặt 1 quả trứng nguyên vỏ (rửa sạch) lên trên, đậy nắp và nấu như cơm thường.',
+        'Khi cơm chín, ủ thêm 5–10 phút. Vớt trứng ra, ngâm nước lạnh rồi bóc vỏ. Xới nhẹ cho bí đỏ tan vào cơm, rắc hành lá và ăn cùng trứng.'
+      ],
+      why: 'Món một nồi chỉ cần nồi cơm điện: bí đỏ chín nhừ hoà vào cơm làm cơm mềm, ngọt dịu, không dầu mỡ. Trứng chín kỹ cho thêm đạm.',
+      tip: 'Nếu bóc trứng thấy còn lòng đào, cho lại vào nồi cơm ở chế độ giữ ấm thêm 10–15 phút, không ăn lòng đào. Muốn nhiều đạm hơn thì ăn kèm ức gà xé hoặc đậu hũ hấp.',
+      swaps: [['Trứng', 'Đậu hũ non hấp', 'Nếu bạn muốn món chay không trứng']]
     },
 
     // ───────────── MÓN CHAY ─────────────
@@ -432,6 +618,32 @@
       tip: 'Bỏ ớt, chanh, tỏi ngâm giấm, giá sống, quẩy. Đừng uống hết nước dùng nóng cùng một lúc.',
       swaps: [['Gừng', 'Bỏ hẳn', 'Nếu bạn thấy nóng rát'], ['Rau thơm', 'Bỏ nếu thấy cộm', 'Phở vẫn thơm nhờ nước luộc gà']]
     },
+    {
+      id: 'bun-ga-nuoc-trong', name: 'Bún gà nước trong', emoji: '🍜', kind: 'Món nước',
+      meals: ['sang', 'trua', 'toi'], care: 2, time: 35, kcal: 340, tools: ['bep'],
+      ing: [['bun', 150], ['uc-ga', 100], ['nam', 30], ['ca-rot', 30], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Luộc ức gà trong khoảng 700ml nước 12–15 phút đến chín kỹ. Vớt gà ra, để nguội rồi xé nhỏ. Gạn nước luộc qua rây, vớt bọt và lớp mỡ nổi.',
+        'Đun sôi lại nước luộc gà, cho nấm thái nhỏ và cà rốt thái sợi vào nấu 8 phút đến mềm. Nêm nhạt.',
+        'Trụng bún tươi trong nước sôi 20–30 giây, cho vào tô, xếp gà xé lên trên rồi chan nước dùng nóng vừa. Rắc hành lá.'
+      ],
+      why: 'Bún tươi mềm, dễ tiêu. Nước luộc gà đã gạn mỡ ngọt tự nhiên nên không cần hạt nêm hay nước màu. Nấm và cà rốt nấu mềm thêm vị ngọt.',
+      tip: 'Bỏ ớt, chanh, rau sống, giá sống và mắm tôm khi ăn. Nêm thật nhạt, chan nước dùng ấm vừa miệng. Muốn nhanh hơn, luộc gà từ tối hôm trước rồi hâm lại nước dùng.',
+      swaps: [['Nấm', 'Bí xanh thái sợi', 'Nếu bạn thấy nấm khó tiêu']]
+    },
+    {
+      id: 'banh-canh-ca', name: 'Bánh canh cá phi lê', emoji: '🍜', kind: 'Món nước',
+      meals: ['sang', 'trua', 'toi'], care: 2, time: 30, kcal: 340, tools: ['bep'],
+      ing: [['banh-canh', 150], ['ca-phi-le', 100], ['ca-rot', 30], ['gung', 3], ['hanh-la', 3], ['muoi', 0.25]],
+      steps: [
+        'Cá phi lê rửa sạch, thái miếng nhỏ, ướp ¼ thìa cà phê muối cùng 2 lát gừng mỏng trong 5 phút. Cà rốt thái sợi nhỏ.',
+        'Đun sôi khoảng 600ml nước, cho cà rốt vào nấu 5 phút, thả bánh canh vào nấu 3–4 phút cho sợi nở mềm.',
+        'Cho cá vào, nấu thêm 3–4 phút đến khi cá chín trắng (đừng khuấy mạnh kẻo nát cá). Vớt bỏ gừng, nêm nhạt, rắc hành lá.'
+      ],
+      why: 'Sợi bánh canh to, mềm và dai nhẹ, nấu trong nước dùng loãng. Cá phi lê chín nhanh, ít béo, ngọt tự nhiên nên không cần hạt nêm.',
+      tip: 'Bỏ ớt, chanh, tiêu, hành phi, giá sống và chả cá chiên. Nấu bánh canh thật mềm và ăn ngay khi còn ấm vì sợi dễ nở.',
+      swaps: [['Cá phi lê', 'Ức gà xé hoặc thịt nạc băm', 'Nếu bạn muốn đổi vị'], ['Gừng', 'Bỏ hẳn', 'Nếu bạn thấy nóng rát']]
+    },
 
     // ───────────── ĂN SÁNG / ĂN PHỤ ─────────────
     {
@@ -446,6 +658,18 @@
       why: 'Bánh mì trắng mềm, trứng chín kỹ và chuối chín đều là món hiền, làm nhanh cho buổi sáng bận rộn.',
       tip: 'Không phết tương ớt, pate, mayonnaise hay bơ. Bánh mì ổ giòn có vỏ cứng nên cắt bỏ vỏ hoặc thay bằng sandwich.',
       swaps: [['Dưa leo', 'Bỏ hoặc thay bằng cà rốt luộc thái lát', 'Nếu bạn thấy đầy hơi']]
+    },
+    {
+      id: 'banh-mi-thit-luoc', name: 'Bánh mì sandwich thịt nạc luộc', emoji: '🥪', kind: 'Điểm tâm',
+      meals: ['sang', 'phu'], care: 2, time: 20, kcal: 380, tools: ['bep'],
+      ing: [['banh-mi-sw', 3], ['thit-nac', 50], ['ca-rot', 30], ['muoi', 0.25]],
+      steps: [
+        'Luộc thịt nạc thăn với ¼ thìa cà phê muối 12–15 phút đến chín kỹ, vớt ra để nguội rồi thái lát thật mỏng. Cà rốt bào sợi, luộc 3 phút cho mềm, để ráo.',
+        'Kẹp thịt và cà rốt vào bánh mì sandwich mềm (cắt viền cứng nếu thấy cộm). Chấm chút nước luộc thịt ấm thay nước sốt nếu muốn.'
+      ],
+      why: 'Bánh mì sandwich mềm kẹp thịt nạc luộc và cà rốt chín: bữa sáng nhanh, không pate, không mayonnaise, không tương ớt.',
+      tip: 'Không phết pate, bơ, mayonnaise, tương ớt hay kẹp chả lụa. Luộc thịt từ tối hôm trước để sáng chỉ cần thái và kẹp. Ăn chậm, nhai kỹ.',
+      swaps: [['Thịt nạc luộc', 'Ức gà luộc xé hoặc trứng luộc', 'Nếu bạn muốn đổi vị']]
     },
     {
       id: 'khoai-lang-trung-luoc', name: 'Khoai lang hấp trứng luộc', emoji: '🍠', kind: 'Điểm tâm',
@@ -471,6 +695,18 @@
       why: 'Bữa phụ nhẹ giúp dạ dày không bị trống quá lâu mà không gây quá no. Bánh quy lạt ít béo, ít ngọt.',
       tip: 'Chọn sữa ít đường. Tránh bánh quy kem, bánh bơ hay bánh mặn nhiều gia vị.',
       swaps: [['Sữa đậu nành', 'Nước gạo rang ấm', 'Nếu bạn dễ đầy hơi với đậu nành']]
+    },
+    {
+      id: 'nuoc-gao-rang', name: 'Nước gạo rang ấm', emoji: '🍵', kind: 'Ăn vặt',
+      meals: ['sang', 'phu'], care: 1, time: 20, kcal: 40, tools: ['bep'],
+      ing: [['gao', 30]],
+      steps: [
+        'Cho gạo khô (không vo) vào nồi nhỏ, rang lửa nhỏ, đảo liên tục 8–10 phút đến khi hạt gạo vàng đều và thơm (không để cháy đen).',
+        'Đổ khoảng 600ml nước vào nồi gạo rang, đun sôi rồi hạ lửa nhỏ nấu 10 phút. Lọc bỏ bã, rót ra ly và uống ấm từng ngụm.'
+      ],
+      why: 'Nước gạo rang ấm, thơm nhẹ, không caffeine và không axit nên ít kích thích. Uống từng ngụm giữa các bữa giúp dễ chịu mà không gây no.',
+      tip: 'Rang lửa nhỏ, gạo cháy đen sẽ đắng và khó uống. Uống ấm, không uống khi quá nóng. Có thể rang nhiều gạo một lần, đựng hộp kín để dùng cả tuần.',
+      swaps: []
     },
     {
       id: 'chuoi-sua-chua', name: 'Chuối chín + sữa chua không đường', emoji: '🍌', kind: 'Ăn vặt',
@@ -551,6 +787,32 @@
       tip: 'Chọn quán nấu nước dùng trong, không phải quán nêm đậm.'
     },
     {
+      id: 'out-banh-cuon', name: 'Bánh cuốn ở quán', emoji: '🥟', kind: 'Ăn ngoài', mode: 'out',
+      meals: ['sang', 'toi'], care: 2, costFixed: 30000, kcal: 380, tools: ['khong'], mapQuery: 'bánh cuốn', prot: ['heo'],
+      order: [
+        'Gọi "bánh cuốn nhân thịt" ít nhân, xin bánh mới tráng, còn nóng.',
+        'Dặn bỏ hành phi và không cho chả (chả quế, chả lụa), không giò.',
+        'Xin riêng chén nước mắm pha thật nhạt, bỏ ớt, tỏi và giấm. Ăn kèm vài lát dưa leo gọt vỏ nếu muốn.',
+        'Ăn chậm và nhai kỹ; bánh cuốn mềm nên dễ ăn quá nhanh và quá no.'
+      ],
+      avoid: ['Chả quế, chả lụa, giò, nem chua ăn kèm (nhiều mỡ, phụ gia)', 'Hành phi, tiêu, ớt, tỏi ngâm giấm', 'Nước chấm chua cay, giá sống, rau sống'],
+      why: 'Bánh cuốn hấp bằng hơi nước, vỏ bột gạo mỏng và mềm, nhân thịt băm ít dầu nên nhẹ hơn nhiều món ăn sáng khác. Chỉ cần dặn bỏ hành phi, chả và nước chấm chua cay.',
+      tip: 'Nhân bánh cuốn thường có mộc nhĩ, hành khô và nêm đậm: hãy xin ít nhân. Nước chấm quán thường chua cay nên hãy xin riêng chén nước mắm pha nhạt.'
+    },
+    {
+      id: 'out-hu-tieu', name: 'Hủ tiếu nước ở quán', emoji: '🍜', kind: 'Ăn ngoài', mode: 'out',
+      meals: ['sang', 'trua'], care: 2, costFixed: 40000, kcal: 420, tools: ['khong'], mapQuery: 'hủ tiếu', prot: ['heo', 'ga'],
+      order: [
+        'Gọi "hủ tiếu nước" với thịt nạc hoặc gà xé; bỏ gan, tim, lòng, mỡ heo, bì.',
+        'Dặn nước lèo trong, ít béo, không cho tỏi phi, hành phi, tiêu, ớt.',
+        'Xin trụng sợi hủ tiếu mềm hơn một chút. Không cho giá sống, rau sống, chanh, sa tế.',
+        'Quá no thì chia làm hai lần; đừng uống hết nước lèo nóng cùng một lúc.'
+      ],
+      avoid: ['Hủ tiếu khô trộn tỏi phi, mỡ hành, sa tế', 'Hủ tiếu Nam Vang nhiều lòng, tim, gan, tôm khô', 'Tỏi phi, hành phi, tiêu, ớt, chanh, giá sống'],
+      why: 'Sợi hủ tiếu mềm, nước lèo ninh xương khá trong. Khi dặn bỏ các thứ kích thích, tô hủ tiếu nước với thịt nạc là lựa chọn ăn ngoài tương đối ổn.',
+      tip: 'Nước lèo quán thường ninh xương, béo và nêm đậm: hãy nhờ nhiều nước trong, ít mỡ và vớt bớt mỡ nổi trên mặt trước khi ăn.'
+    },
+    {
       id: 'out-com-ga-luoc', name: 'Cơm gà luộc ở quán', emoji: '🍗', kind: 'Ăn ngoài', mode: 'out',
       meals: ['trua', 'toi'], care: 2, costFixed: 45000, kcal: 520, tools: ['khong'], mapQuery: 'cơm gà luộc', prot: ['ga'],
       order: [
@@ -582,7 +844,7 @@
   function round500(n) { return Math.max(1000, Math.round(n / 500) * 500); }
 
   // Nguyên liệu đạm chính, độ khó và mức vị: những thứ bộ lọc cần mà không muốn khai báo tay cho từng món.
-  var PROTEIN_OF = { 'uc-ga': 'ga', 'thit-nac': 'heo', 'thit-bo-nac': 'bo', 'ca-phi-le': 'ca', 'trung-ga': 'trung', 'dau-hu': 'dauhu' };
+  var PROTEIN_OF = { 'uc-ga': 'ga', 'thit-nac': 'heo', 'thit-bo-nac': 'bo', 'ca-phi-le': 'ca', 'tom': 'tom', 'trung-ga': 'trung', 'dau-hu': 'dauhu' };
 
   function qtyOf(d, id) {
     return d.ing.reduce(function (s, p) { return s + (p[0] === id ? p[1] : 0); }, 0);

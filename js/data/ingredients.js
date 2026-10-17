@@ -30,12 +30,18 @@
     'banh-pho': { name: 'Bánh phở tươi', emoji: '🍜', cat: 'tinhbot', unit: 'g', price: 25 },
     'nui': { name: 'Nui', emoji: '🍝', cat: 'tinhbot', unit: 'g', price: 40 },
     'banh-quy-lat': { name: 'Bánh quy lạt', emoji: '🍘', cat: 'tinhbot', unit: 'miếng', price: 600 },
+    'bun': { name: 'Bún tươi', emoji: '🍜', cat: 'tinhbot', unit: 'g', price: 20 },
+    'banh-canh': { name: 'Bánh canh (sợi tươi)', emoji: '🍜', cat: 'tinhbot', unit: 'g', price: 25 },
+    'khoai-mon': { name: 'Khoai môn', emoji: '🥔', cat: 'tinhbot', unit: 'g', price: 30 },
+    'dau-xanh': { name: 'Đậu xanh bóc vỏ', emoji: '🫘', cat: 'tinhbot', unit: 'g', price: 55 },
+    'bap-ngo': { name: 'Ngô ngọt (hạt)', emoji: '🌽', cat: 'tinhbot', unit: 'g', price: 35 },
 
     // Đạm
     'uc-ga': { name: 'Ức gà phi lê', emoji: '🍗', cat: 'dam', unit: 'g', price: 85, animal: 'meat' },
     'thit-nac': { name: 'Thịt nạc heo (thăn / xay)', emoji: '🥩', cat: 'dam', unit: 'g', price: 125, animal: 'meat' },
     'thit-bo-nac': { name: 'Thịt bò nạc', emoji: '🍖', cat: 'dam', unit: 'g', price: 250, animal: 'meat' },
     'ca-phi-le': { name: 'Cá phi lê (basa, diêu hồng)', emoji: '🐟', cat: 'dam', unit: 'g', price: 95, animal: 'meat' },
+    'tom': { name: 'Tôm thẻ (bóc vỏ)', emoji: '🦐', cat: 'dam', unit: 'g', price: 190, animal: 'meat' },
     'trung-ga': { name: 'Trứng gà', emoji: '🥚', cat: 'dam', unit: 'quả', price: 3500, animal: 'egg' },
     'dau-hu': { name: 'Đậu hũ non', emoji: '🫘', cat: 'dam', unit: 'g', price: 40 },
 
@@ -45,6 +51,9 @@
     'ca-rot': { name: 'Cà rốt', emoji: '🥕', cat: 'rau', unit: 'g', price: 25 },
     'su-su': { name: 'Su su', emoji: '🥬', cat: 'rau', unit: 'g', price: 20 },
     'muop': { name: 'Mướp', emoji: '🌿', cat: 'rau', unit: 'g', price: 25 },
+    'bau': { name: 'Bầu', emoji: '🥒', cat: 'rau', unit: 'g', price: 20 },
+    'mong-toi': { name: 'Mồng tơi', emoji: '🥬', cat: 'rau', unit: 'g', price: 25 },
+    'rau-ngot': { name: 'Rau ngót', emoji: '🌿', cat: 'rau', unit: 'g', price: 30 },
     'bap-cai': { name: 'Bắp cải', emoji: '🥬', cat: 'rau', unit: 'g', price: 20 },
     'cai-ngot': { name: 'Cải ngọt', emoji: '🥬', cat: 'rau', unit: 'g', price: 25 },
     'bong-cai': { name: 'Bông cải xanh', emoji: '🥦', cat: 'rau', unit: 'g', price: 45 },
@@ -72,7 +81,7 @@
     'nuoc-tuong': { name: 'Nước tương', emoji: '🧂', cat: 'giavi', unit: 'thìa cà phê', price: 0, staple: true }
   };
 
-  // Dụng cụ nấu: phòng trọ thường chỉ có một vài món, nên cho người dùng chọn.
+  // Dụng cụ nấu: nhiều bếp nhỏ (nhà trọ, căn hộ) chỉ có một vài món, nên cho người dùng chọn.
   H.TOOLS = [
     { id: 'noi-com', name: 'Nồi cơm điện', emoji: '🍚' },
     { id: 'bep', name: 'Bếp + nồi', emoji: '🔥' },

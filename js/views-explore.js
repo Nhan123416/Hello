@@ -94,37 +94,59 @@
   }
 
   H.views.explore = {
-    title: 'Khám phá món lành',
+    title: 'Món ăn',
     render: function () {
       var active = H.activeFilters().length;
       var pl = H.ui.profileLabel();
+      var so = H.SORTS.filter(function (x) { return x.id === H.ui.exploreSort; })[0] || H.SORTS[0];
       return '<div class="explore">' +
-        H.ui.pageHead('KHÁM PHÁ', 'Món lành cho dạ dày', 'Chọn theo bữa, theo ngân sách hoặc theo nguyên liệu bạn có. Mỗi món đều ghi rõ vì sao hợp và cách làm.') +
+        H.ui.pageHead('MÓN ĂN', 'Món lành cho dạ dày', 'Mỗi món đều ghi rõ vì sao hợp và cách làm.') +
         '<div class="toolbar"><div class="search"><span class="search-ic">' + H.icon('search', { size: 18 }) + '</span>' +
         '<input id="explore-q" type="search" placeholder="Tìm món hoặc nguyên liệu" autocomplete="off" value="' + esc(H.ui.exploreQ) + '" data-input="explore-q" aria-label="Tìm món"></div>' +
         '<button type="button" class="btn btn-soft btn-filter" data-act="open-filters" data-ctx="explore" aria-label="Bộ lọc' + (active ? ', đang bật ' + active : '') + '">' + H.icon('sliders', { size: 18 }) + '<span class="btn-t">Bộ lọc</span>' + (active ? '<i class="count">' + active + '</i>' : '') + '</button></div>' +
-        '<button type="button" class="deck-cta" data-act="open-deck">' + H.icon('shuffle', { size: 20 }) + '<span><strong>Vuốt chọn món</strong><small>Vuốt phải để thích, vuốt trái để bỏ. Mình ghi nhớ gu của bạn.</small></span>' + H.icon('chev-r', { size: 18 }) + '</button>' +
         '<div class="chips scroller" role="group" aria-label="Lọc theo bữa">' +
         [{ id: 'all', short: 'Tất cả bữa', emoji: '' }].concat(H.SLOTS).map(function (m) {
           return H.ui.chip((m.emoji ? m.emoji + ' ' : '') + m.short, H.ui.exploreMeal === m.id, 'explore-meal', { v: m.id });
         }).join('') +
         H.ui.chip(H.icon('heart', { size: 15 }) + ' Yêu thích', H.ui.exploreFav, 'explore-fav') + '</div>' +
         H.ui.filterPills('explore') +
-        '<div class="sortbar"><span class="sort-l" id="sort-l">Sắp xếp</span><div class="chips scroller" role="group" aria-labelledby="sort-l">' + H.SORTS.map(function (so) {
-          return H.ui.chip(esc(so.label), H.ui.exploreSort === so.id, 'explore-sort', { v: so.id });
-        }).join('') + '</div></div>' +
         '<div class="explore-meta"><p><strong id="explore-count">' + H.exploreList().length + ' món</strong> hợp với <button type="button" class="link-btn" data-act="open-filters" data-ctx="home">' + esc(pl.text) + '</button></p>' +
-        '<button type="button" class="link-btn" data-act="explore-all" aria-pressed="' + H.ui.exploreAll + '">' + (H.ui.exploreAll ? 'Chỉ hiện món hợp với tôi' : 'Hiện cả món chưa hợp') + '</button></div>' +
+        '<div class="meta-acts"><button type="button" class="btn btn-ghost btn-sm" data-act="open-sort">' + H.icon('swap', { size: 16 }) + '<span>' + esc(so.label) + '</span></button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-act="open-deck">' + H.icon('shuffle', { size: 16 }) + '<span>Vuốt chọn</span></button></div></div>' +
         '<div id="explore-results">' + resultsHtml() + '</div>' +
         H.ui.disclaimer() + '</div>';
     }
   };
 
+  // Sắp xếp và phạm vi hiển thị gom vào một sheet cho trang đỡ rối.
+  H.openSort = function () {
+    H.sheet.open({
+      title: 'Sắp xếp và hiển thị',
+      render: function () {
+        return {
+          body: '<section class="fgroup"><h3>Sắp xếp theo</h3><div class="opt-group" role="radiogroup" aria-label="Sắp xếp theo">' + H.SORTS.map(function (so) {
+            var on = H.ui.exploreSort === so.id;
+            return '<button type="button" class="opt" role="radio" aria-checked="' + on + '" data-act="sort-pick" data-v="' + so.id + '">' +
+              '<span class="opt-text"><strong>' + esc(so.label) + '</strong><small>' + esc(so.hint) + '</small></span>' +
+              '<span class="opt-check" aria-hidden="true">' + (on ? H.icon('check', { size: 16, stroke: 3 }) : '') + '</span></button>';
+          }).join('') + '</div></section>' +
+            '<section class="fgroup"><h3>Hiển thị</h3><div class="chips">' +
+            H.ui.chip('Chỉ món hợp với tôi', !H.ui.exploreAll, 'explore-all-set', { v: 0 }) +
+            H.ui.chip('Cả món chưa hợp', H.ui.exploreAll, 'explore-all-set', { v: 1 }) + '</div>' +
+            '<p class="hint">Món chưa hợp vẫn xem được công thức, mình ghi rõ vì sao chưa hợp với hồ sơ của bạn.</p></section>',
+          foot: '<button type="button" class="btn btn-primary btn-block btn-lg" data-act="close-sheet">Xem ' + H.exploreList().length + ' món</button>'
+        };
+      },
+      onClose: function () { H.render({ keepScroll: true }); }
+    });
+  };
+  H.actions['open-sort'] = function () { H.openSort(); };
+  H.actions['sort-pick'] = function (el) { H.ui.exploreSort = el.dataset.v; H.sheet.refresh(); };
+  H.actions['explore-all-set'] = function (el) { H.ui.exploreAll = el.dataset.v === '1'; H.sheet.refresh(); };
+
   H.inputs['explore-q'] = function (el) { H.ui.exploreQ = el.value; renderResults(); };
   H.actions['explore-meal'] = function (el) { H.ui.exploreMeal = el.dataset.v; H.render({ keepScroll: true }); };
-  H.actions['explore-sort'] = function (el) { H.ui.exploreSort = el.dataset.v; H.render({ keepScroll: true }); };
   H.actions['explore-fav'] = function () { H.ui.exploreFav = !H.ui.exploreFav; H.render({ keepScroll: true }); };
-  H.actions['explore-all'] = function () { H.ui.exploreAll = !H.ui.exploreAll; H.render({ keepScroll: true }); };
   H.actions['explore-reset'] = function () {
     H.ui.exploreQ = ''; H.ui.exploreMeal = 'all'; H.ui.exploreFav = false; H.ui.exploreSort = 'hop';
     H.resetFilters();
@@ -145,23 +167,20 @@
 
   // ───────────── chi tiết món ─────────────
   function stagePills(d) {
-    var base = { cap: 1, doi: 2, on: 3 };
+    var base = { cap: 1, doi: 2, on: 3, khoe: 3 };
     return '<div class="stage-pills" aria-label="Hợp với giai đoạn">' + H.STAGES.map(function (s) {
       var ok = base[s.id] >= d.care;
       return '<span class="spill ' + (ok ? 'yes' : 'no') + '">' + (ok ? '✓' : '✕') + ' ' + esc(s.short) + '</span>';
     }).join('') + '</div>';
   }
 
-  // Thang mức vị của món so với mức bạn đặt. Cột nào vượt mức thì tô cảnh báo.
+  // Mức vị của món so với mức bạn đặt, dạng nhãn gọn một hàng. Nhãn nào vượt mức bạn đặt thì tô cảnh báo.
   function flavorMeter(d) {
-    return '<section class="flmeter" aria-label="Mức vị của món"><h2 class="flmeter-h">Mức vị của món' + (d.mode === 'out' ? ' <small>khi gọi đúng như hướng dẫn</small>' : '') + '</h2><ul>' +
+    return '<section class="flmeter" aria-label="Mức vị của món"><h2 class="flmeter-h">Mức vị' + (d.mode === 'out' ? ' <small>khi gọi đúng như hướng dẫn</small>' : '') + '</h2><ul class="flpills">' +
       H.FLAVORS.map(function (f) {
         var lv = d.fl[f.id], lim = H.flavorLimit(f.id), over = lv > lim;
-        var bars = '';
-        for (var i = 1; i <= 3; i++) bars += '<i class="' + (i <= lv ? 'on' : '') + '"></i>';
-        return '<li class="' + (over ? 'over' : '') + '"><span class="flm-n"><span aria-hidden="true">' + f.emoji + '</span> ' + esc(f.name.split(' ')[0]) + '</span>' +
-          '<span class="flm-bars" aria-hidden="true">' + bars + '</span>' +
-          '<span class="flm-v">' + esc(f.levels[lv]) + (over ? ' · vượt mức bạn đặt' : '') + '</span></li>';
+        return '<li class="' + (over ? 'over' : '') + '"><span aria-hidden="true">' + f.emoji + '</span><span class="flp-t"><b>' + esc(f.name.split(' ')[0]) + '</b> ' + esc(f.levels[lv].toLowerCase()) +
+          (over ? '<small>vượt mức bạn đặt</small>' : '') + '</span></li>';
       }).join('') + '</ul></section>';
   }
 
@@ -178,6 +197,7 @@
   }
 
   function ingredientRows(d) {
+    var useFridge = H.pantryItems().length > 0;   // chưa ghi gì vào tủ lạnh thì không hiện trạng thái "Chưa có" cho từng món
     return '<ul class="ings">' + d.ing.map(function (p) {
       var id = p[0], it = H.INGREDIENTS[id];
       var qty = U.fmtQty(p[1], it.unit);
@@ -187,11 +207,13 @@
       }
       var have = H.usableStock(id), enough = have + 1e-9 >= p[1], part = have > 0 && !enough;
       var label = enough ? 'Đủ' : (part ? 'Thiếu ' + U.fmtQty(p[1] - have, it.unit) : 'Chưa có');
-      var swap = !enough && H.SUBS[id] ? '<button type="button" class="sub-link" data-act="subs-open" data-id="' + id + '">Thay thế</button>' : '';
-      return '<li class="ing"><span class="ing-e">' + it.emoji + '</span><span class="ing-n">' + esc(it.name) + (advice ? '<small class="adv">' + esc(advice) + '</small>' : '') + swap + '</span><span class="ing-q">' + qty + '</span>' +
-        '<button type="button" class="pill-toggle' + (enough ? ' on' : (part ? ' part' : '')) + '" data-act="toggle-fridge" data-id="' + id + '" data-need="' + p[1] + '" aria-pressed="' + enough + '" aria-label="' + esc(it.name) + ': ' + label + (enough ? '. Chạm để sửa số lượng trong tủ lạnh' : '. Chạm để thêm vào tủ lạnh') + '">' +
-        (enough ? H.icon('check', { size: 13, stroke: 3 }) : '') + label + '</button></li>';
-    }).join('') + '</ul>';
+      var name = H.SUBS[id] ? '<button type="button" class="sub-name" data-act="subs-open" data-id="' + id + '" aria-label="' + esc(it.name) + ': xem đồ thay thế">' + esc(it.name) + '</button>' : esc(it.name);
+      var pill = useFridge
+        ? '<button type="button" class="pill-toggle' + (enough ? ' on' : (part ? ' part' : '')) + '" data-act="toggle-fridge" data-id="' + id + '" data-need="' + p[1] + '" aria-pressed="' + enough + '" aria-label="' + esc(it.name) + ': ' + label + (enough ? '. Chạm để sửa số lượng trong tủ lạnh' : '. Chạm để thêm vào tủ lạnh') + '">' +
+          (enough ? H.icon('check', { size: 13, stroke: 3 }) : '') + label + '</button>'
+        : '';
+      return '<li class="ing"><span class="ing-e">' + it.emoji + '</span><span class="ing-n">' + name + (advice ? '<small class="adv">' + esc(advice) + '</small>' : '') + '</span><span class="ing-q">' + qty + '</span>' + pill + '</li>';
+    }).join('') + '</ul><p class="hint ing-hint">Chạm vào tên nguyên liệu có gạch chân để xem đồ thay thế khi thiếu.' + (useFridge ? '' : ' Muốn mình báo đồ còn thiếu, hãy ghi đồ vào <a href="#fridge">tủ lạnh</a>.') + '</p>';
   }
 
   function missingNote(d) {
@@ -227,10 +249,10 @@
       h += '<section class="callout"><h2>' + H.icon('shield', { size: 18 }) + 'Vì sao hợp dạ dày</h2><p>' + esc(d.why) + '</p>' + stagePills(d) + '</section>';
 
       if (d.mode === 'home') {
-        h += '<section class="block"><h2>Dụng cụ</h2><div class="chips static">' + (d.tools.indexOf('khong') >= 0 ? '<span class="chip static">Không cần nấu</span>' : d.tools.map(function (t) {
+        h += '<p class="dish-tools"><b>Dụng cụ:</b> ' + (d.tools.indexOf('khong') >= 0 ? 'không cần nấu' : d.tools.map(function (t) {
           var tool = H.TOOLS.filter(function (x) { return x.id === t; })[0];
-          return '<span class="chip static">' + tool.emoji + ' ' + esc(tool.name) + '</span>';
-        }).join('<span class="or">hoặc</span>')) + '</div></section>';
+          return '<span>' + tool.emoji + ' ' + esc(tool.name) + '</span>';
+        }).join(' <i>hoặc</i> ')) + '</p>';
         h += '<section class="block"><div class="block-head"><h2>Nguyên liệu <small>cho 1 người</small></h2></div>' + ingredientRows(d) + missingNote(d) + '</section>';
         h += '<section class="block"><h2>Cách làm</h2>' +
           '<a class="btn btn-primary btn-lg btn-block cook-cta" href="#cook-' + d.id + '">' + H.icon('play', { size: 20 }) + 'Nấu từng bước <small>đọc to, hẹn giờ</small></a><ol class="steps">' + d.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></section>';
@@ -244,7 +266,10 @@
           return '<li><span class="sw-from">' + esc(s[0]) + '</span>' + H.icon('chev-r', { size: 16 }) + '<span class="sw-to"><strong>' + esc(s[1]) + '</strong><small>' + esc(s[2]) + '</small></span></li>';
         }).join('') + '</ul></section>';
       }
-      h += rateBlock(d) + diaryNote(d) + talkBlock(d);
+      // Chấm sao giữ ngay trên trang (đây là cách mình học gu của bạn); nhật ký và bài của mọi người gập lại cho gọn.
+      h += rateBlock(d);
+      h += '<details class="fold fold-card dish-more"' + H.ui.foldAttr('dish-more', false) + '><summary><span class="fold-t">Nhật ký và bài chia sẻ<small>ghi chú của bạn về món này, bài của mọi người</small></span></summary>' +
+        diaryNote(d) + talkBlock(d) + '</details>';
       h += '<div class="dish-actions">' +
         '<button type="button" class="btn btn-primary btn-lg grow" data-act="pin" data-id="' + d.id + '">' + H.icon('pin', { size: 18 }) + 'Chốt món này</button>' +
         '<button type="button" class="btn btn-soft btn-lg btn-sq fav' + (fav ? ' on' : '') + '" data-act="fav" data-id="' + d.id + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Bỏ yêu thích' : 'Yêu thích') + '">' + H.icon('heart', { size: 20, fill: fav }) + '</button>' +
@@ -263,7 +288,7 @@
     if (!E.length) return '';
     var bad = E.filter(function (x) { return x.feel >= 3; }).length;
     return '<p class="note ' + (bad ? 'warn' : 'ok') + '">' + H.icon(bad ? 'info' : 'check', { size: 16, stroke: bad ? 2 : 3 }) +
-      '<span>Nhật ký của bạn: đã ăn món này ' + E.length + ' lần, ' + (bad ? 'khó chịu ' + bad + ' lần. <a href="#community-diary">Xem nhật ký</a>' : 'chưa lần nào khó chịu.') + '</span></p>';
+      '<span>Nhật ký của bạn: đã ăn món này ' + E.length + ' lần, ' + (bad ? 'khó chịu ' + bad + ' lần. <a href="#diary">Xem nhật ký</a>' : 'chưa lần nào khó chịu.') + '</span></p>';
   }
 
   // Bài của mọi người (và của bạn) nhắc đến món này, như một góc hỏi đáp về công thức.

@@ -45,7 +45,7 @@
   function todayInner() {
     var iso = U.iso(new Date());
     var slots = H.slotsOn();
-    return '<div class="today-head"><h2>Bữa hôm nay</h2><a class="link" href="#plan">Xem kế hoạch tuần ' + H.icon('chev-r', { size: 14 }) + '</a></div>' +
+    return '<div class="today-head"><h2>Bữa hôm nay</h2><a class="link" href="#plan">Xem thực đơn tuần ' + H.icon('chev-r', { size: 14 }) + '</a></div>' +
       '<ul class="today-list">' + slots.map(function (sid) {
         var s = slotInfo(sid);
         var id = H.getMeal(iso, sid);
@@ -70,26 +70,37 @@
       '<button type="button" class="wheel-hub" data-act="spin" aria-label="Quay vòng quay">' + H.icon('sparkle', { size: 26, stroke: 2.2 }) + '</button></div>';
   }
 
-  function promoCards() {
-    var rows = ['chao-thit-bam', 'canh-bi-xanh-thit-bam', 'trung-hap-thit-bam'].map(function (id) { return H.DISH_BY_ID[id]; });
-    var mock = rows.map(function (d, i) {
-      return '<li>' + H.ui.tile(d, 'xs') + '<span><b>' + ['Sáng', 'Trưa', 'Tối'][i] + '</b>' + esc(d.name) + '</span><em>' + U.vnd(d.cost) + '</em></li>';
-    }).join('');
-    return '<section class="promos" aria-label="Tính năng nổi bật"><h2 class="sr-only">Tính năng nổi bật</h2><div class="promo-row">' +
-      '<a class="promo p-plan" href="#plan"><span class="pill">KẾ HOẠCH CẢ TUẦN</span><strong>21 bữa,<br>không trùng</strong><span>Tự động lên thực đơn 7 ngày và gộp sẵn danh sách đi chợ.</span><ul class="mock">' + mock + '</ul></a>' +
-      '<button type="button" class="promo p-filter" data-act="open-filters"><span class="pill">BỘ LỌC THEO DẠ DÀY</span><strong>Lọc món theo giai đoạn đau</strong><span>Đợt cấp, đang đỡ hay ổn định? Mình chỉ đưa món vừa sức.</span>' +
-      '<span class="mock-chips"><i class="on">Đang đỡ dần</i><i>Mức vừa</i><i class="on">Nấu tại nhà</i></span></button>' +
-      '<a class="promo p-guide" href="#guide-tra"><span class="pill">TRA NGUYÊN LIỆU</span><strong>Nên dùng hay nên tránh?</strong><span>Gõ tên nguyên liệu, mình nói vì sao và gợi ý đồ thay thế.</span>' +
-      '<span class="mock-chips big"><i class="good">✓ Chuối chín</i><i class="limit">! Cà chua</i><i class="avoid">✕ Cà phê</i></span></a>' +
-      '<a class="promo p-rank" href="#rank"><span class="pill">BẢNG XẾP HẠNG</span><strong>Món được chốt nhiều nhất</strong><span>Xem món nào bạn và mọi người hay chọn.</span>' +
-      '<span class="mock-medals" aria-hidden="true"><i>🥇</i><i>🥈</i><i>🥉</i></span></a>' +
-      '</div></section>';
-  }
-
   function tipCard() {
     var t = H.HABITS[U.hash(U.iso(new Date())) % H.HABITS.length];
-    return '<section class="tipcard"><span class="tip-e" aria-hidden="true">' + t.emoji + '</span><div><p class="eyebrow">Mẹo hôm nay</p><h3>' + esc(t.title) + '</h3><p>' + esc(t.text) + '</p></div>' +
-      '<a class="link" href="#guide-luuy">Thói quen khác ' + H.icon('chev-r', { size: 14 }) + '</a></section>';
+    return '<section class="tipcard"><span class="tip-e" aria-hidden="true">' + t.emoji + '</span><div><p class="eyebrow">Mẹo hôm nay</p><h3>' + esc(t.title) + '</h3><p>' + esc(t.text) + '</p></div></section>';
+  }
+
+  // Hướng dẫn 3 bước cho người mới: chính là luồng chính của ứng dụng.
+  function tourCard() {
+    var steps = H.tourSteps(), n = steps.filter(function (x) { return x.done; }).length;
+    var first = -1;
+    steps.forEach(function (st, i) { if (!st.done && first < 0) first = i; });
+    return '<section class="tour" aria-labelledby="tour-t"><div class="tour-head"><h2 id="tour-t">Làm quen trong 3 bước <small>' + n + '/3</small></h2>' +
+      '<button type="button" class="link-btn" data-act="tour-hide">Ẩn</button></div><ol class="tour-steps">' + steps.map(function (st, i) {
+        var inner = '<span class="tour-i" aria-hidden="true">' + (st.done ? H.icon('check', { size: 14, stroke: 3 }) : (i + 1)) + '</span><span class="tour-s">' + esc(st.text) + '</span>';
+        var cls = st.done ? 'done' : (i === first ? 'cur' : '');
+        if (st.done) return '<li class="' + cls + '">' + inner + '<span class="sr-only"> (đã xong)</span></li>';
+        return '<li class="' + cls + '">' + (st.href ? '<a href="' + st.href + '">' + inner + '</a>' : '<button type="button" data-act="spin">' + inner + '</button>') + '</li>';
+      }).join('') + '</ol></section>';
+  }
+
+  // Mỗi lần chỉ hiện MỘT thẻ ngữ cảnh để trang chủ không rối. Thứ tự ưu tiên: hướng dẫn cho người mới,
+  // nhắc giờ ăn đã trễ hoặc sắp tới (trong 90 phút), đồ trong tủ lạnh cần chú ý, gợi ý bật nhắc giờ khi đang tắt, mẹo trong ngày.
+  // urgent = đặt phía trên vòng quay, ngược lại đặt phía dưới bữa hôm nay.
+  function pickContext() {
+    if (H.tourVisible()) return { urgent: true, html: tourCard() };
+    var u = H.remind.nextUp();
+    if (u.kind === 'overdue' || (u.kind === 'next' && u.sameDay && u.in <= 5400000)) return { urgent: true, html: H.remind.cardBox() };
+    var al = H.pantry.alertCard();
+    if (al) return { urgent: H.expiredItems().length > 0, html: al };
+    // nhắc giờ đang tắt: gợi ý bật lại, người dùng bấm "Để sau" thì không hỏi nữa trong ngày
+    if (u.kind === 'off' && H.state.remind.bannerHiddenOn !== H.today()) return { urgent: false, html: H.remind.cardBox() };
+    return { urgent: false, html: tipCard() };
   }
 
   H.views.home = {
@@ -99,6 +110,7 @@
       var pl = H.ui.profileLabel();
       var fit = H.countFit();
       var today = new Date();
+      var ctx = pickContext();
       return '<div class="home">' +
         '<div class="home-grid">' +
         '<button type="button" class="profile-chip" data-act="open-filters" data-ctx="home">' +
@@ -106,8 +118,7 @@
         '<span class="pc-t"><strong>' + esc(pl.text) + '</strong><small>' + fit + ' món hợp với bạn · ' + U.WD_LONG[today.getDay()] + ', ' + U.fmtDM(today) + '</small></span>' +
         H.icon('sliders', { size: 20 }) + '</button>' +
         H.ui.filterPills('home') +
-        H.remind.cardBox() +
-        H.pantry.alertCard() +
+        (ctx.urgent ? '<div id="ctx-box" class="ctx-box">' + ctx.html + '</div>' : '') +
 
         '<section class="hero" aria-labelledby="hero-title">' +
         '<div class="hero-head"><div><h1 id="hero-title">Chưa biết ăn gì?</h1><p>Để Bé Cháo chọn một món lành cho bữa này.</p></div>' +
@@ -117,20 +128,24 @@
         }).join('') + '</div>' +
         '<div id="wheel-box">' + wheelInner(pool) + '</div>' +
         '<button type="button" class="btn btn-white btn-xl btn-block" data-act="spin"' + (pool.length < 2 ? ' disabled' : '') + '>' + H.icon('wheel', { size: 22 }) + 'Quay ngay!</button>' +
-        '<div class="hero-links"><button type="button" data-act="open-filters" data-ctx="home">' + H.icon('sliders', { size: 16 }) + 'Bộ lọc</button>' +
-        '<button type="button" data-act="open-wheel-list">' + H.icon('list', { size: 16 }) + 'Vòng quay (' + pool.length + ' món)</button></div>' +
+        '<div class="hero-links"><button type="button" data-act="open-wheel-list">' + H.icon('list', { size: 16 }) + 'Vòng quay (' + pool.length + ' món)</button></div>' +
         '<div class="confetti" aria-hidden="true"></div></section>' +
 
         '<section id="result-box" class="result-box" aria-live="polite">' + resultInner() + '</section>' +
         '<section id="today-box" class="today">' + todayInner() + '</section>' +
+        (ctx.urgent ? '' : '<div id="ctx-box" class="ctx-box">' + ctx.html + '</div>') +
         '</div>' +
-        promoCards() + tipCard() +
-        '<p class="aboutstrip"><span>Trang này là một ý tưởng thiết kế cho sinh viên đau dạ dày tự nấu ăn.</span><a class="link" href="#about">Đọc ý tưởng dự án ' + H.icon('chev-r', { size: 14 }) + '</a></p>' +
         H.ui.disclaimer() + '</div>';
     }
   };
 
   // ───────────── hành động ─────────────
+  H.actions['tour-hide'] = function () {
+    H.state.tour.hidden = true;
+    H.save();
+    H.render({ keepScroll: true });
+  };
+
   H.actions['home-meal'] = function (el) {
     if (H.ui.spinning) return;
     H.ui.meal = el.dataset.v;
@@ -179,6 +194,11 @@
       var live = document.getElementById('sr-live');
       if (live) live.textContent = 'Kết quả vòng quay: ' + d.name;
       confetti();
+      if (!H.state.tour.spun) {
+        H.tourMark('spun');
+        var cb = document.getElementById('ctx-box');
+        if (cb && cb.querySelector('.tour')) { if (H.tourVisible()) cb.innerHTML = tourCard(); else cb.remove(); }
+      }
     });
     if (!started && rb) rb.classList.remove('waiting');
   };
