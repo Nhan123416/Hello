@@ -1,4 +1,4 @@
-/* Khám phá món + trang chi tiết món. */
+/* Màn hình "Món ăn": danh sách món (tra được cả nguyên liệu) và trang chi tiết từng món, có cẩm nang và hướng dẫn đi chợ. */
 (function (H) {
   'use strict';
 
@@ -89,8 +89,10 @@
   function renderResults() {
     var box = document.getElementById('explore-results');
     var cnt = document.getElementById('explore-count');
+    var lk = document.getElementById('explore-lookup');
     if (box) box.innerHTML = resultsHtml();
     if (cnt) cnt.textContent = H.exploreList().length + ' món';
+    if (lk) lk.innerHTML = H.guide.lookupHtml(H.ui.exploreQ);
   }
 
   H.views.explore = {
@@ -100,7 +102,7 @@
       var pl = H.ui.profileLabel();
       var so = H.SORTS.filter(function (x) { return x.id === H.ui.exploreSort; })[0] || H.SORTS[0];
       return '<div class="explore">' +
-        H.ui.pageHead('MÓN ĂN', 'Món lành cho dạ dày', 'Mỗi món đều ghi rõ vì sao hợp và cách làm.') +
+        H.ui.pageHead('MÓN ĂN', 'Món lành cho dạ dày', 'Mỗi món ghi rõ có hợp với bạn không, vì sao, và cần đi chợ mua gì.') +
         '<div class="toolbar"><div class="search"><span class="search-ic">' + H.icon('search', { size: 18 }) + '</span>' +
         '<input id="explore-q" type="search" placeholder="Tìm món hoặc nguyên liệu" autocomplete="off" value="' + esc(H.ui.exploreQ) + '" data-input="explore-q" aria-label="Tìm món"></div>' +
         '<button type="button" class="btn btn-soft btn-filter" data-act="open-filters" data-ctx="explore" aria-label="Bộ lọc' + (active ? ', đang bật ' + active : '') + '">' + H.icon('sliders', { size: 18 }) + '<span class="btn-t">Bộ lọc</span>' + (active ? '<i class="count">' + active + '</i>' : '') + '</button></div>' +
@@ -112,7 +114,8 @@
         H.ui.filterPills('explore') +
         '<div class="explore-meta"><p><strong id="explore-count">' + H.exploreList().length + ' món</strong> hợp với <button type="button" class="link-btn" data-act="open-filters" data-ctx="home">' + esc(pl.text) + '</button></p>' +
         '<div class="meta-acts"><button type="button" class="btn btn-ghost btn-sm" data-act="open-sort">' + H.icon('swap', { size: 16 }) + '<span>' + esc(so.label) + '</span></button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" data-act="open-deck">' + H.icon('shuffle', { size: 16 }) + '<span>Vuốt chọn</span></button></div></div>' +
+        '<button type="button" class="btn btn-soft btn-sm" data-act="open-guide" data-tab="tra">' + H.icon('book', { size: 16 }) + '<span>Cẩm nang</span></button></div></div>' +
+        '<div id="explore-lookup">' + H.guide.lookupHtml(H.ui.exploreQ) + '</div>' +
         '<div id="explore-results">' + resultsHtml() + '</div>' +
         H.ui.disclaimer() + '</div>';
     }
@@ -168,10 +171,10 @@
   // ───────────── chi tiết món ─────────────
   function stagePills(d) {
     var base = { cap: 1, doi: 2, on: 3, khoe: 3 };
-    return '<div class="stage-pills" aria-label="Hợp với giai đoạn">' + H.STAGES.map(function (s) {
+    return '<div class="stage-row"><span class="stage-cap" id="stage-cap">Hợp với giai đoạn</span><div class="stage-pills" role="group" aria-labelledby="stage-cap">' + H.STAGES.map(function (s) {
       var ok = base[s.id] >= d.care;
-      return '<span class="spill ' + (ok ? 'yes' : 'no') + '">' + (ok ? '✓' : '✕') + ' ' + esc(s.short) + '</span>';
-    }).join('') + '</div>';
+      return '<span class="spill ' + (ok ? 'yes' : 'no') + '">' + (ok ? '✓' : '✕') + ' ' + esc(s.short) + '<span class="sr-only">' + (ok ? ': hợp' : ': chưa hợp') + '</span></span>';
+    }).join('') + '</div></div>';
   }
 
   // Mức vị của món so với mức bạn đặt, dạng nhãn gọn một hàng. Nhãn nào vượt mức bạn đặt thì tô cảnh báo.
@@ -213,7 +216,7 @@
           (enough ? H.icon('check', { size: 13, stroke: 3 }) : '') + label + '</button>'
         : '';
       return '<li class="ing"><span class="ing-e">' + it.emoji + '</span><span class="ing-n">' + name + (advice ? '<small class="adv">' + esc(advice) + '</small>' : '') + '</span><span class="ing-q">' + qty + '</span>' + pill + '</li>';
-    }).join('') + '</ul><p class="hint ing-hint">Chạm vào tên nguyên liệu có gạch chân để xem đồ thay thế khi thiếu.' + (useFridge ? '' : ' Muốn mình báo đồ còn thiếu, hãy ghi đồ vào <a href="#fridge">tủ lạnh</a>.') + '</p>';
+    }).join('') + '</ul><p class="hint ing-hint">Chạm vào tên nguyên liệu có gạch chân để xem đồ thay thế khi thiếu.' + (useFridge ? '' : ' Muốn mình báo đồ còn thiếu, hãy ghi đồ vào <button type="button" class="link-btn" data-act="open-fridge">tủ lạnh</button>.') + '</p>';
   }
 
   function missingNote(d) {
@@ -221,66 +224,60 @@
     if (!miss.length) return '<p class="note ok">' + H.icon('check', { size: 16, stroke: 3 }) + '<span>Bạn có đủ nguyên liệu chính trong tủ lạnh để nấu món này.</span></p>';
     var cost = miss.reduce(function (s, p) { return s + (p[1] - H.usableStock(p[0])) * H.INGREDIENTS[p[0]].price; }, 0);
     var items = miss.map(function (p) { return p[0] + ':' + Math.round((p[1] - H.usableStock(p[0])) * 100) / 100; }).join(',');
-    return '<p class="note">' + H.icon('cart', { size: 16 }) + '<span>Cần mua thêm ' + miss.length + ' nguyên liệu, khoảng ' + U.vnd(Math.max(500, Math.round(cost / 500) * 500)) + '. ' +
+    return '<p class="note">' + H.icon('cart', { size: 16 }) + '<span>Cần mua thêm <strong>' + miss.length + ' nguyên liệu</strong>, khoảng <strong>' + U.vnd(Math.max(500, Math.round(cost / 500) * 500)) + '</strong>. ' +
       '<button type="button" class="link-btn" data-act="buy-ids" data-items="' + esc(items) + '">Mua online</button></span></p>';
   }
 
-  H.views.dish = {
-    title: function (r) { var d = H.DISH_BY_ID[r.id]; return d ? d.name : 'Món ăn'; },
-    render: function (r) {
-      var d = H.DISH_BY_ID[r.id];
-      if (!d) {
-        return '<div class="dish">' + H.ui.empty({ title: 'Không tìm thấy món này', text: 'Có thể đường dẫn đã cũ.', action: '<a class="btn btn-primary" href="#explore">Về danh sách món</a>' }) + '</div>';
-      }
-      var fav = H.state.favs.indexOf(d.id) >= 0;
-      var reason = H.notFitReason(d);
-      var h = '<article class="dish">' +
-        '<button type="button" class="back" data-act="back">' + H.icon('chev-l', { size: 18 }) + 'Quay lại</button>' +
-        '<header class="dish-hero ' + H.ui.kindClass(d.kind) + '">' + H.ui.tile(d, 'xxl') +
-        '<div class="dish-title"><div class="tags">' + H.ui.kindTag(d) + H.ui.careBadge(d.care, true) + H.ui.extraTags(d) + '</div>' +
-        '<h1>' + esc(d.name) + '</h1></div></header>';
-      if (reason) h += '<p class="note warn">' + H.icon('info', { size: 16 }) + '<span><strong>Chưa hợp với hồ sơ hiện tại của bạn:</strong> ' + esc(reason) + '. Bạn vẫn xem được công thức để tham khảo.</span></p>';
-      else {
-        var flags = H.limitFlags(d);
-        if (flags.length) h += '<p class="note warn">' + H.icon('info', { size: 16 }) + '<span><strong>Vượt giới hạn bạn đã đặt:</strong> ' + flags.map(esc).join('; ') + '. Bạn vẫn có thể nấu, hoặc chỉnh lại bộ lọc.</span></p>';
-      }
-      h += H.ui.dishStats(d);
-      h += flavorMeter(d);
-      h += '<section class="callout"><h2>' + H.icon('shield', { size: 18 }) + 'Vì sao hợp dạ dày</h2><p>' + esc(d.why) + '</p>' + stagePills(d) + '</section>';
+  // Số bữa của tuần này đang dùng món này.
+  function weekPlanned(d) {
+    var n = 0;
+    H.weekDays(H.weekStartOf(0)).forEach(function (day) {
+      ['sang', 'trua', 'toi', 'phu'].forEach(function (s) { if (H.getMeal(U.iso(day), s) === d.id) n++; });
+    });
+    return n;
+  }
 
-      if (d.mode === 'home') {
-        h += '<p class="dish-tools"><b>Dụng cụ:</b> ' + (d.tools.indexOf('khong') >= 0 ? 'không cần nấu' : d.tools.map(function (t) {
-          var tool = H.TOOLS.filter(function (x) { return x.id === t; })[0];
-          return '<span>' + tool.emoji + ' ' + esc(tool.name) + '</span>';
-        }).join(' <i>hoặc</i> ')) + '</p>';
-        h += '<section class="block"><div class="block-head"><h2>Nguyên liệu <small>cho 1 người</small></h2></div>' + ingredientRows(d) + missingNote(d) + '</section>';
-        h += '<section class="block"><h2>Cách làm</h2>' +
-          '<a class="btn btn-primary btn-lg btn-block cook-cta" href="#cook-' + d.id + '">' + H.icon('play', { size: 20 }) + 'Nấu từng bước <small>đọc to, hẹn giờ</small></a><ol class="steps">' + d.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></section>';
-      } else {
-        h += '<section class="block"><h2>Cách gọi món an toàn</h2><ol class="steps">' + d.order.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></section>';
-        h += '<section class="block"><h2>Nên tránh khi gọi</h2><ul class="avoid-list">' + d.avoid.map(function (s) { return '<li>' + H.icon('x', { size: 14, stroke: 3 }) + esc(s) + '</li>'; }).join('') + '</ul></section>';
-      }
-      h += '<section class="callout tip"><h2>' + H.icon('info', { size: 18 }) + 'Lưu ý</h2><p>' + esc(d.tip) + '</p></section>';
-      if (d.swaps && d.swaps.length) {
-        h += '<section class="block"><h2>Nguyên liệu đổi được</h2><ul class="swaps">' + d.swaps.map(function (s) {
-          return '<li><span class="sw-from">' + esc(s[0]) + '</span>' + H.icon('chev-r', { size: 16 }) + '<span class="sw-to"><strong>' + esc(s[1]) + '</strong><small>' + esc(s[2]) + '</small></span></li>';
-        }).join('') + '</ul></section>';
-      }
-      // Chấm sao giữ ngay trên trang (đây là cách mình học gu của bạn); nhật ký và bài của mọi người gập lại cho gọn.
-      h += rateBlock(d);
-      h += '<details class="fold fold-card dish-more"' + H.ui.foldAttr('dish-more', false) + '><summary><span class="fold-t">Nhật ký và bài chia sẻ<small>ghi chú của bạn về món này, bài của mọi người</small></span></summary>' +
-        diaryNote(d) + talkBlock(d) + '</details>';
-      h += '<div class="dish-actions">' +
-        '<button type="button" class="btn btn-primary btn-lg grow" data-act="pin" data-id="' + d.id + '">' + H.icon('pin', { size: 18 }) + 'Chốt món này</button>' +
-        '<button type="button" class="btn btn-soft btn-lg btn-sq fav' + (fav ? ' on' : '') + '" data-act="fav" data-id="' + d.id + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Bỏ yêu thích' : 'Yêu thích') + '">' + H.icon('heart', { size: 20, fill: fav }) + '</button>' +
-        (d.mode === 'out'
-          ? '<a class="btn btn-soft btn-lg btn-sq" href="' + H.mapsUrl(d.mapQuery + ' gần đây') + '" target="_blank" rel="noopener noreferrer" aria-label="Tìm quán gần bạn (mở tab mới)">' + H.icon('pin', { size: 20 }) + '</a>'
-          : '<a class="btn btn-soft btn-lg btn-sq" href="' + H.ytUrl('cách nấu ' + d.name + ' cho người đau dạ dày') + '" target="_blank" rel="noopener noreferrer" aria-label="Xem video hướng dẫn trên YouTube (mở tab mới)">' + H.icon('play', { size: 20 }) + '</a>') +
-        '</div>';
-      h += H.ui.disclaimer() + '</article>';
-      return h;
-    }
+  // Phần "Đi chợ cho món này": nguyên liệu và số lượng cho 1 người, còn thiếu gì, mẹo chọn mua.
+  function buyGuide(d) {
+    var cats = {};
+    d.ing.forEach(function (p) { var it = H.INGREDIENTS[p[0]]; if (!it.staple) cats[it.cat] = true; });
+    var tips = H.CATEGORIES.filter(function (c) { return cats[c.id] && c.buy; });
+    return '<section id="buyguide" class="block buyguide" tabindex="-1" aria-labelledby="bg-t"><div class="block-head"><h2 id="bg-t">Đi chợ cho món này <small>cho 1 người</small></h2></div>' +
+      missingNote(d) + ingredientRows(d) +
+      (tips.length ? '<details class="fold"' + H.ui.foldAttr('bg-tips', false) + '><summary>Mẹo chọn mua</summary><ul class="buytips">' + tips.map(function (c) {
+        return '<li><span aria-hidden="true">' + c.emoji + '</span><div><strong>' + esc(c.name) + '</strong><p>' + esc(c.buy) + '</p></div></li>';
+      }).join('') + '</ul></details>' : '') +
+      '<p class="hint bg-plan">' + (weekPlanned(d)
+        ? 'Món này đã có trong thực đơn tuần, nguyên liệu nằm sẵn trong <a href="#plan-shop">danh sách đi chợ cả tuần</a>.'
+        : 'Chốt món này để thêm vào thực đơn tuần, nguyên liệu sẽ tự gộp vào danh sách đi chợ.') + '</p></section>';
+  }
+
+  H.scrollToBuyGuide = function () {
+    var el = document.getElementById('buyguide');
+    if (!el) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    try { el.focus({ preventScroll: true }); } catch (e) { /* bỏ qua */ }
   };
+
+  // ───────────── khối "Hợp với bạn không?" ─────────────
+  // Một câu trả lời rõ ràng ngay đầu trang món: hợp, hợp nhưng vượt giới hạn bạn đặt, hay chưa hợp.
+  function verdictOf(d) {
+    var reason = H.notFitReason(d);
+    if (reason) return { cls: 'bad', icon: 'x', head: 'Chưa hợp với bạn lúc này', text: reason + '. Bạn vẫn xem được công thức để tham khảo.' };
+    var flags = H.limitFlags(d);
+    if (flags.length) return { cls: 'warn', icon: 'info', head: 'Hợp với dạ dày, nhưng vượt giới hạn bạn đặt', text: flags.join('; ') + '. Bạn vẫn có thể nấu, hoặc chỉnh lại bộ lọc.' };
+    return { cls: 'ok', icon: 'check', head: 'Hợp với bạn lúc này', text: H.CARE[d.care].long + '. Hồ sơ của bạn: ' + H.ui.profileLabel().text.toLowerCase() + '.' };
+  }
+
+  function nutriHtml(d) {
+    var n = H.guide.nutrition(d);
+    return '<div class="nutri"><p class="nutri-h">' + H.icon('flame', { size: 16 }) + 'Dinh dưỡng <small>khoảng ' + n.kcal + ' kcal một phần</small></p>' +
+      (n.groups.length ? '<ul class="ngroups">' + n.groups.map(function (g) {
+        return '<li class="' + (g.has ? 'has' : 'no') + '"><span aria-hidden="true">' + g.emoji + '</span>' + esc(g.name) + '<i aria-hidden="true">' + (g.has ? '✓' : '✕') + '</i><span class="sr-only">' + (g.has ? ' có' : ' chưa có') + '</span></li>';
+      }).join('') + '</ul>' : '') +
+      '<p class="hint">' + esc(n.note) + '</p></div>';
+  }
 
   // Nhật ký của bạn nói gì về món này.
   function diaryNote(d) {
@@ -288,16 +285,71 @@
     if (!E.length) return '';
     var bad = E.filter(function (x) { return x.feel >= 3; }).length;
     return '<p class="note ' + (bad ? 'warn' : 'ok') + '">' + H.icon(bad ? 'info' : 'check', { size: 16, stroke: bad ? 2 : 3 }) +
-      '<span>Nhật ký của bạn: đã ăn món này ' + E.length + ' lần, ' + (bad ? 'khó chịu ' + bad + ' lần. <a href="#diary">Xem nhật ký</a>' : 'chưa lần nào khó chịu.') + '</span></p>';
+      '<span>Nhật ký của bạn: đã ăn món này ' + E.length + ' lần, ' + (bad ? 'khó chịu ' + bad + ' lần.' : 'chưa lần nào khó chịu.') + '</span></p>';
   }
 
-  // Bài của mọi người (và của bạn) nhắc đến món này, như một góc hỏi đáp về công thức.
-  function talkBlock(d) {
-    var posts = H.allPosts().filter(function (p) { return p.dish === d.id; }).slice(0, 3);
-    return '<section class="block talk"><div class="block-head"><h2>Mọi người nói gì về món này</h2></div>' +
-      (posts.length ? '<ul class="posts">' + posts.map(H.postCard).join('') + '</ul>' : '<p class="hint">Chưa có ai chia sẻ về món này. Bạn nấu thử rồi kể mọi người nghe nhé?</p>') +
-      '<button type="button" class="btn btn-soft btn-sm" data-act="post-about" data-id="' + d.id + '">' + H.icon('plus', { size: 16 }) + 'Viết bài về món này</button></section>';
+  function healthBlock(d) {
+    var v = verdictOf(d);
+    return '<section class="health" aria-labelledby="hl-t"><h2 id="hl-t">' + H.icon('shield', { size: 18 }) + 'Hợp với bạn không?</h2>' +
+      '<div class="verdict ' + v.cls + '" role="status"><span class="vd-ic" aria-hidden="true">' + H.icon(v.icon, { size: 18, stroke: 3 }) + '</span>' +
+      '<div><strong>' + esc(v.head) + '</strong><p>' + esc(v.text) + '</p></div></div>' +
+      '<p class="hl-why"><strong>Vì sao: </strong>' + esc(d.why) + '</p>' + stagePills(d) +
+      flavorMeter(d) + nutriHtml(d) +
+      (d.mode === 'home' ? H.guide.dishHtml(d) : '') +
+      diaryNote(d) +
+      '<p class="hl-tip">' + H.icon('info', { size: 16 }) + '<span><strong>Lưu ý: </strong>' + esc(d.tip) + '</span></p></section>';
   }
+
+  H.views.dish = {
+    title: function (r) { var d = H.DISH_BY_ID[r.id]; return d ? d.name : 'Món ăn'; },
+    after: function () {
+      if (H.ui.dishScroll === 'buyguide') { H.ui.dishScroll = ''; H.scrollToBuyGuide(); }
+    },
+    render: function (r) {
+      var d = H.DISH_BY_ID[r.id];
+      if (!d) {
+        return '<div class="dish">' + H.ui.empty({ title: 'Không tìm thấy món này', text: 'Có thể đường dẫn đã cũ.', action: '<a class="btn btn-primary" href="#explore">Về danh sách món</a>' }) + '</div>';
+      }
+      var fav = H.state.favs.indexOf(d.id) >= 0;
+      var h = '<article class="dish">' +
+        '<button type="button" class="back" data-act="back">' + H.icon('chev-l', { size: 18 }) + 'Quay lại</button>' +
+        '<header class="dish-hero ' + H.ui.kindClass(d.kind) + '">' + H.ui.tile(d, 'xxl') +
+        '<div class="dish-title"><div class="tags">' + H.ui.kindTag(d) + H.ui.careBadge(d.care, true) + H.ui.extraTags(d) + '</div>' +
+        '<h1>' + esc(d.name) + '</h1></div></header>';
+      h += H.ui.dishStats(d);
+      h += healthBlock(d);
+
+      if (d.mode === 'home') {
+        h += buyGuide(d);
+        h += '<section class="block"><h2>Cách làm</h2>' +
+          '<p class="dish-tools"><b>Dụng cụ:</b> ' + (d.tools.indexOf('khong') >= 0 ? 'không cần nấu' : d.tools.map(function (t) {
+            var tool = H.TOOLS.filter(function (x) { return x.id === t; })[0];
+            return '<span>' + tool.emoji + ' ' + esc(tool.name) + '</span>';
+          }).join(' <i>hoặc</i> ')) + '</p>' +
+          '<a class="btn btn-primary btn-lg btn-block cook-cta" href="#cook-' + d.id + '">' + H.icon('play', { size: 20 }) + 'Nấu từng bước <small>đọc to, hẹn giờ</small></a><ol class="steps">' + d.steps.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' +
+          '<p class="hint"><a href="' + H.ytUrl('cách nấu ' + d.name + ' cho người đau dạ dày') + '" target="_blank" rel="noopener noreferrer">Xem video hướng dẫn trên YouTube<span class="sr-only"> (mở tab mới)</span></a></p></section>';
+      } else {
+        h += '<section class="block"><h2>Cách gọi món an toàn</h2><ol class="steps">' + d.order.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></section>';
+        h += '<section class="block"><h2>Nên tránh khi gọi</h2><ul class="avoid-list">' + d.avoid.map(function (s) { return '<li>' + H.icon('x', { size: 14, stroke: 3 }) + esc(s) + '</li>'; }).join('') + '</ul></section>';
+      }
+      if (d.swaps && d.swaps.length) {
+        h += '<section class="block"><h2>Nguyên liệu đổi được</h2><ul class="swaps">' + d.swaps.map(function (s) {
+          return '<li><span class="sw-from">' + esc(s[0]) + '</span>' + H.icon('chev-r', { size: 16 }) + '<span class="sw-to"><strong>' + esc(s[1]) + '</strong><small>' + esc(s[2]) + '</small></span></li>';
+        }).join('') + '</ul></section>';
+      }
+      // Chấm sao giữ ngay trên trang: đây là cách mình học gu của bạn.
+      h += rateBlock(d);
+      h += '<div class="dish-actions">' +
+        '<button type="button" class="btn btn-primary btn-lg grow" data-act="pin" data-id="' + d.id + '">' + H.icon('pin', { size: 18 }) + 'Chốt món này</button>' +
+        (d.mode === 'out'
+          ? '<a class="btn btn-soft btn-lg btn-sq" href="' + H.mapsUrl(d.mapQuery + ' gần đây') + '" target="_blank" rel="noopener noreferrer" aria-label="Tìm quán gần bạn (mở tab mới)">' + H.icon('pin', { size: 20 }) + '</a>'
+          : '<button type="button" class="btn btn-soft btn-lg btn-sq" data-act="go-buyguide" data-id="' + d.id + '" aria-label="Xem hướng dẫn đi chợ cho món này">' + H.icon('cart', { size: 20 }) + '</button>') +
+        '<button type="button" class="btn btn-soft btn-lg btn-sq fav' + (fav ? ' on' : '') + '" data-act="fav" data-id="' + d.id + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Bỏ yêu thích' : 'Yêu thích') + '">' + H.icon('heart', { size: 20, fill: fav }) + '</button>' +
+        '</div>';
+      h += H.ui.disclaimer() + '</article>';
+      return h;
+    }
+  };
 
   function rateBlock(d) {
     var r = H.ratingOf(d.id), off = H.isExcluded(d.id);

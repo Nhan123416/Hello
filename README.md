@@ -13,54 +13,65 @@ Giao diện kiểu app "chọn món bằng vòng quay" (mobile-first, bo tròn, 
 | **Đối tượng** | Người bị đau dạ dày / viêm loét dạ dày tự nấu ăn (sinh viên, người đi làm, người lớn tuổi) và người không đau nhưng muốn ăn lành mạnh. |
 | **HMW** | Làm sao để họ tự tin mua đúng nguyên liệu và nấu an toàn, không phải lo "lỡ ăn sai"? |
 
-## Thiết kế gọn: luồng chính và tính năng phụ
+## Ba màn hình chính
 
-Phản hồi từ người dùng thử: *"giao diện còn ôm đồm, quá nhiều tính năng cùng lúc"*. Cách xử lý là **ẩn dần (progressive disclosure)** thay vì để mọi thứ ngang hàng:
+Thiết kế lại theo góp ý của giảng viên (phân tích đầy đủ ở [`docs/gop-y-giang-vien.md`](docs/gop-y-giang-vien.md)): *đứng ở vị trí người dùng cuối, đi theo quy trình từng bước, tiết chế thông tin, mỗi thứ chỉ có một chỗ*. Thanh điều hướng chỉ còn **3 mục**, đúng một mạch **chọn món → biết món có hợp không rồi chốt → đi chợ, nấu, ăn → ghi cảm nhận**:
 
-- **Luồng chính chỉ có ba việc**: quay/chọn một món → xếp thực đơn cả tuần → đi chợ theo danh sách. Trang chủ chỉ giữ vòng quay, kết quả, "Bữa hôm nay" và **một thẻ ngữ cảnh duy nhất** (hướng dẫn 3 bước cho người mới → nhắc giờ ăn đã trễ hoặc sắp tới trong 90 phút → đồ trong tủ lạnh cần chú ý → gợi ý bật nhắc giờ → mẹo trong ngày).
-- **Thanh tab dưới gồm 5 mục**: Hôm nay · Món ăn · Thực đơn · Cẩm nang · **Thêm**. Tủ lạnh, nhắc giờ, nhật ký, cộng đồng, bảng xếp hạng, vuốt chọn món, mời bạn bè, hồ sơ và cài đặt nằm trong **Thêm**, mỗi mục là một trang riêng có nút quay về.
-- **Người mới**: chào mừng đúng 2 bước (bạn thuộc nhóm nào → dạ dày đang thế nào), ngân sách / thời gian / giờ ăn / cỡ chữ được **đặt sẵn theo nhóm**; trang chủ có thẻ "Làm quen trong 3 bước" tự tích khi bạn làm xong.
-- **Bộ lọc** chỉ có phần chính (tình trạng dạ dày, loại bữa, thời gian, ngân sách); mức vị, độ khó, nguyên liệu chính, cách ăn, năng lượng, chay, dụng cụ gập trong "Lọc thêm" (tự mở nếu bạn đang dùng). Sắp xếp và "hiện cả món chưa hợp" gom vào một nút.
-- **Trang món** gọn hơn: nhãn mức vị một hàng, dụng cụ một dòng, nhãn "Đủ / Thiếu" từng nguyên liệu chỉ hiện khi bạn đã dùng tủ lạnh (không thì mỗi dòng đều "Chưa có"), nhật ký và bài chia sẻ gập lại.
-- Các trang nhiều tuỳ chọn (Nhắc giờ, Tủ lạnh) gập phần ít dùng; lịch nhắc chỉ hiện các lời nhắc sắp tới, phần đã qua gập lại.
-- **Đã bỏ hẳn** những thứ chưa làm được thật hoặc trùng lặp: tab "Bạn bè (sắp có)", nút "chụp ảnh tủ lạnh (sắp có)", khối giới thiệu 4 ô và dải "ý tưởng thiết kế" ở trang chủ, nút "Bộ lọc" thứ hai trên vòng quay, hàng 6 nút sắp xếp, thẻ "Vuốt chọn món" chiếm chỗ, huy hiệu cúp trên thanh trên.
+| | Màn hình | Làm gì |
+|---|---|---|
+| 1 | **Hôm nay** `#home` | Quay may mắn cho vui, hoặc **tự chọn món** từ danh sách món hợp với bạn. Phía dưới là **hành trình của bạn**: đã quay bao nhiêu vòng, đã chốt những món nào. |
+| 2 | **Món ăn** `#explore` | Danh sách và chi tiết món. **Cẩm nang nằm ngay trong từng món**: khối "Hợp với bạn không?" (hợp hay không và vì sao), dinh dưỡng, nguyên liệu nên hạn chế. Có nút **Chốt món** và **hướng dẫn đi chợ** cho món đó. |
+| 3 | **Thực đơn** `#plan` | Thực đơn cả tuần và danh sách đi chợ; khối **nhắc nhở** (giờ đi chợ, giờ nấu, giờ ăn); **ô cảm nhận ngay dưới từng bữa** và phần "Nhìn lại tuần". |
+
+Những thứ trước đây là trang riêng đã được **gộp vào ba màn hình trên**:
+
+| Trước | Bây giờ |
+|---|---|
+| Tab Cẩm nang | Vào từng món (khối "Hợp với bạn không?"); ô tìm món cũng tra được nguyên liệu; nút "Cẩm nang" mở hộp tra nguyên liệu, kiểm tra công thức, thay thế, lưu ý chung |
+| Nhật ký ăn uống | Dòng "Bụng bạn thấy sao?" dưới từng bữa trong Thực đơn, kèm "Nhìn lại tuần" |
+| Nhắc giờ ăn | Khối "Nhắc nhở" ở đầu màn Thực đơn |
+| Tủ lạnh | Thẻ trong tab Đi chợ của màn Thực đơn (danh sách đi chợ tự trừ đồ đang có) |
+| Trang "Thêm" | Bỏ. Hồ sơ và cài đặt ở biểu tượng bánh răng trên cùng |
+
+**Đã bỏ** vì chưa làm được thật hoặc trùng việc: bảng tin cộng đồng và bảng xếp hạng minh hoạ (chỉ lưu trên máy), vuốt chọn món (trùng "Tự chọn món"), mục video chuyên gia (chờ danh sách video đã kiểm duyệt).
 
 ## Tính năng
 
-### Chọn món
-- **Vòng quay "Hôm nay ăn gì?"**: quay ra món hợp với tình trạng dạ dày, kèm lý do hợp và nút **Chốt món** (ghim vào lịch tuần). Có danh sách "Vòng quay của bạn" (bỏ bớt món).
+### 1. Hôm nay
+- **Hai cách chọn** (công tắc ngay đầu trang): **Quay may mắn** và **Tự chọn món**.
+- **Vòng quay "Hôm nay ăn gì?"**: quay ra món hợp với tình trạng dạ dày theo bữa (sáng, trưa, tối, phụ), kèm lý do hợp. Kết quả có "Xem chi tiết", "Quay lại" và **Chốt món**. Có danh sách "Vòng quay của bạn" (bỏ bớt món).
+- **Tự chọn món**: danh sách món hợp với hồ sơ cho bữa bạn chọn, món bạn hay chọn và hay nấu xếp lên trước (gắn nhãn "Hay chọn"); bấm **Chọn** để chốt luôn.
+- **Hành trình của bạn**: số vòng đã quay, số lần chốt món, số món khác nhau, món chốt nhiều nhất và hàng "Chốt gần đây" (bấm vào để xem món).
+- **Chốt xong biết làm gì tiếp**: hộp "Đã chốt món!" cho đổi bữa/ngày và hiện ngay bước tiếp theo: **xem hướng dẫn đi chợ** (món ăn ngoài thì "tìm quán gần bạn").
+- Trang chủ chỉ có **một thẻ ngữ cảnh** mỗi lúc (hướng dẫn 3 bước cho người mới → nhắc giờ ăn đã trễ hoặc sắp tới → đồ trong tủ lạnh cần chú ý → gợi ý bật nhắc giờ → mẹo trong ngày).
+
+### 2. Món ăn
 - **60 món** (53 nấu tại nhà + 7 gọi món an toàn ở quán), nhiều món thuần Việt: cháo đậu xanh, cháo tôm bí đỏ, canh bầu, canh mồng tơi mướp, canh rau ngót, canh khoai môn, canh bắp cải cuộn thịt, súp gà ngô, bí xanh nhồi thịt hấp, cá kho nhạt, gà kho gừng nhạt, tôm hấp gừng, bún gà, bánh canh cá, nước gạo rang, bánh cuốn và hủ tiếu ở quán... Món có đậu hạt, ngô, tôm, rau lá chỉ hiện khi dạ dày đã ổn định.
+- **Tìm kiếm** có dấu hoặc không dấu, **sắp xếp** (hợp nhất, rẻ nhất, nhanh nhất, ít kcal, chấm sao, dùng đồ sắp hết hạn). Gõ tên nguyên liệu (ví dụ "cà chua") thì ngay trên danh sách hiện **cẩm nang của nguyên liệu đó** (nên dùng, dùng ít hay nên tránh, vì sao).
+- **Bộ lọc nhiều thang đo**: tình trạng dạ dày, loại bữa, *thời gian nấu* (5 phút đến 1 giờ) và *ngân sách một bữa* (6.000đ đến 50.000đ) là hai mục riêng; thêm độ khó, nguyên liệu chính, cách ăn, năng lượng, món chay, dụng cụ trong "Lọc thêm".
+- **Mức vị tối đa (cay, mặn, chua, béo)**: bốn thang 0 đến 3, **tự khoá theo hồ sơ dạ dày** (đang đau cấp thì cay và chua khoá ở mức 0). Bạn chỉ hạ thấp thêm được, không nâng vượt mức an toàn. Nhóm "không đau dạ dày" không bị khoá.
+- **Trang một món**, theo đúng thứ tự người dùng cần:
+  1. **Hợp với bạn không?**: kết luận rõ ("Hợp với bạn lúc này" / "Hợp với dạ dày, nhưng vượt giới hạn bạn đặt" / "Chưa hợp với bạn lúc này") kèm lý do, giai đoạn nào ăn được, mức vị so với mức bạn đặt, nhóm dinh dưỡng (tinh bột, đạm, rau) và kcal, **cẩm nang nói gì về từng nguyên liệu của món**, nhật ký của bạn về món này và lưu ý khi nấu.
+  2. **Đi chợ cho món này**: nguyên liệu và số lượng cho một người, còn thiếu gì và khoảng bao nhiêu tiền, mẹo chọn mua, đồ thay thế khi thiếu.
+  3. **Cách làm** và nút **Nấu từng bước** (đọc to, hẹn giờ), video hướng dẫn tìm trên YouTube.
+  4. Thanh nút cố định: **Chốt món này**, **Hướng dẫn đi chợ**, **Yêu thích**. **Chấm sao** 1 đến 5: món 4 đến 5 sao và món yêu thích được ưu tiên khi tự xếp thực đơn.
+- **Hộp Cẩm nang** (nút "Cẩm nang" ở đầu danh sách): tra 69 nguyên liệu (nên dùng / dùng ít / nên tránh, kèm lý do), **kiểm tra công thức bất kỳ** (dán danh sách nguyên liệu, mình đánh dấu phần nên tránh và gợi ý thay), bảng thay thế, "Tưởng lành mà không lành", thói quen ăn uống, dấu hiệu cần đi khám ngay.
+
+### 3. Thực đơn
+- **Thực đơn tuần**: tự xếp 21 bữa không lặp món theo hồ sơ, ngân sách và các giới hạn bạn đặt; ưu tiên món dùng đồ sắp hết hạn, món bạn chấm cao và món hay chọn. Mặc định chỉ xếp món nấu tại nhà; chọn **Cách ăn: Tất cả** (nhóm *Người đi làm* đã chọn sẵn) thì tuần có cả bữa ăn ngoài. Có nút **lặp lại thực đơn tuần trước**.
+- **Nhắc nhở** (đầu màn hình): bật/tắt, dòng "Sắp tới: ...", ba mốc **đi chợ**, **nấu** (tính theo thời gian nấu để kịp giờ ăn) và **ăn**. "Chỉnh giờ và cách nhắc" mở hộp đặt giờ ăn, bữa phụ, loại lời nhắc. Có "nhắc lại sau 10 phút", thông báo của trình duyệt (khi bạn cho phép) và **file lịch .ics 7 ngày** để điện thoại tự nhắc kể cả khi không mở trang.
+- **Cảm nhận sau bữa ăn**: đánh dấu "đã nấu / đã ăn" thì dưới bữa đó hiện dòng **"Bụng bạn thấy sao?"** (4 mức, một chạm) và ô nhận xét ngắn; bấm dòng "Triệu chứng" để chọn triệu chứng (ợ chua, đầy bụng, buồn nôn...) và ghi thêm món đã ăn. Khoảng 45 phút sau khi bấm "Đã ăn", lời nhắc hỏi bụng bạn thấy sao.
+- **Nhìn lại tuần**: đã ăn bao nhiêu bữa, bao nhiêu bữa thấy ổn hay khó chịu, các bữa theo từng ô; từ nhật ký 30 ngày chỉ ra **món nên cẩn thận** và **món hợp với bạn** (mỗi món cần ít nhất 2 lần ghi). Nút "+ Ghi bữa khác" cho bữa không có trong thực đơn.
+- **Đi chợ** (tab thứ hai): danh sách = cần cho các bữa chưa nấu − đồ đang có; bấm "đã mua" thì cộng vào tủ lạnh; **Mua online** (Bách hoá Xanh, Shopee, Tiki, Lazada, Google Maps). Thẻ **Tủ lạnh** mở hộp nhập nhanh bằng chữ ("trứng 6, gạo 1kg"), số lượng, hạn dùng, báo đồ sắp hỏng, gợi ý món nên nấu trước và nguyên liệu thay thế; đánh dấu "đã nấu" thì nguyên liệu tự trừ.
+- **Ngân sách thực tế**: nhập số tiền đã chi thật (có thể gõ "180k"), mình gợi ý **"Đặt ngân sách X đ/ngày?"** từ dữ liệu của chính bạn.
+
+### Dùng chung
 - **Hồ sơ dạ dày**: tình trạng (đợt cấp / đang đỡ / ổn định / **không đau dạ dày, ăn lành mạnh**) × mức độ (nhẹ / vừa / nặng). Mỗi món có mức "dịu" 1 đến 3 và chỉ hiện khi đủ dịu với hồ sơ.
-- **Bộ lọc nhiều thang đo**: *thời gian nấu* (5, 10, 15, 20, 30, 45 phút, 1 giờ) và *ngân sách một bữa* (6.000đ đến 50.000đ) là hai mục riêng; thêm độ khó, nguyên liệu chính (gà, heo, bò, cá, tôm, trứng, đậu hũ), cách ăn, năng lượng, món chay, dụng cụ. Các bộ lọc đang bật hiện thành nhãn có nút xoá.
-- **Mức vị tối đa (cay, mặn, chua, béo)**: bốn thang 0 đến 3, **tự khoá theo hồ sơ dạ dày** (đang đau cấp thì cay và chua khoá ở mức 0). Bạn chỉ hạ thấp thêm được, không nâng vượt mức an toàn. Trang món có nhãn mức vị và nhắc bỏ gừng, thay cà chua, nêm nhạt khi món vượt mức bạn đặt. Nhóm "không đau dạ dày" không bị khoá.
-- **Món ăn**: tìm kiếm (có dấu hoặc không dấu), sắp xếp theo hợp nhất / rẻ nhất / nhanh nhất / ít kcal / chấm sao / dùng đồ sắp hết hạn.
-- **Vuốt chọn món**: vuốt phải để thích, vuốt trái để bỏ khỏi vòng quay và kế hoạch, có nút, bàn phím (← → ↓ Z) và hoàn tác.
-- **Chấm sao** 1 đến 5: món 4 đến 5 sao và món yêu thích được ưu tiên khi tự xếp thực đơn.
-
-### Nhớ thói quen và ngân sách thực tế
-- **Món bạn hay chọn**: đếm số lần bạn chốt món và số lần nấu. Món hay chọn được **gợi ý thường hơn** (gợi ý hằng ngày), **ưu tiên nhẹ khi tự xếp thực đơn** (vẫn không lặp trong tuần), và hiện thành hàng **"Bạn hay chọn"** một chạm khi chọn món cho một bữa.
-- **Lặp lại thực đơn tuần trước**: một nút chép cả tuần trước sang tuần này (bỏ món không còn hợp hồ sơ, món đã bỏ, món bạn chấm 1 đến 2 sao; ô nào không chép được thì tự xếp bù).
-- **Ngân sách thực tế**: ở tab Đi chợ bạn nhập số tiền đã chi thật (có thể gõ "180k"); không nhập thì mình tính từ giá các bữa đã nấu. Từ đó trang Thực đơn gợi ý **"Đặt ngân sách X đ/ngày?"** (làm tròn lên 5.000đ), bấm một lần là áp dụng, bấm "Để sau" thì không hỏi lại đúng mức đó.
-
-### Nhiều đối tượng
-- Chọn nhóm lúc bắt đầu hoặc trong Cài đặt > **Tôi là**: *Sinh viên* (≤ 20.000đ, ≤ 30 phút), *Người đi làm* (≤ 50.000đ, ≤ 30 phút, thực đơn tuần có cả bữa ăn ngoài), *Người lớn tuổi* (≤ 45 phút, nêm nhạt, **chữ to**, giờ ăn sớm hơn), *Ăn lành mạnh* (không đau dạ dày). Mỗi nhóm chỉ là **cài đặt sẵn**, vẫn đổi được từng mục; đổi nhóm có hộp xác nhận.
+- **Nhiều đối tượng**: chọn nhóm lúc bắt đầu hoặc trong Cài đặt > **Tôi là**: *Sinh viên* (≤ 20.000đ, ≤ 30 phút), *Người đi làm* (≤ 50.000đ, ≤ 30 phút, thực đơn có cả bữa ăn ngoài), *Người lớn tuổi* (≤ 45 phút, nêm nhạt, **chữ to**, giờ ăn sớm hơn), *Ăn lành mạnh*. Mỗi nhóm chỉ là **cài đặt sẵn**, vẫn đổi được từng mục.
+- **Người mới**: chào mừng đúng 2 bước (bạn thuộc nhóm nào → dạ dày đang thế nào); trang chủ có thẻ "Làm quen trong 3 bước" (quay hoặc tự chọn → xem món có hợp không rồi chốt → xem thực đơn và đi chợ) tự tích khi bạn làm xong.
 - **Chữ to** (Cài đặt > Cỡ chữ): mọi cỡ chữ tính theo rem nên tăng đồng loạt, đã kiểm tra không tràn ngang ở 360px.
-
-### Nấu và mua
-- **Thực đơn tuần**: tự xếp 21 bữa không lặp món theo hồ sơ, ngân sách và các giới hạn bạn đặt (thời gian, giá, độ khó, mức vị); ưu tiên món dùng đồ sắp hết hạn, món bạn chấm cao và món hay chọn. Mặc định chỉ xếp món nấu tại nhà; chọn **Cách ăn: Tất cả** (nhóm *Người đi làm* đã chọn sẵn) thì tuần có cả bữa ăn ngoài, bữa đó không tính vào danh sách đi chợ.
-- **Danh sách đi chợ** = cần cho các bữa chưa nấu − đồ đang có trong tủ lạnh. Bấm "đã mua" thì cộng vào tủ lạnh. Có nút **Mua online** (mở trang tìm kiếm của Bách hoá Xanh, Shopee, Tiki, Lazada hoặc Google Maps).
-- **Nấu từng bước** (`#cook-<mã món>`): chữ to, **đọc to** từng bước (giọng của trình duyệt), **hẹn giờ** tự nhận từ công thức ("12–15 phút"), điều khiển bằng giọng nói (thử nghiệm, Chrome/Edge), giữ màn hình sáng, nhãn hẹn giờ nổi khi sang trang khác.
-
-### Trong mục "Thêm"
-- **Tủ lạnh có số lượng và hạn dùng**: nhập nhanh bằng chữ ("trứng 6, gạo 1kg, bí đỏ 300g, tôm 200"), báo đồ hết hạn / sắp hết hạn / sắp hết, gợi ý **món nên nấu trước**, **nguyên liệu thay thế**. Đánh dấu "đã nấu" thì nguyên liệu tự trừ khỏi tủ.
-- **Nhắc ăn đúng giờ**: nhắc **đi chợ** (tối hôm trước), **chuẩn bị nguyên liệu**, **bắt đầu nấu** (tính theo thời gian nấu của món để kịp giờ ăn) và **đến giờ ăn**; có "nhắc lại sau 10 phút", "đã ăn", "bỏ qua". Khoảng 45 phút sau khi bấm "Đã ăn", hỏi **bụng bạn thấy sao** để ghi nhật ký. Thông báo của trình duyệt (khi bạn cho phép) và **file lịch .ics 7 ngày** để điện thoại tự nhắc kể cả khi không mở trang. Chuông trên thanh trên cùng mở thẳng trang này.
-- **Nhật ký ăn uống**: ghi cảm giác và triệu chứng sau mỗi bữa; thống kê 30 ngày chỉ ra món nên cẩn thận và món hợp với bạn.
-- **Cộng đồng**: bảng tin (có thể gắn món, mỗi trang món có góc "mọi người nói gì"), **bảng xếp hạng** món được chốt. Mời bạn bè dùng thử (mở hộp chia sẻ hoặc sao chép lời mời).
-- **Hồ sơ và cài đặt**, **Về dự án** (vấn đề, nguyên nhân gốc rễ, câu hỏi thiết kế, ai dùng được, việc làm được thật / chưa làm được).
-
-### Cẩm nang
-- Tra 69 nguyên liệu (nên dùng / dùng ít / nên tránh, kèm lý do), **kiểm tra công thức bất kỳ**, bảng thay thế, "Tưởng lành mà không lành", thói quen ăn uống, dấu hiệu cần đi khám ngay.
 - Giao diện sáng / tối, **4 bộ màu** (Ngọc lam, Lá trà, Biển sâu, Mận chín), lưu dữ liệu trong trình duyệt (`localStorage`).
+- **Về dự án** (`#about`, mở từ Cài đặt): vấn đề, nguyên nhân gốc rễ, câu hỏi thiết kế, quy trình ba màn hình, những gì đã gộp hoặc bỏ, việc làm được thật / chưa làm được.
 
 ## Chạy thử
 
@@ -81,55 +92,62 @@ npx serve .
 
 ```
 index.html            khung trang
-css/                  tokens (màu, chữ, chế độ tối, bộ màu) · base (kèm chữ to) · components · views
+css/                  tokens (màu, chữ, chế độ tối, bộ màu) · base (kèm chữ to, thanh 3 tab) · components · views
+docs/
+  gop-y-giang-vien.md phân tích ghi âm góp ý của giảng viên và cách xử lý từng điểm
 js/
   util.js             tiện ích (bỏ dấu, ngày tháng, sao chép...)
   icons.js            icon SVG + mascot "Bé Cháo"
   data/
-    ingredients.js    nguyên liệu, giá ước tính, dụng cụ
+    ingredients.js    nguyên liệu, giá ước tính, dụng cụ, mẹo chọn mua theo nhóm
     dishes.js         các món (công thức, mức dịu, độ khó, nguyên liệu chính, mức vị tính sẵn)
-    guide.js          cẩm nang: nên/tránh, thay thế, cảnh báo, thói quen, tình trạng dạ dày, video
+    guide.js          cẩm nang: nên/tránh, thay thế, cảnh báo, thói quen, tình trạng dạ dày
     extras.js         bộ màu, thang lọc, mức vị và ngưỡng khoá, nhóm người dùng, nguyên liệu thay thế, hạn dùng, gói thường mua, cửa hàng
-  store.js            trạng thái, localStorage, lọc món, xếp thực đơn, thói quen, ngân sách thực tế, tủ lạnh, đi chợ, nhật ký
+  store.js            trạng thái, localStorage, lọc món, xếp thực đơn, thói quen, thống kê hành trình, cảm nhận từng bữa, tủ lạnh, đi chợ
   ui.js               ô minh hoạ, sheet / hộp thoại, toast, hộp gập nhớ trạng thái
   wheel.js            vòng quay (SVG)
-  sheets.js           bộ lọc, ghim lịch, chọn món, cài đặt, chào mừng 2 bước
-  remind.js           lời nhắc ăn đúng giờ, hộp nhắc, file .ics
-  pantry.js           tủ lạnh: giao diện, nhập nhanh, thay thế, mua online
-  deck.js             vuốt chọn món
+  sheets.js           bộ lọc, chốt món, chọn món, cài đặt, chào mừng 2 bước
+  remind.js           lời nhắc ăn đúng giờ, khối nhắc nhở, hộp chỉnh giờ, file .ics
+  pantry.js           tủ lạnh: nhập nhanh, thay thế, mua online (mở thành hộp từ tab Đi chợ)
+  guide.js            cẩm nang gắn vào món: nguyên liệu → mục cẩm nang, dinh dưỡng, tra cứu, kiểm tra công thức, hộp Cẩm nang
+  diary.js            dòng cảm nhận dưới từng bữa, "Nhìn lại tuần", hộp ghi chi tiết
   cook.js             nấu từng bước: đọc to, hẹn giờ, giọng nói
-  views-*.js          các màn hình (hôm nay, món ăn, thực đơn, cẩm nang, cộng đồng + nhật ký + xếp hạng, thêm + tủ lạnh + nhắc giờ, về dự án)
+  views-home.js       màn Hôm nay (vòng quay, tự chọn món, hành trình)
+  views-explore.js    màn Món ăn (danh sách, trang món: hợp với bạn không, đi chợ cho món)
+  views-plan.js       màn Thực đơn (tuần, đi chợ, nhắc nhở, nhìn lại tuần)
+  views-about.js      Về dự án
   app.js              điều hướng (hash) và khởi động
 assets/favicon.svg
 ```
 
-Các địa chỉ: `#home`, `#explore`, `#dish-<mã>`, `#cook-<mã>`, `#plan`, `#plan-shop`, `#guide…`, `#more`, `#fridge`, `#remind`, `#diary`, `#community`, `#rank`, `#about`. Địa chỉ cũ (`#plan-fridge`, `#plan-remind`, `#community-diary`, `#community-friends`) vẫn mở đúng trang.
+Các địa chỉ: `#home`, `#explore`, `#dish-<mã>`, `#cook-<mã>`, `#plan`, `#plan-shop`, `#about`. Địa chỉ cũ vẫn mở đúng chỗ: `#guide…` (Cẩm nang mở thành hộp ở màn Món ăn), `#fridge` và `#plan-fridge` (tủ lạnh trong tab Đi chợ), `#remind` và `#plan-remind` (khối nhắc nhở ở màn Thực đơn), `#diary` (Thực đơn), `#community…`, `#rank`, `#more` (về màn Hôm nay).
 
 Mã dùng script thường (không module) nên chạy được cả khi mở bằng `file://`.
 
 ## Thêm nội dung
 
 - **Thêm món**: thêm một object vào `RAW` trong `js/data/dishes.js`. Chi phí, món chay, năng lượng, độ khó, nguyên liệu chính và mức vị được tính tự động từ `ing`; `base: 'com'` tự thêm gạo và bước nấu cơm mềm. Món ăn ngoài khai báo thêm `prot: [...]` cho nguyên liệu chính. Mức vị của món không được vượt `H.FLAVOR_CAPS[care]`.
-- **Thêm nguyên liệu**: `js/data/ingredients.js` (đơn vị, giá, có phải đồ có sẵn trong bếp không), rồi thêm hạn dùng (`H.SHELF_DAYS`), gói thường mua (`H.PACK`), từ khoá nhập nhanh (`H.ING_ALIASES`) và đồ thay thế (`H.SUBS`) trong `extras.js`. Nếu là nguồn đạm mới, thêm vào `H.PROTEINS` (extras.js) và `PROTEIN_OF` (dishes.js).
+- **Thêm nguyên liệu**: `js/data/ingredients.js` (đơn vị, giá, có phải đồ có sẵn trong bếp không), rồi thêm hạn dùng (`H.SHELF_DAYS`), gói thường mua (`H.PACK`), từ khoá nhập nhanh (`H.ING_ALIASES`) và đồ thay thế (`H.SUBS`) trong `extras.js`. Nếu là nguồn đạm mới, thêm vào `H.PROTEINS` (extras.js) và `PROTEIN_OF` (dishes.js). Để khối "Hợp với bạn không?" nhận ra nguyên liệu mới, thêm một dòng vào `FOOD_OF` trong `js/guide.js` (mã nguyên liệu → mã mục trong `H.FOODS`; nguyên liệu chưa có dòng này thì khối cẩm nang của món bỏ qua nguyên liệu đó).
 - **Thêm nhóm người dùng**: `H.PERSONAS` trong `extras.js` (ngân sách và thời gian phải nằm trong `COST_STEPS` / `TIME_STEPS`; `text: 'large'` để bật chữ to, `salt: 1` để mặc định nêm nhạt).
 - **Đổi bảng màu**: sửa `--p-base` và `--accent-base` trong `css/tokens.css`; mọi màu nền, chữ, viền đều sinh từ hai màu này (cả giao diện tối). Muốn thêm lựa chọn trong Cài đặt thì thêm vào `H.PALETTES` (extras.js) và một dòng `:root[data-palette="..."]` ở cuối tokens.css.
 - **Thêm mục cẩm nang**: `H.FOODS` trong `js/data/guide.js`. `alias` là các cách gọi khác; "Kiểm tra công thức" dùng chính các alias này để nhận diện.
-- **Thêm video chuyên gia**: điền `H.VIDEOS` trong `js/data/guide.js` (mẫu ở comment). Chỉ thêm video đã được kiểm duyệt nội dung.
+- **Mẹo chọn mua**: trường `buy` của từng nhóm trong `H.CATEGORIES` (`js/data/ingredients.js`).
 
 ## Hạn chế hiện tại và bước tiếp theo
 
 Những thứ **chưa làm được vì cần máy chủ hoặc AI** (trang này chạy hoàn toàn trên máy người dùng nên không làm giả; các mục chỉ là chỗ giữ chỗ đã được bỏ khỏi giao diện):
 
-- **Kết bạn, bài viết và bảng xếp hạng cho mọi người cùng thấy**: cần tài khoản đăng nhập, cơ sở dữ liệu (ví dụ Supabase hoặc Firebase) và kiểm duyệt nội dung. Hiện bài viết chỉ lưu trên máy người đăng, bảng xếp hạng "cộng đồng" là số liệu minh hoạ (có ghi chú trên giao diện).
+- **Kết bạn, bài viết và bảng xếp hạng cho mọi người cùng thấy**: cần tài khoản đăng nhập, cơ sở dữ liệu (ví dụ Supabase hoặc Firebase) và kiểm duyệt nội dung. Vì chưa làm được thật nên đã bỏ khỏi bản này.
 - **Nhập nguyên liệu bằng ảnh / quét mã**: cần dịch vụ nhận diện hình ảnh. Hiện có nhập nhanh bằng chữ và chọn từ danh mục.
 - **Nhắc đẩy khi đã đóng hẳn trình duyệt**: cần máy chủ gửi Web Push. Hiện nhắc khi tab còn mở, thông báo trình duyệt khi tab ở nền, và file lịch `.ics` cho điện thoại.
 - **Đặt hàng tự động** trên sàn thương mại: hiện chỉ mở trang tìm kiếm của cửa hàng.
 - **Giọng đọc và nhận giọng nói** phụ thuộc trình duyệt và thiết bị (một số máy chưa cài giọng tiếng Việt, iOS chưa hỗ trợ nghe liên tục).
-- **Video chuyên gia**: mới có khung và các đường dẫn tìm kiếm YouTube. Cần danh sách video đã duyệt.
+- **Video chuyên gia**: cần danh sách video đã duyệt; hiện trang món chỉ có đường dẫn tìm kiếm YouTube.
 - **Hình món** đang dùng emoji trên ô màu. Có thể thay bằng ảnh thật (cần ảnh có bản quyền rõ ràng).
-- **Nội dung y khoa** được viết theo các hướng dẫn dinh dưỡng phổ biến và ghi rõ chỗ các nguồn chưa thống nhất (sữa, gừng, chất xơ, hải sản, đậu hạt...). Cần bác sĩ hoặc chuyên gia dinh dưỡng thẩm định, nhất là phân loại "mức dịu" của từng món, ngưỡng khoá mức vị (`H.FLAVOR_CAPS`) và khoảng cách giữa các bữa được gợi ý. Nhóm "người lớn tuổi" và "ăn lành mạnh" mới là **cài đặt sẵn về ngân sách, thời gian và cỡ chữ**; chưa có thực đơn riêng theo bệnh nền khác (tiểu đường, huyết áp, gout...), nhu cầu năng lượng theo tuổi và giới tính.
-- Giá nguyên liệu và kcal là **ước tính**, chưa lấy từ nguồn giá thực tế theo vùng. Số liệu thống kê trong nhật ký và gợi ý ngân sách chỉ là gợi ý từ dữ liệu của chính bạn, không phải kết luận y khoa.
+- **Nội dung y khoa** được viết theo các hướng dẫn dinh dưỡng phổ biến và ghi rõ chỗ các nguồn chưa thống nhất (sữa, gừng, chất xơ, hải sản, đậu hạt...). Cần bác sĩ hoặc chuyên gia dinh dưỡng thẩm định, nhất là phân loại "mức dịu" của từng món, ngưỡng khoá mức vị (`H.FLAVOR_CAPS`), khối "Hợp với bạn không?" và khoảng cách giữa các bữa được gợi ý. Nhóm "người lớn tuổi" và "ăn lành mạnh" mới là **cài đặt sẵn về ngân sách, thời gian và cỡ chữ**; chưa có thực đơn riêng theo bệnh nền khác (tiểu đường, huyết áp, gout...), nhu cầu năng lượng theo tuổi và giới tính.
+- Giá nguyên liệu và kcal là **ước tính**, chưa lấy từ nguồn giá thực tế theo vùng. Số liệu "Nhìn lại tuần" và gợi ý ngân sách chỉ là gợi ý từ dữ liệu của chính bạn, không phải kết luận y khoa.
 - Chưa có tài khoản đăng nhập và đồng bộ giữa các thiết bị.
+- Phần góp ý của giảng viên được rút ra từ **bản chuyển chữ tự động của một ghi âm nhiều tạp âm**, nên là diễn giải ý chứ không phải nguyên văn (xem `docs/gop-y-giang-vien.md`); nên đối chiếu lại với giảng viên.
 
 ## Tham khảo
 

@@ -461,40 +461,4 @@
     { id: 'toi', label: 'Bữa tối', short: 'Tối', emoji: '🌙' },
     { id: 'phu', label: 'Bữa phụ', short: 'Phụ', emoji: '🍎' }
   ];
-
-  // ───── Video chuyên gia ─────
-  // Thêm video đã được kiểm duyệt vào đây, ví dụ:
-  // { id: 'YOUTUBE_ID', title: 'Tên video', who: 'BS. Nguyễn Văn A', role: 'Bác sĩ dinh dưỡng, Bệnh viện X', topic: 'Ăn gì khi viêm dạ dày cấp' }
-  H.VIDEOS = [];
-
-  H.VIDEO_TOPICS = [
-    { q: 'chế độ ăn cho người viêm loét dạ dày bác sĩ dinh dưỡng', title: 'Chế độ ăn cho người viêm loét dạ dày' },
-    { q: 'viêm dạ dày cấp nên ăn gì bác sĩ tư vấn', title: 'Viêm dạ dày cấp nên ăn gì' },
-    { q: 'vi khuẩn HP dạ dày điều trị và ăn uống bác sĩ', title: 'Vi khuẩn HP: điều trị và ăn uống' },
-    { q: 'thực đơn cho người đau dạ dày chuyên gia dinh dưỡng', title: 'Thực đơn cho người đau dạ dày' },
-    { q: 'khi nào cần nội soi dạ dày bác sĩ tiêu hoá', title: 'Khi nào cần nội soi dạ dày' }
-  ];
-
-  // ───── Dữ liệu minh hoạ ─────
-  // Bảng xếp hạng "cộng đồng" chỉ là số liệu minh hoạ cho đến khi có máy chủ thật.
-  H.DEMO_RANK = [
-    ['chao-thit-bam', 92], ['chao-ga', 87], ['canh-bi-xanh-thit-bam', 76], ['trung-hap-thit-bam', 63],
-    ['com-ga-nam-noi-com', 54], ['canh-su-su-ca-rot', 44], ['sup-bi-do', 41], ['mien-ga', 39],
-    ['dau-hu-hap-thit-bam', 33], ['khoai-tay-nghien-ga', 28]
-  ];
-
-  H.COMMUNITY_TAGS = ['Món ăn', 'Mẹo nhỏ', 'Hỏi đáp', 'Tâm sự'];
-
-  // Bài viết mẫu để diễn đàn không trống. Được gắn nhãn "mẫu", không phải lời kể của người thật.
-  H.COMMUNITY_SEED = [
-    { id: 'seed-1', sample: true, name: 'Bé Cháo', tag: 'Mẹo nhỏ', stage: 'doi',
-      text: 'Nấu sẵn một nồi cháo trắng vào cuối tuần, chia ra hộp nhỏ. Mỗi bữa chỉ cần hâm nóng rồi thêm thịt bằm hoặc trứng hấp là xong, đỡ phải ăn đại đồ cay ngoài quán.',
-      ts: 0, likes: 12 },
-    { id: 'seed-2', sample: true, name: 'Bé Cháo', tag: 'Mẹo nhỏ', stage: 'on',
-      text: 'Để một hộp bánh quy lạt và vài quả chuối trong ngăn bàn. Đói giữa buổi học thì ăn một ít, đỡ bị cồn cào và đỡ thèm đồ ăn vặt chua cay.',
-      ts: 0, likes: 9 },
-    { id: 'seed-3', sample: true, name: 'Bé Cháo', tag: 'Hỏi đáp', stage: 'cap',
-      text: 'Đang đau mà phải thi, nên ăn gì sáng nay? Gợi ý: cháo thịt bằm hoặc yến mạch nấu chuối, ăn sớm trước giờ thi 1 đến 2 giờ, tránh cà phê dù buồn ngủ. Nếu đau dữ dội thì đi khám, đừng cố chịu.',
-      ts: 0, likes: 15 }
-  ];
 })(window.HNAG = window.HNAG || {});

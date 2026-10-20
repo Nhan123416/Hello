@@ -1,4 +1,4 @@
-/* Trang "Về dự án": vấn đề, nguyên nhân, câu hỏi thiết kế, cách trang này giải quyết và những gì đã đổi theo góp ý. */
+/* Trang "Về dự án": vấn đề, nguyên nhân, câu hỏi thiết kế, quy trình ba màn hình và những gì đã gộp lại hoặc bỏ đi theo góp ý. */
 (function (H) {
   'use strict';
 
@@ -17,44 +17,50 @@
     ['Không ai “dịch” lời dặn của bác sĩ', 'Câu “hạn chế đồ cay, dầu mỡ” chưa thành thực đơn cụ thể theo nguyên liệu và dụng cụ mà mỗi người đang có.']
   ];
 
-  // Luồng chính: ba việc ai cũng làm. Mọi thứ khác nằm trong mục "Thêm".
-  var MAIN_FLOW = [
-    ['wheel', 'Quay hoặc chọn một món', 'Vòng quay chỉ gồm những món hợp với tình trạng dạ dày, ngân sách và thời gian nấu của bạn.', '#home'],
-    ['calendar', 'Xếp thực đơn cả tuần', 'Tự lập 21 bữa không lặp món, tính sẵn chi phí và thời gian nấu từng ngày.', '#plan'],
-    ['cart', 'Đi chợ theo danh sách', 'Gộp nguyên liệu của cả tuần, trừ đồ đã có trong tủ lạnh.', '#plan-shop']
+  // Quy trình của người dùng, từng bước, và nơi làm từng việc. Đúng ba màn hình ở thanh điều hướng.
+  var FLOW = [
+    ['wheel', 'Hôm nay', 'Quay may mắn cho vui, hoặc tự chọn món. Phía dưới ghi lại bạn đã quay bao nhiêu vòng và đã chốt những món nào.', '#home'],
+    ['book', 'Món ăn', 'Mỗi món cho biết ngay có hợp với bạn không và vì sao (cẩm nang nằm trong từng món), rồi chốt món và xem hướng dẫn đi chợ.', '#explore'],
+    ['calendar', 'Thực đơn', 'Thực đơn cả tuần, danh sách đi chợ, khối nhắc nhở (giờ đi chợ, giờ nấu, giờ ăn) và ô ghi cảm nhận sau mỗi bữa.', '#plan']
   ];
 
-  var SOLUTIONS = [
-    ['search', 'Nguyên liệu nên dùng và nên tránh, kèm vì sao', 'Ví dụ vì sao nên tránh cà chua sống, còn cà chua nấu nhừ thì dùng ít được.', '#guide-tra'],
-    ['shuffle', 'Gợi ý nguyên liệu thay thế', 'Công thức gốc có thành phần cần kiêng thì đổi sang gì cho vẫn ngon. Dán công thức để mình soi giúp.', '#guide-thaythe'],
-    ['warn', 'Cảnh báo “tưởng lành mà không lành”', 'Đồ lên men, nước có gas, đồ đóng hộp và những thứ nghe có vẻ tốt cho sức khoẻ.', '#guide-tuonglanh'],
-    ['play', 'Video từ chuyên gia, bác sĩ dinh dưỡng', 'Để người bệnh yên tâm hơn. Mục này đang chờ danh sách video đã kiểm duyệt.', '#guide-video'],
-    ['bell', 'Nhắc ăn đúng giờ', 'Nhắc đi chợ, chuẩn bị nguyên liệu, nấu và ăn theo giờ bạn đặt. Xuất lịch .ics để điện thoại nhắc kể cả khi đóng trang.', '#remind'],
-    ['fridge', 'Tủ lạnh có số lượng và hạn dùng', 'Báo đồ sắp hỏng, sắp hết, gợi ý món nên nấu trước và nguyên liệu thay thế khi thiếu.', '#fridge'],
-    ['book2', 'Nhật ký ăn uống', 'Ghi cảm giác sau mỗi bữa để tìm ra món hợp và món hay làm bạn khó chịu.', '#diary'],
-    ['users', 'Cộng đồng chia sẻ kinh nghiệm', 'Trao đổi món ăn và mẹo nấu. Hiện là bản thử nghiệm.', '#community']
+  // Những gì đã gộp vào ba màn hình trên theo góp ý, và những gì đã bỏ.
+  var MERGED = [
+    ['Cẩm nang', 'vào từng món ở màn Món ăn (khối “Hợp với bạn không?”). Phần tra nguyên liệu, kiểm tra công thức và lưu ý chung mở bằng nút “Cẩm nang”.'],
+    ['Nhật ký ăn uống', 'thành một dòng cảm nhận ngay dưới từng bữa ở màn Thực đơn, kèm phần “Nhìn lại tuần”.'],
+    ['Nhắc giờ ăn', 'thành khối “Nhắc nhở” ở màn Thực đơn.'],
+    ['Tủ lạnh', 'vào tab Đi chợ của màn Thực đơn, để danh sách đi chợ tự trừ đồ đang có.']
+  ];
+  var DROPPED = [
+    'Bảng tin cộng đồng và bảng xếp hạng minh hoạ: chỉ lưu trên máy nên chưa có ý nghĩa thật.',
+    'Vuốt chọn món: trùng việc với “Tự chọn món” ở trang Hôm nay.',
+    'Mục video chuyên gia: đang chờ danh sách video đã kiểm duyệt.',
+    'Trang “Thêm” và các nút phụ: không còn cần khi mọi thứ đã nằm trong ba màn hình.'
   ];
 
   // Việc nào làm thật được ngay trên trang này, việc nào cần máy chủ hoặc AI.
   var REAL = [
     'Lọc món theo tình trạng dạ dày, mức độ, thời gian nấu, ngân sách, độ khó và mức vị (cay, mặn, chua, béo) bị khoá theo hồ sơ.',
     'Xếp thực đơn tuần, lặp lại thực đơn tuần trước, danh sách đi chợ trừ đồ trong tủ lạnh, tự trừ nguyên liệu khi đánh dấu “đã nấu”.',
-    'Nhớ món bạn hay chọn và hay nấu để gợi ý nhanh hơn; nhớ số tiền bạn chi thật khi đi chợ để gợi ý ngân sách sát thực tế.',
-    'Nhắc giờ khi tab còn mở, thông báo của trình duyệt (nếu bạn cho phép), file lịch .ics cho điện thoại.',
-    'Chấm sao, vuốt chọn món, nhật ký ăn uống: lưu trên thiết bị của bạn.'
+    'Cẩm nang gắn vào từng nguyên liệu của món; tra nguyên liệu, kiểm tra công thức bất kỳ và gợi ý thay thế.',
+    'Nhớ món bạn hay chọn và hay nấu, số vòng đã quay, món đã chốt; nhớ số tiền chi thật khi đi chợ để gợi ý ngân sách sát thực tế.',
+    'Ghi cảm nhận sau từng bữa và nhìn lại tuần; mình chỉ ra món hay làm bạn khó chịu và món hợp với bạn.',
+    'Nhắc giờ khi tab còn mở, thông báo của trình duyệt (nếu bạn cho phép), file lịch .ics cho điện thoại.'
   ];
   var LATER = [
-    'Kết bạn, bảng xếp hạng và bài viết cho mọi người cùng thấy: cần tài khoản và máy chủ.',
+    'Kết bạn, cộng đồng chia sẻ và bảng xếp hạng thật: cần tài khoản và máy chủ.',
     'Chụp ảnh tủ lạnh hoặc quét mã để nhập nguyên liệu: cần dịch vụ nhận diện hình ảnh (AI).',
     'Nhắc đẩy khi đã đóng hẳn trình duyệt: cần máy chủ gửi thông báo (hiện dùng file lịch .ics thay thế).',
-    'Đặt hàng tự động trên Shopee, Tiki, Bách hoá Xanh: hiện chỉ mở trang tìm kiếm của cửa hàng.'
+    'Đặt hàng tự động trên Shopee, Tiki, Bách hoá Xanh: hiện chỉ mở trang tìm kiếm của cửa hàng.',
+    'Video của bác sĩ, chuyên gia dinh dưỡng: cần danh sách video đã kiểm duyệt.'
   ];
 
   H.views.about = {
     title: 'Về dự án',
     render: function () {
       return '<div class="about">' +
-        H.ui.subHead('VỀ DỰ ÁN', 'Vì sao có “Hôm nay ăn gì?”', 'Một công cụ nhỏ giúp người đau dạ dày tự nấu ăn đúng cách, và giúp bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi.') +
+        '<a class="back" href="#home">' + H.icon('chev-l', { size: 18 }) + 'Hôm nay</a>' +
+        H.ui.pageHead('VỀ DỰ ÁN', 'Vì sao có “Hôm nay ăn gì?”', 'Một công cụ nhỏ giúp người đau dạ dày tự nấu ăn đúng cách, và giúp bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi.') +
 
         '<section class="about-card"><h2>Vấn đề</h2>' +
         '<p>Người bị đau dạ dày hoặc viêm loét dạ dày thường phải tự nấu ăn, vì quán ăn và dịch vụ giao đồ ăn hiện tại hầu như không có lựa chọn cho người cần kiêng cữ (cay, chua, dầu mỡ, cà phê...). Điều này rõ nhất với sinh viên ở nhà trọ, nhưng người đi làm bận rộn và người lớn tuổi cũng gặp đúng khó khăn đó. Tự mua nguyên liệu và nấu đúng cách thì lại thiếu hướng dẫn cụ thể, đáng tin cậy.</p></section>' +
@@ -69,10 +75,16 @@
         '<section class="callout tip"><h2>' + H.icon('sparkle', { size: 18 }) + 'Câu hỏi định hướng thiết kế</h2>' +
         '<p>Làm sao để người bị đau dạ dày có thể tự tin mua đúng nguyên liệu và nấu ăn an toàn cho tình trạng của mình, mà không cần lo sợ ăn sai hay tự mò mẫm?</p></section>' +
 
-        '<section class="block"><h2>Luồng chính: ba việc</h2><ul class="about-solutions">' + MAIN_FLOW.map(row).join('') + '</ul>' +
-        '<p class="hint">Trang chủ chỉ giữ ba việc này. Tủ lạnh, nhắc giờ, nhật ký, cộng đồng và các cài đặt nằm trong mục “Thêm” để lúc đầu bạn không bị rối.</p></section>' +
+        '<section class="block"><h2>Quy trình: ba màn hình</h2><ol class="flow">' + FLOW.map(function (f, i) {
+          return '<li><a class="row" href="' + f[3] + '"><span class="row-ic">' + H.icon(f[0], { size: 20 }) + '</span>' +
+            '<span class="row-main"><strong>' + (i + 1) + '. ' + esc(f[1]) + '</strong><small>' + esc(f[2]) + '</small></span>' + H.icon('chev-r', { size: 18 }) + '</a></li>';
+        }).join('') + '</ol>' +
+        '<p class="hint">Người dùng đi một mạch: chọn món, biết món có hợp không rồi chốt, đi chợ, nấu và ăn, ghi lại cảm nhận. Mỗi màn hình chỉ giữ phần chính của bước đó; phần phụ gập lại hoặc mở trong hộp thoại khi cần.</p></section>' +
 
-        '<section class="block"><h2>Những thứ hỗ trợ thêm</h2><ul class="about-solutions">' + SOLUTIONS.map(row).join('') + '</ul></section>' +
+        '<div class="about-grid">' +
+        '<section class="about-card"><h2>Đã gộp lại theo góp ý</h2><ul class="about-list">' + MERGED.map(function (m) { return '<li><strong>' + esc(m[0]) + '</strong> ' + esc(m[1]) + '</li>'; }).join('') + '</ul></section>' +
+        '<section class="about-card"><h2>Đã bỏ</h2><ul class="about-list">' + DROPPED.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></section>' +
+        '</div>' +
 
         '<section class="block"><h2>Ai dùng được?</h2><ul class="about-solutions">' + H.PERSONAS.map(function (p) {
           return '<li class="row who-row"><span class="row-ic" aria-hidden="true">' + p.emoji + '</span><span class="row-main"><strong>' + esc(p.name) + '</strong><small>' + esc(p.desc) + '</small></span></li>';
@@ -93,9 +105,4 @@
         '</div>';
     }
   };
-
-  function row(s) {
-    return '<li><a class="row" href="' + s[3] + '"><span class="row-ic">' + H.icon(s[0], { size: 20 }) + '</span>' +
-      '<span class="row-main"><strong>' + esc(s[1]) + '</strong><small>' + esc(s[2]) + '</small></span>' + H.icon('chev-r', { size: 18 }) + '</a></li>';
-  }
 })(window.HNAG = window.HNAG || {});

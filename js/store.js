@@ -20,6 +20,7 @@
       profile: { who: '', stage: 'doi', severity: 'vua', veg: false, tools: ['noi-com', 'bep', 'chao'], flavor: { cay: null, man: null, chua: null, beo: null } },
       textSize: 'normal',                  // normal | large (chữ to cho người lớn tuổi)
       tour: { hidden: false, spun: false, shopped: false },   // thẻ "Làm quen trong 3 bước" ở trang chủ
+      spins: 0,                            // tổng số lần đã quay vòng quay (hiện ở thẻ thống kê trang chủ)
       cooks: {},                           // { mã món: số lần đã nấu } để nhớ món hay nấu
       spent: {},                           // { 'YYYY-MM-DD' (thứ Hai đầu tuần): số tiền thực chi khi đi chợ }
       hints: { budget: 0 },                // mức ngân sách gợi ý mà bạn đã bỏ qua
@@ -37,8 +38,6 @@
       pantry: {},                          // tủ lạnh: { mã nguyên liệu: { qty: số lượng, exp: 'YYYY-MM-DD' hoặc '' } }
       consumed: {},                        // { 'ngày:bữa': { mã: [số lượng đã trừ, hạn] } } để hoàn lại khi bỏ đánh dấu đã nấu
       bought: {},                          // { 'tuần:nguyên liệu': true }
-      posts: [],                           // bài viết của người dùng (chỉ lưu trên máy)
-      liked: {},
       remind: defaultRemind(),             // lời nhắc ăn đúng giờ (xem js/remind.js)
       remindLog: {},                       // { 'ngày:bữa:loại': { s: lúc hiện, z: hẹn lại lúc, d: 1 đã xử lý } }
       ate: {},                             // { 'ngày:bữa': { t: lúc bấm "Đã ăn", late: số phút lệch so với giờ ăn | null } }
@@ -91,9 +90,8 @@
       }
     } catch (e) { /* dữ liệu hỏng hoặc bị chặn: dùng mặc định */ }
     // làm sạch kiểu dữ liệu
-    ['excluded', 'favs', 'log', 'posts', 'timers', 'diary'].forEach(function (k) { if (!Array.isArray(s[k])) s[k] = []; });
+    ['excluded', 'favs', 'log', 'timers', 'diary'].forEach(function (k) { if (!Array.isArray(s[k])) s[k] = []; });
     s.diary = s.diary.map(cleanDiary).filter(Boolean).slice(-400);
-    s.posts = s.posts.filter(function (p) { return p && typeof p === 'object' && typeof p.text === 'string'; });
     s.cookPrefs = { read: !!(s.cookPrefs && s.cookPrefs.read), rate: [0.85, 1, 1.15].indexOf(s.cookPrefs && s.cookPrefs.rate) >= 0 ? s.cookPrefs.rate : 1 };
     if (!s.cookAt || typeof s.cookAt.id !== 'string') s.cookAt = { id: '', step: 0 };
     s.cookAt.step = Math.max(0, Math.floor(Number(s.cookAt.step)) || 0);
@@ -101,7 +99,7 @@
     s.timers = s.timers.filter(function (t) {
       return t && typeof t.k === 'string' && typeof t.dish === 'string' && isFinite(t.end) && isFinite(t.secs) && t.secs > 0 && t.end > nowMs - 3600000;
     }).slice(0, 12).map(function (t) { return { k: t.k, dish: t.dish, step: Math.max(0, Math.floor(t.step) || 0), label: String(t.label || '').slice(0, 80), end: Number(t.end), secs: Number(t.secs) }; });
-    ['plan', 'cooked', 'picks', 'bought', 'liked', 'remindLog', 'ate', 'pantry', 'consumed', 'ratings', 'cooks', 'spent'].forEach(function (k) { if (!s[k] || typeof s[k] !== 'object' || Array.isArray(s[k])) s[k] = {}; });
+    ['plan', 'cooked', 'picks', 'bought', 'remindLog', 'ate', 'pantry', 'consumed', 'ratings', 'cooks', 'spent'].forEach(function (k) { if (!s[k] || typeof s[k] !== 'object' || Array.isArray(s[k])) s[k] = {}; });
     Object.keys(s.cooks).forEach(function (id) {
       var n = s.cooks[id];
       if (!H.DISH_BY_ID[id] || !(Number.isInteger(n) && n > 0)) delete s.cooks[id];
@@ -111,6 +109,7 @@
       if (!/^\d{4}-\d{2}-\d{2}$/.test(wk) || !(typeof n === 'number' && isFinite(n) && n > 0 && n <= 1e8)) delete s.spent[wk];
     });
     s.tour = { hidden: !!(s.tour && s.tour.hidden), spun: !!(s.tour && s.tour.spun), shopped: !!(s.tour && s.tour.shopped) };
+    s.spins = Math.max(0, Math.min(1e6, Math.floor(Number(s.spins)) || 0));
     s.hints = { budget: Math.max(0, Number(s.hints && s.hints.budget) || 0) };
     if (['normal', 'large'].indexOf(s.textSize) < 0) s.textSize = 'normal';
     if (['', 'sv', 'dilam', 'caotuoi', 'khoe'].indexOf(s.profile.who) < 0) s.profile.who = '';
@@ -220,8 +219,7 @@
     spinning: false,
     exploreQ: '', exploreMeal: 'all', exploreAll: false, exploreFav: false, exploreSort: 'hop',
     weekOffset: 0, day: 'all',
-    guideQ: '', guideV: 'all', guideG: 'all',
-    rankTab: 'demo'
+    homeMode: 'spin'         // spin = quay may mắn | pick = tự chọn món
   };
 
   // ───────────── chọn món theo hồ sơ ─────────────
@@ -402,6 +400,36 @@
     var n = H.habitCount(id);
     return n ? 0.3 + 0.2 * Math.min(n, 3) : 0;   // tối đa 0,9: đủ để món quen được ưu tiên nhưng không lặp món trong tuần
   };
+  // Mỗi lần vòng quay dừng lại là một vòng.
+  H.recordSpin = function () {
+    H.state.spins = Math.min(1e6, (H.state.spins || 0) + 1);
+    H.save();
+  };
+
+  // Hành trình của bạn: đã quay bao nhiêu vòng, đã chốt những món nào (món hay chốt nhất, các món chốt gần đây).
+  H.historyStats = function () {
+    var S = H.state, pinned = 0;
+    Object.keys(S.picks).forEach(function (id) { if (H.DISH_BY_ID[id]) pinned += S.picks[id]; });
+    var recent = [], seen = {};
+    for (var i = S.log.length - 1; i >= 0 && recent.length < 5; i--) {
+      var l = S.log[i];
+      if (!H.DISH_BY_ID[l.id] || seen[l.id]) continue;
+      seen[l.id] = 1;
+      recent.push({ id: l.id, date: l.date, slot: l.slot });
+    }
+    return { spins: S.spins || 0, pinned: pinned, kinds: Object.keys(S.picks).filter(function (id) { return H.DISH_BY_ID[id]; }).length, top: H.myRank().slice(0, 3), recent: recent };
+  };
+
+  // Món để bạn tự chọn cho một bữa: món hay chọn và hay nấu lên trước, rồi món bạn chấm cao, món dùng đồ sắp hết hạn, và món dịu hơn.
+  H.pickList = function (meal, limit) {
+    var base = H.wheelPool(meal);
+    return base.map(function (d, i) {
+      return { d: d, i: i, h: H.habitCount(d.id), r: H.ratingOf(d.id), u: Math.min(2, H.urgencyOf(d).score) };
+    }).sort(function (a, b) {
+      return (b.h - a.h) || (b.r - a.r) || (b.u - a.u) || (a.d.care - b.d.care) || (a.d.name.localeCompare(b.d.name, 'vi'));
+    }).slice(0, limit || 6).map(function (x) { return x.d; });
+  };
+
   // Vài món bạn hay chọn nhất cho một bữa (chỉ món còn hợp hồ sơ), dùng cho hàng "Bạn hay chọn" khi chọn món.
   H.favoriteDishes = function (slot, limit) {
     return H.DISHES.filter(function (d) {
@@ -435,9 +463,9 @@
   H.tourSteps = function () {
     var S = H.state;
     var steps = [
-      { id: 'spin', done: S.tour.spun || S.log.length > 0, text: 'Quay và chốt một món', href: '' },
-      { id: 'plan', done: H.weekStats(H.weekStartOf(0)).planned > 0, text: 'Xếp thực đơn cả tuần', href: '#plan' },
-      { id: 'shop', done: S.tour.shopped, text: 'Xem danh sách đi chợ', href: '#plan-shop' }
+      { id: 'spin', done: S.tour.spun || S.spins > 0 || S.log.length > 0, text: 'Quay hoặc tự chọn một món', href: '' },
+      { id: 'pin', done: S.log.length > 0, text: 'Xem món có hợp không rồi chốt', href: '#explore' },
+      { id: 'shop', done: S.tour.shopped, text: 'Xem thực đơn và đi chợ', href: '#plan' }
     ];
     return steps;
   };
@@ -895,6 +923,41 @@
   H.deleteDiary = function (id) { H.state.diary = H.state.diary.filter(function (x) { return x.id !== id; }); H.save(); };
   H.diaryFor = function (date, slot) { return H.state.diary.filter(function (x) { return x.date === date && x.slot === slot; })[0] || null; };
 
+  // Bữa đã ăn: đã đánh dấu "đã nấu" hoặc "đã ăn" trong thực đơn, hoặc đã bấm "Đã ăn" ở lời nhắc.
+  H.isEaten = function (date, slot) { return !!(H.state.cooked[date + ':' + slot] || H.state.ate[date + ':' + slot]); };
+
+  // Ghi nhanh cảm giác sau một bữa trong thực đơn. Giữ nguyên triệu chứng và ghi chú đã có, món mặc định là món của bữa đó.
+  H.setMealFeel = function (date, slot, feel) {
+    var old = H.diaryFor(date, slot), id = H.getMeal(date, slot);
+    return H.addDiary({
+      id: old ? old.id : '', ts: old ? old.ts : 0, date: date, slot: slot, feel: feel,
+      symptoms: old ? old.symptoms : [], dishes: old && old.dishes.length ? old.dishes : (id ? [id] : []), note: old ? old.note : ''
+    });
+  };
+  // Nhận xét ngắn cho một bữa đã có cảm giác. Chưa chọn cảm giác thì chưa có mục để gắn nhận xét.
+  H.setMealNote = function (date, slot, note) {
+    var old = H.diaryFor(date, slot);
+    if (!old) return null;
+    return H.addDiary(Object.assign({}, old, { note: String(note || '').slice(0, 200) }));
+  };
+
+  // Nhìn lại một tuần: các bữa đã ăn (kèm cảm giác nếu đã ghi), tính theo kế hoạch của tuần đó.
+  H.weekReview = function (start) {
+    var rows = [], good = 0, bad = 0, logged = 0, planned = 0;
+    H.weekDays(start).forEach(function (day) {
+      var iso = U.iso(day);
+      H.slotsOn().forEach(function (slot) {
+        var id = H.getMeal(iso, slot);
+        if (id) planned++;
+        if (!id || !H.isEaten(iso, slot)) return;
+        var e = H.diaryFor(iso, slot);
+        rows.push({ date: iso, slot: slot, id: id, feel: e ? e.feel : 0, note: e ? e.note : '' });
+        if (e) { logged++; if (e.feel <= 2) good++; else bad++; }
+      });
+    });
+    return { rows: rows, eaten: rows.length, planned: planned, logged: logged, good: good, bad: bad };
+  };
+
   // Thống kê N ngày gần đây: tỷ lệ ổn, món nên cẩn thận (nhiều lần khó chịu), món hợp, triệu chứng hay gặp, trung bình theo ngày.
   H.diaryStats = function (days) {
     var today = U.parse(H.today()), from = U.iso(U.addDays(today, -(days - 1)));
@@ -923,31 +986,11 @@
     };
   };
 
-  // ───────────── bảng xếp hạng & cộng đồng ─────────────
+  // ───────────── món chốt nhiều nhất ─────────────
   H.myRank = function () {
     return Object.keys(H.state.picks)
       .filter(function (id) { return H.DISH_BY_ID[id]; })
       .map(function (id) { return [id, H.state.picks[id]]; })
       .sort(function (a, b) { return b[1] - a[1]; });
-  };
-
-  H.allPosts = function () {
-    var mine = H.state.posts.slice().sort(function (a, b) { return b.ts - a.ts; });
-    return mine.concat(H.COMMUNITY_SEED);
-  };
-  H.addPost = function (p) {
-    var post = { id: 'p' + Date.now().toString(36) + U.rand(1000), sample: false, mine: true,
-      name: p.name, tag: p.tag, stage: p.stage, text: p.text, dish: H.DISH_BY_ID[p.dish] ? p.dish : '', ts: Date.now(), likes: 0 };
-    H.state.posts.push(post);
-    H.save();
-    return post;
-  };
-  H.deletePost = function (id) {
-    H.state.posts = H.state.posts.filter(function (p) { return p.id !== id; });
-    H.save();
-  };
-  H.toggleLike = function (id) {
-    if (H.state.liked[id]) delete H.state.liked[id]; else H.state.liked[id] = true;
-    H.save();
   };
 })(window.HNAG = window.HNAG || {});

@@ -1,4 +1,4 @@
-/* Thực đơn tuần và danh sách đi chợ. (Tủ lạnh và nhắc giờ nằm trong mục "Thêm".) */
+/* Màn hình "Thực đơn": thực đơn cả tuần (kèm khối nhắc nhở, cảm nhận sau từng bữa, nhìn lại tuần) và danh sách đi chợ (kèm tủ lạnh). */
 (function (H) {
   'use strict';
 
@@ -26,7 +26,7 @@
       '<div class="mealrow-act">' +
       '<button type="button" class="btn-icon round' + (cooked ? ' on' : '') + '" data-act="cook" data-date="' + iso + '" data-slot="' + sid + '" aria-pressed="' + cooked + '" aria-label="Đánh dấu ' + (d.mode === 'out' ? 'đã ăn ' : 'đã nấu ') + esc(d.name) + '">' + H.icon('check', { size: 16, stroke: 3 }) + '</button>' +
       '<button type="button" class="btn-icon round" data-act="meal-menu" data-date="' + iso + '" data-slot="' + sid + '" aria-label="Thêm tuỳ chọn cho ' + esc(d.name) + '">' + H.icon('more', { size: 18 }) + '</button>' +
-      '</div></div></div>';
+      '</div></div>' + H.diary.feelLine(iso, sid) + '</div>';
   }
 
   function dayCard(day) {
@@ -78,7 +78,7 @@
     var shown = H.ui.day === 'all' ? days : days.filter(function (d) { return String(d.getDay()) === H.ui.day; });
     var todayISO = U.iso(new Date());
     var n = st.total;
-    var h = '<section class="weekcard" aria-labelledby="week-title">' +
+    var h = H.remind.blockHtml() + '<section class="weekcard" aria-labelledby="week-title">' +
       '<div class="weekcard-top"><div><h2 id="week-title">Tuần bắt đầu ' + U.fmtDM(start) + '</h2>' +
       '<p>Đã xếp <strong>' + st.planned + '/' + n + '</strong> bữa (' + st.cooked + ' đã nấu hoặc đã ăn)</p></div>' +
       '<div class="weeknav"><button type="button" class="btn-icon round" data-act="week-prev" aria-label="Tuần trước">' + H.icon('chev-l', { size: 18 }) + '</button>' +
@@ -99,6 +99,7 @@
         return '<button type="button" class="chip chip-green' + (iso === todayISO ? ' is-today' : '') + '" aria-pressed="' + (H.ui.day === String(d.getDay())) + '" data-act="plan-day" data-v="' + d.getDay() + '">' + U.WD_SHORT[d.getDay()] + '</button>';
       }).join('') + '</div>';
     h += '<div class="days">' + shown.map(dayCard).join('') + '</div>';
+    h += H.diary.reviewHtml(start);
     return h;
   }
 
@@ -124,11 +125,19 @@
     return lines.join('\n');
   }
 
+  // Tủ lạnh: ghi đồ đang có để danh sách đi chợ tự trừ. Quản lý trong hộp thoại.
+  function fridgeCard() {
+    var n = H.pantryItems().length, warn = H.expiredItems().length + H.expiringItems(2).length;
+    return '<section class="fridgecard"><span class="fc-e" aria-hidden="true">🧊</span><div class="fc-t"><strong>Tủ lạnh của tôi</strong>' +
+      '<small>' + (n ? n + ' loại đang có' + (warn ? ', ' + warn + ' món cần chú ý' : '') + '. Danh sách đi chợ đã trừ những thứ này.' : 'Chưa ghi gì. Ghi đồ đang có để danh sách đi chợ tự trừ.') + '</small></div>' +
+      '<button type="button" class="btn btn-soft btn-sm" data-act="open-fridge">' + (n ? 'Quản lý' : 'Ghi đồ có sẵn') + '</button></section>';
+  }
+
   function shopTab() {
     var start = viewStart();
     var sh = H.shopping(start);
     if (!sh.items.length) {
-      return H.ui.empty({
+      return fridgeCard() + H.ui.empty({
         title: 'Chưa có gì để mua',
         text: 'Hãy xếp thực đơn cho tuần này, mình sẽ gộp nguyên liệu thành danh sách đi chợ cho bạn.',
         action: '<button type="button" class="btn btn-green" data-act="plan-auto-go">' + H.icon('sparkle', { size: 18 }) + 'Tự xếp thực đơn</button>'
@@ -136,11 +145,11 @@
     }
     var toBuy = sh.items.filter(function (x) { return !x.inFridge; });
     var done = toBuy.filter(function (x) { return x.bought; }).length;
-    var h = '<section class="weekcard shop-head"><div class="weekcard-top"><div><h2>Danh sách đi chợ</h2>' +
+    var h = fridgeCard() + '<section class="weekcard shop-head"><div class="weekcard-top"><div><h2>Danh sách đi chợ</h2>' +
       '<p>Cho ' + sh.meals + ' bữa nấu tại nhà chưa nấu, tuần bắt đầu ' + U.fmtDM(start) + '</p></div>' +
       '<div class="weeknav"><button type="button" class="btn-icon round" data-act="week-prev" aria-label="Tuần trước">' + H.icon('chev-l', { size: 18 }) + '</button>' +
       '<button type="button" class="btn-icon round" data-act="week-next" aria-label="Tuần sau">' + H.icon('chev-r', { size: 18 }) + '</button></div></div>' +
-      '<div class="shop-total"><span>Ước tính</span><strong>' + U.vnd(sh.total) + '</strong><small>đã trừ đồ có trong <a href="#fridge">tủ lạnh</a> · mua ' + done + '/' + toBuy.length + '</small></div>' +
+      '<div class="shop-total"><span>Ước tính</span><strong>' + U.vnd(sh.total) + '</strong><small>đã trừ đồ có trong <button type="button" class="link-btn" data-act="open-fridge">tủ lạnh</button> · mua ' + done + '/' + toBuy.length + '</small></div>' +
       '<div class="weekcard-actions"><button type="button" class="btn btn-green" data-act="shop-copy">' + H.icon('copy', { size: 18 }) + 'Sao chép danh sách</button>' +
       '<button type="button" class="btn btn-soft" data-act="shop-buy">' + H.icon('ext', { size: 18 }) + 'Mua online</button>' +
       '<button type="button" class="btn btn-ghost" data-act="shop-clear">Bỏ tick hết</button></div></section>';
@@ -173,8 +182,8 @@
       var n = H.slotsOn().length * 7;
       var tabs = [['week', 'Thực đơn', 'calendar', 'plan'], ['shop', 'Đi chợ', 'cart', 'plan-shop']];
       return '<div class="plan">' +
-        H.ui.pageHead('<span class="k-ic">' + H.icon('calendar', { size: 14 }) + '</span>THỰC ĐƠN 7 NGÀY AN TOÀN', 'Thực đơn trong tuần',
-          'Tự động lập ' + n + ' bữa không lặp món, hợp với tình trạng dạ dày và ngân sách của bạn.') +
+        H.ui.pageHead('<span class="k-ic">' + H.icon('calendar', { size: 14 }) + '</span>THỰC ĐƠN VÀ NHẬT KÝ', 'Thực đơn trong tuần',
+          'Tự lập ' + n + ' bữa không lặp món hợp với dạ dày và ngân sách của bạn. Ăn xong, ghi lại cảm nhận ngay dưới bữa đó.') +
         '<div class="seg two" role="tablist" aria-label="Chọn mục">' + tabs.map(function (t) {
           return '<a role="tab" class="seg-i' + (tab === t[0] ? ' on' : '') + '" aria-selected="' + (tab === t[0]) + '" href="#' + t[3] + '">' + H.icon(t[2], { size: 16 }) + '<span>' + t[1] + '</span></a>';
         }).join('') + '</div>' +
@@ -193,7 +202,7 @@
           H.render({ keepScroll: true });
         }
       }
-      if (r.tab === 'shop' && H.shopping(viewStart()).items.length) H.tourMark('shopped');
+      if (H.weekStats(viewStart()).planned > 0) H.tourMark('shopped');   // đã mở thực đơn (hoặc danh sách đi chợ) có món: xong bước 3 của hướng dẫn
     }
   };
 
@@ -259,7 +268,9 @@
   H.actions.cook = function (el) {
     var on = H.toggleCooked(el.dataset.date, el.dataset.slot);
     var used = H.state.consumed[el.dataset.date + ':' + el.dataset.slot];
-    H.toast(on ? (used ? 'Đã đánh dấu đã nấu và trừ nguyên liệu khỏi tủ lạnh' : 'Đã đánh dấu đã nấu') : 'Đã bỏ đánh dấu', { icon: 'check' });
+    var d = H.DISH_BY_ID[H.getMeal(el.dataset.date, el.dataset.slot)];
+    var verb = d && d.mode === 'out' ? 'đã ăn' : 'đã nấu';
+    H.toast(on ? (used ? 'Đã đánh dấu ' + verb + ' và trừ nguyên liệu khỏi tủ lạnh. Bụng bạn thấy sao?' : 'Đã đánh dấu ' + verb + '. Bụng bạn thấy sao? Ghi ngay dưới bữa này.') : 'Đã bỏ đánh dấu', { icon: 'check', ms: on ? 3600 : 2600 });
     H.render({ keepScroll: true });
   };
   H.actions.reroll = function (el) {

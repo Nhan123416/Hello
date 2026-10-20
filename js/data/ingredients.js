@@ -10,13 +10,14 @@
 (function (H) {
   'use strict';
 
+  // buy: mẹo chọn mua, hiện trong phần "Đi chợ cho món này" ở trang từng món.
   H.CATEGORIES = [
-    { id: 'tinhbot', name: 'Tinh bột', emoji: '🍚' },
-    { id: 'dam', name: 'Đạm', emoji: '🍗' },
-    { id: 'rau', name: 'Rau củ', emoji: '🥬' },
-    { id: 'traicay', name: 'Trái cây', emoji: '🍌' },
-    { id: 'khac', name: 'Sữa & khác', emoji: '🥛' },
-    { id: 'giavi', name: 'Gia vị cơ bản', emoji: '🧂' }
+    { id: 'tinhbot', name: 'Tinh bột', emoji: '🍚', buy: 'Gạo, nui: xem hạn dùng, bao bì kín. Bún, bánh phở, bánh canh tươi nên mua trong ngày. Khoai chọn củ chắc, không mọc mầm.' },
+    { id: 'dam', name: 'Đạm', emoji: '🍗', buy: 'Thịt nạc màu hồng tươi, không mùi lạ. Cá thịt chắc, mắt trong. Tôm vỏ cứng, không nhớt. Trứng vỏ sạch, không nứt. Đậu hũ còn hạn, không chua.' },
+    { id: 'rau', name: 'Rau củ', emoji: '🥬', buy: 'Chọn rau lá non, xanh, không dập úa. Bí, bầu, mướp chọn quả non, vỏ mịn. Cà rốt chắc tay, không héo.' },
+    { id: 'traicay', name: 'Trái cây', emoji: '🍌', buy: 'Chọn quả chín vừa, không dập, không thâm. Táo chọn quả chắc tay.' },
+    { id: 'khac', name: 'Sữa & khác', emoji: '🥛', buy: 'Sữa đậu nành, sữa chua: xem hạn dùng, chọn loại ít đường hoặc không đường.' },
+    { id: 'giavi', name: 'Gia vị cơ bản', emoji: '🧂', buy: '' }
   ];
 
   H.INGREDIENTS = {

@@ -90,7 +90,7 @@
     return '<p class="disclaimer">' + H.icon('info', { size: 16 }) +
       '<span>Thông tin chỉ mang tính tham khảo, không thay thế chẩn đoán và điều trị của bác sĩ. ' +
       'Nếu đau kéo dài, nôn ra máu, đi ngoài phân đen hoặc sụt cân nhanh, hãy ' +
-      '<a href="#guide-luuy">đi khám ngay</a>.</span></p>';
+      '<button type="button" class="link-btn" data-act="open-redflags">đi khám ngay</button>.</span></p>';
   };
 
   // Hồ sơ dạ dày dạng "chip" ngắn gọn.

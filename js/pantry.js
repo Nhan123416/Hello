@@ -228,11 +228,31 @@
       cls = 'low';
       text = shortName(low[0].id) + ' sắp hết' + (low.length > 1 ? ' (cùng ' + (low.length - 1) + ' món khác)' : '') + '. Xem tủ lạnh và danh sách thay thế.';
     }
-    return '<a class="alertcard ' + cls + '" href="#fridge"><span class="ac-e" aria-hidden="true">🧊</span><span class="ac-t">' + esc(text) + '</span>' + H.icon('chev-r', { size: 16 }) + '</a>';
+    return '<button type="button" class="alertcard ' + cls + '" data-act="open-fridge"><span class="ac-e" aria-hidden="true">🧊</span><span class="ac-t">' + esc(text) + '</span>' + H.icon('chev-r', { size: 16 }) + '</button>';
   };
 
   // ───────────── hành động ─────────────
-  function rerender() { H.render({ keepScroll: true }); }
+  // Tủ lạnh nằm trong hộp thoại: đang mở thì làm mới cả hộp lẫn trang bên dưới.
+  function rerender() {
+    var t = H.sheet.top();
+    if (t && t.isFridge) t.refresh();
+    H.render({ keepScroll: true });
+  }
+
+  // Mở từ danh sách đi chợ (hoặc từ thẻ nhắc đồ sắp hết hạn ở trang chủ).
+  H.openFridge = function () {
+    var rec = H.sheet.open({
+      title: 'Tủ lạnh của tôi',
+      cls: 'overlay-fridge',
+      render: function () {
+        return { body: '<p class="hint fridge-lead">Ghi số lượng và hạn dùng. Mình báo đồ sắp hỏng, gợi ý món nên nấu trước và tự trừ nguyên liệu khi bạn đánh dấu “đã nấu”. Danh sách đi chợ cũng tự trừ những gì bạn đang có.</p>' + P.tabHtml() };
+      },
+      onClose: function () { H.render({ keepScroll: true }); }
+    });
+    rec.isFridge = true;
+    return rec;
+  };
+  H.actions['open-fridge'] = function () { H.openFridge(); };
 
   H.actions['toggle-fridge-tab'] = function (el) {
     var id = el.dataset.id;
@@ -361,7 +381,7 @@
           body: '<p class="dialog-text">Có thể thay <strong>' + esc(it.name) + '</strong> bằng một trong các nguyên liệu sau. Mình xếp thứ bạn đang có trong tủ lạnh lên đầu.</p>' +
             (subs.length ? '<ul class="rows">' + subs.map(subRow).join('') + '</ul>'
               : '<p class="hint">Chưa có gợi ý thay thế cho nguyên liệu này. Nếu chỉ là rau thơm hay hành lá nhỏ thì bỏ đi cũng được.</p>') +
-            '<p class="hint">Món thay thế có thể đổi vị và độ mềm một chút. Xem thêm <a href="#guide-thaythe" data-act="close-sheet">bảng thay thế trong Cẩm nang</a>.</p>',
+            '<p class="hint">Món thay thế có thể đổi vị và độ mềm một chút. Xem thêm <button type="button" class="link-btn" data-act="open-guide" data-tab="thaythe">bảng thay thế trong Cẩm nang</button>.</p>',
           foot: '<button type="button" class="btn btn-primary btn-block" data-act="close-sheet" data-autofocus>Đã hiểu</button>'
         };
       }

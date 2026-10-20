@@ -337,7 +337,7 @@
       }
       return '<div class="alarm-foot"><div class="feelbar" role="group" aria-label="Bụng bạn thấy sao">' + H.FEELS.map(function (f) {
         return '<button type="button" class="feel-btn" data-act="alarm-feel" data-v="' + f.id + '"' + k + '><span aria-hidden="true">' + f.emoji + '</span><small>' + esc(f.label) + '</small></button>';
-      }).join('') + '</div>' + snooze + '<a class="link center" href="#diary" data-act="alarm-go"' + k + '>Mở nhật ký để ghi chi tiết</a></div>';
+      }).join('') + '</div>' + snooze + '<a class="link center" href="#plan" data-act="alarm-go"' + k + '>Mở thực đơn để ghi chi tiết</a></div>';
     }
     if (e.type === 'shop') {
       return '<div class="alarm-foot"><a class="btn btn-primary btn-lg" href="#plan-shop" data-act="alarm-go" data-autofocus' + k + '>' + H.icon('cart', { size: 18 }) + 'Xem danh sách đi chợ</a>' +
@@ -413,7 +413,8 @@
   };
 
   function saveFeel(e, feel, syms) {
-    H.addDiary({ date: e.date, slot: e.slot, feel: feel, symptoms: syms, dishes: e.dish ? [e.dish.id] : [], note: '' });
+    var old = H.diaryFor(e.date, e.slot);
+    H.addDiary({ date: e.date, slot: e.slot, feel: feel, symptoms: syms, dishes: e.dish ? [e.dish.id] : (old ? old.dishes : []), note: old ? old.note : '' });
     setLog(e.key, { d: 1, z: 0 });
     H.toast('Đã ghi vào nhật ký', { icon: 'check' });
     closeAlarm();
@@ -467,7 +468,7 @@
     var u = R.nextUp(), S = H.state, now = H.now();
     var sum = R.daySummary(U.iso(now));
     var progress = '<span class="nu-prog">Hôm nay đã ăn <strong>' + sum.ate + '/' + sum.total + '</strong> bữa' + (sum.onTime ? ' · ' + sum.onTime + ' đúng giờ' : '') + '</span>';
-    var link = '<a class="link" href="#remind">Lịch nhắc ' + H.icon('chev-r', { size: 14 }) + '</a>';
+    var link = '<a class="link" href="#plan">Thực đơn và nhắc nhở ' + H.icon('chev-r', { size: 14 }) + '</a>';
     if (u.kind === 'off') {
       return '<div class="nextup off"><span class="nu-e" aria-hidden="true">⏰</span><div class="nu-main"><strong>Nhắc giờ ăn đang tắt</strong>' +
         '<p>Ăn đúng giờ rất quan trọng với dạ dày. Bật lên để mình nhắc đi chợ, chuẩn bị, nấu và ăn.</p></div>' +
@@ -509,6 +510,8 @@
     return '<div id="nextup" class="nextup-box" aria-live="off">' + lastCard + '</div>';
   };
   R.refreshCard = function () {
+    var rb = document.getElementById('rb-next');
+    if (rb) { var line = R.nextLine(); if (rb.textContent !== line) rb.textContent = line; }
     var box = document.getElementById('nextup');
     if (!box) { lastCard = ''; return; }
     var html = R.cardHtml();
@@ -603,7 +606,54 @@
     } catch (x) { return false; }
   };
 
-  // ───────────── tab "Nhắc giờ" trong Kế hoạch ─────────────
+  // ───────────── khối "Nhắc nhở" ở màn Thực đơn ─────────────
+  // Một dòng về lời nhắc kế tiếp, dùng trong khối nhắc nhở.
+  R.nextLine = function () {
+    var u = R.nextUp();
+    if (u.kind === 'off') return 'Nhắc giờ đang tắt. Bật lên để mình nhắc đi chợ, nấu và ăn đúng giờ.';
+    if (u.kind === 'overdue') return 'Đã quá giờ ' + slotInfo(u.e.slot).label.toLowerCase() + ' ' + R.fmtSpan(u.late) + '. Bạn ăn chưa?';
+    if (u.kind === 'next') {
+      var n = u.e, sl = n.slot !== 'all' ? slotInfo(n.slot) : null, ds = n.dish;
+      var what = n.type === 'eat' ? 'ăn ' + sl.label.toLowerCase()
+        : n.type === 'shop' ? 'đi chợ cho ngày mai'
+        : n.type === 'feel' ? 'ghi cảm giác sau ' + sl.label.toLowerCase()
+        : TYPES[n.type].name.toLowerCase() + (ds ? ' ' + ds.name : '');
+      return 'Sắp tới: ' + what + ' lúc ' + fmtMin(n.min) + (u.sameDay ? ' (còn ' + R.fmtSpan(u.in) + ')' : ', ngày mai');
+    }
+    return 'Hôm nay hết bữa rồi. Chọn món cho ngày mai để mình nhắc giờ.';
+  };
+
+  // Giờ đi chợ, giờ nấu, giờ ăn nhìn được ngay, bật tắt bằng một nút; chỉnh kỹ trong hộp thoại.
+  R.blockHtml = function () {
+    var rm = H.state.remind;
+    function live(k) { return rm.on && rm.kinds[k]; }
+    var eatTimes = H.slotsOn().map(function (s) { return rm.times[s]; }).join(' · ');
+    return '<section class="remblock' + (rm.on ? '' : ' off') + '" aria-labelledby="rb-t">' +
+      '<div class="rb-head"><h2 id="rb-t"><span aria-hidden="true">⏰</span> Nhắc nhở</h2>' + sw(rm.on, 'remind-toggle', '', 'Bật tắt nhắc giờ ăn') + '</div>' +
+      '<p class="rb-next" id="rb-next">' + esc(R.nextLine()) + '</p>' +
+      '<ul class="rb-times">' +
+      '<li class="' + (live('shop') ? '' : 'off') + '"><span aria-hidden="true">🛒</span><span class="rb-t"><small>Đi chợ</small><b>' + esc(rm.shopAt) + '</b></span></li>' +
+      '<li class="' + (live('cook') ? '' : 'off') + '"><span aria-hidden="true">🍳</span><span class="rb-t"><small>Nấu</small><b>kịp giờ ăn</b></span></li>' +
+      '<li class="' + (live('eat') ? '' : 'off') + '"><span aria-hidden="true">🍽️</span><span class="rb-t"><small>Ăn</small><b>' + esc(eatTimes) + '</b></span></li></ul>' +
+      '<button type="button" class="btn btn-soft btn-sm" data-act="open-remind">' + H.icon('gear', { size: 16 }) + 'Chỉnh giờ và cách nhắc</button></section>';
+  };
+
+  // Hộp thoại chỉnh nhắc nhở: giờ ăn, lịch hôm nay, loại nhắc, cách nhận, xuất lịch.
+  R.openSettings = function () {
+    var rec = H.sheet.open({
+      title: 'Nhắc nhở',
+      cls: 'overlay-remind',
+      render: function () {
+        return { body: '<p class="hint rm-lead">Người đau dạ dày nên ăn đều đặn, chia nhỏ bữa và đừng để bụng đói quá lâu. Mình nhắc bạn đi chợ, chuẩn bị, nấu và ăn đúng giờ.</p>' + R.tabHtml() };
+      },
+      onClose: function () { H.render({ keepScroll: true }); }
+    });
+    rec.isRemind = true;
+    return rec;
+  };
+  H.actions['open-remind'] = function () { R.openSettings(); };
+
+  // ───────────── nội dung chỉnh nhắc nhở (hiện trong hộp thoại) ─────────────
   function sw(on, act, extra, label) {
     return '<button type="button" class="switch" role="switch" aria-checked="' + !!on + '" data-act="' + act + '"' + (extra || '') + ' aria-label="' + esc(label) + '"><i></i></button>';
   }
@@ -737,7 +787,11 @@
     return h;
   };
 
-  function rerenderTab() { H.render({ keepScroll: true }); }
+  function rerenderTab() {
+    var t = H.sheet.top();
+    if (t && t.isRemind) t.refresh();
+    H.render({ keepScroll: true });
+  }
 
   function refreshFragments() {
     var tl = document.getElementById('rm-timeline');

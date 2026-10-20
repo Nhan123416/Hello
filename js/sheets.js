@@ -32,7 +32,7 @@
   // Khi đang đau cấp, nhắc rõ giới hạn của việc tự chọn món.
   function acuteNote(p) {
     if (p.stage !== 'cap') return '';
-    return '<p class="note warn">' + H.icon('warn', { size: 16 }) + '<span>Đang đau cấp: nếu đau dữ dội, nôn nhiều hoặc không ăn uống được, hãy đi khám thay vì tự xử lý tại nhà. <a href="#guide-luuy">Xem dấu hiệu cần đi khám</a>.</span></p>';
+    return '<p class="note warn">' + H.icon('warn', { size: 16 }) + '<span>Đang đau cấp: nếu đau dữ dội, nôn nhiều hoặc không ăn uống được, hãy đi khám thay vì tự xử lý tại nhà. <button type="button" class="link-btn" data-act="open-redflags">Xem dấu hiệu cần đi khám</button>.</span></p>';
   }
 
   // Phần "Lọc thêm" tự mở nếu bạn đang dùng một trong các bộ lọc nằm trong đó.
@@ -283,14 +283,16 @@
     pin = { id: id, date: date, slot: slot };
     H.pinMeal(id, date, slot);
     H.sheet.open({
-      title: 'Đã ghim vào lịch! 📌',
+      title: 'Đã chốt món! 📌',
       cls: 'overlay-dialog',
       right: '',
       render: function () {
         var dish = H.DISH_BY_ID[pin.id];
-        var where = dish.mode === 'out'
-          ? linkOut(H.mapsUrl(dish.mapQuery + ' gần đây'), 'pin', 'Tìm quán gần bạn')
-          : linkOut(H.mapsUrl('siêu thị mini gần đây'), 'cart', 'Mua nguyên liệu') + linkOut(H.ytUrl('cách nấu ' + dish.name + ' cho người đau dạ dày'), 'play', 'Xem cách nấu');
+        // Bước tiếp theo trong quy trình: món nấu tại nhà thì xem hướng dẫn đi chợ, món ăn ngoài thì tìm quán.
+        var next = dish.mode === 'out'
+          ? linkOut(H.mapsUrl(dish.mapQuery + ' gần đây'), 'pin', 'Tìm quán gần bạn') +
+            '<a class="btn btn-soft btn-sm" href="#dish-' + dish.id + '" data-act="close-sheet">' + H.icon('list', { size: 16 }) + 'Xem cách gọi món</a>'
+          : '<button type="button" class="btn btn-primary btn-block" data-act="go-buyguide" data-id="' + dish.id + '">' + H.icon('cart', { size: 18 }) + 'Xem hướng dẫn đi chợ</button>';
         return {
           body: '<p class="pin-name">' + esc(dish.name) + '</p>' +
             '<div class="pin-slots" role="group" aria-label="Chọn bữa">' + H.SLOTS.map(function (s) {
@@ -298,8 +300,8 @@
             }).join('') + '</div>' +
             '<h3 class="pin-h">Tuần này</h3><div class="weekstrip">' + weekStripFor(pin.slot) + '</div>' +
             '<p class="hint centered">Chạm vào ngày khác để dời món này sang ngày đó.</p>' +
-            '<h3 class="pin-h">' + (dish.mode === 'out' ? 'Ăn ở đâu?' : 'Chuẩn bị') + '</h3><div class="pin-links">' + where + '</div>',
-          foot: '<div class="foot-actions"><a class="btn btn-ghost" href="#rank" data-act="close-sheet">Xem lịch sử chốt</a><button type="button" class="btn btn-primary" data-act="close-sheet" data-autofocus>Xong</button></div>'
+            '<h3 class="pin-h">Bước tiếp theo</h3><div class="pin-links">' + next + '</div>',
+          foot: '<div class="foot-actions"><a class="btn btn-ghost" href="#plan" data-act="close-sheet">Xem thực đơn tuần</a><button type="button" class="btn btn-primary" data-act="close-sheet" data-autofocus>Xong</button></div>'
         };
       },
       onClose: function () { pin = null; H.render(); }
@@ -317,6 +319,14 @@
   }
   H.actions['pin-day'] = function (el) { if (pin) movePin(el.dataset.date, pin.slot); };
   H.actions['pin-slot'] = function (el) { if (pin) movePin(pin.date, el.dataset.v); };
+  // Từ hộp "Đã chốt món": đi thẳng tới phần hướng dẫn đi chợ của món đó.
+  H.actions['go-buyguide'] = function (el) {
+    var id = el.dataset.id;
+    H.ui.dishScroll = 'buyguide';
+    H.sheet.closeAll();
+    if (H.route && H.route.name === 'dish' && H.route.id === id) H.scrollToBuyGuide();
+    else H.go('dish-' + id);
+  };
   H.actions.pin = function (el) {
     var id = el.dataset.id;
     var d = H.DISH_BY_ID[id];
@@ -393,7 +403,7 @@
             '<section class="fgroup"><h3>Hồ sơ dạ dày</h3>' +
             '<button type="button" class="opt" data-act="settings-profile"><span class="opt-emoji">' + pl.stage.emoji + '</span><span class="opt-text"><strong>' + esc(pl.text) + '</strong><small>Chạm để đổi tình trạng, mức độ và dụng cụ</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></button></section>' +
             '<section class="fgroup"><h3>Nhắc giờ ăn</h3>' +
-            '<a class="opt" href="#remind" data-act="close-sheet"><span class="opt-emoji" aria-hidden="true">⏰</span><span class="opt-text"><strong>' + (H.state.remind.on ? 'Đang bật' : 'Đang tắt') + '</strong><small>Đổi giờ ăn, loại nhắc, thông báo và xuất lịch</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></a></section>' +
+            '<button type="button" class="opt" data-act="settings-remind"><span class="opt-emoji" aria-hidden="true">⏰</span><span class="opt-text"><strong>' + (H.state.remind.on ? 'Đang bật' : 'Đang tắt') + '</strong><small>Đổi giờ ăn, loại nhắc, thông báo và xuất lịch</small></span><span class="opt-check">' + H.icon('chev-r', { size: 18 }) + '</span></button></section>' +
             '<section class="fgroup"><h3>Cỡ chữ</h3><div class="chips" role="radiogroup" aria-label="Cỡ chữ">' +
             '<button type="button" class="chip" role="radio" aria-checked="' + (H.state.textSize !== 'large') + '" data-act="set-text" data-v="normal">Chữ thường</button>' +
             '<button type="button" class="chip chip-big" role="radio" aria-checked="' + (H.state.textSize === 'large') + '" data-act="set-text" data-v="large">Chữ to</button></div></section>' +
@@ -408,9 +418,9 @@
                 '<span class="swatch-name">' + esc(pl2.name) + '</span>' +
                 (on ? '<span class="swatch-tick" aria-hidden="true">' + H.icon('check', { size: 14, stroke: 3 }) + '</span>' : '') + '</button>';
             }).join('') + '</div></section>' +
-            '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Thực đơn, tủ lạnh, nhật ký, bài viết và những món bạn hay chọn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
+            '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Thực đơn, tủ lạnh, nhật ký và những món bạn hay chọn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
             '<button type="button" class="btn btn-ghost btn-danger-ghost" data-act="reset-all">' + H.icon('trash', { size: 16 }) + ' Xoá toàn bộ dữ liệu trên máy này</button></section>' +
-            '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món lành cho người bị đau dạ dày hoặc viêm loét dạ dày và cho bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p><a class="btn btn-soft btn-sm" href="#about" data-act="close-sheet">Đọc ý tưởng dự án</a></section>'
+            '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món lành cho người bị đau dạ dày hoặc viêm loét dạ dày và cho bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p><div class="chips"><a class="btn btn-soft btn-sm" href="#about" data-act="close-sheet">Đọc ý tưởng dự án</a><button type="button" class="btn btn-soft btn-sm" data-act="share-site">' + H.icon('ext', { size: 16 }) + 'Mời bạn bè dùng thử</button></div></section>'
         };
       },
       onClose: function () { H.render(); }
@@ -418,6 +428,25 @@
   };
   H.actions['open-settings'] = function () { H.openSettings(); };
   H.actions['settings-profile'] = function () { H.sheet.close(); setTimeout(function () { H.openFilters('home'); }, 230); };
+  H.actions['settings-remind'] = function () { H.sheet.close(); setTimeout(function () { H.remind.openSettings(); }, 230); };
+
+  // Mời bạn bè: chỉ mở hộp chia sẻ hoặc sao chép nội dung, không có gì lên máy chủ.
+  H.actions['share-site'] = function () {
+    var data = { title: 'Hôm nay ăn gì?', text: 'Web gợi ý món lành cho người đau dạ dày, có vòng quay chọn món, thực đơn tuần, danh sách đi chợ và nhắc ăn đúng giờ.', url: location.href.split('#')[0] };
+    var text = data.text + (/^https?:/.test(data.url) ? ' ' + data.url : '');
+    function copyIt() {
+      U.copy(text).then(function (ok) {
+        if (ok) H.toast('Đã sao chép lời mời, dán vào Zalo hay Messenger nhé', { icon: 'copy', ms: 3600 });
+        else if (H.showTextSheet) H.showTextSheet('Lời mời bạn bè', text);
+      });
+    }
+    if (navigator.share) {
+      // Một số khung nhúng chặn chia sẻ hệ thống: khi đó chuyển sang sao chép (người dùng tự bấm huỷ thì thôi).
+      navigator.share(data).catch(function (e) { if (!e || e.name !== 'AbortError') copyIt(); });
+      return;
+    }
+    copyIt();
+  };
   H.actions['set-text'] = function (el) {
     H.state.textSize = el.dataset.v === 'large' ? 'large' : 'normal';
     H.applyTheme();
@@ -452,7 +481,7 @@
   H.actions['reset-all'] = function () {
     H.confirm({
       title: 'Xoá toàn bộ dữ liệu?',
-      text: 'Kế hoạch tuần, tủ lạnh, bài viết, bảng xếp hạng và cài đặt sẽ về mặc định. Việc này không hoàn tác được.',
+      text: 'Kế hoạch tuần, tủ lạnh, nhật ký, thống kê hành trình và cài đặt sẽ về mặc định. Việc này không hoàn tác được.',
       ok: 'Xoá hết', danger: true,
       onOk: function () {
         H.sheet.closeAll();

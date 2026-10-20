@@ -1,4 +1,4 @@
-/* Màn hình "Hôm nay": vòng quay, kết quả, bữa hôm nay, thẻ giới thiệu. */
+/* Màn hình "Hôm nay": quay may mắn hoặc tự chọn món, bữa hôm nay, thống kê hành trình, một thẻ gợi ý. */
 (function (H) {
   'use strict';
 
@@ -25,18 +25,17 @@
     }
     var d = cur.d;
     var eyebrow = (cur.source === 'spin' ? 'Kết quả vòng quay' : 'Gợi ý hôm nay') + ' · ' + slot.label;
-    var why = d.why;
     return '<article class="result" aria-label="' + esc(d.name) + '">' +
       '<p class="eyebrow">' + (cur.source === 'spin' ? H.icon('sparkle', { size: 14 }) : H.icon('leaf', { size: 14 })) + eyebrow + '</p>' +
       '<div class="result-main">' + H.ui.tile(d, 'xl') +
       '<div class="result-info"><h2>' + esc(d.name) + '</h2>' +
       '<div class="tags">' + H.ui.kindTag(d) + H.ui.careBadge(d.care, true) + H.ui.extraTags(d) + '</div></div></div>' +
       H.ui.dishStats(d) +
-      '<p class="why"><strong>Vì sao hợp dạ dày: </strong>' + esc(why) + '</p>' +
+      '<p class="why"><strong>Vì sao hợp dạ dày: </strong>' + esc(d.why) + '</p>' +
       '<div class="result-actions">' +
       '<button type="button" class="btn btn-primary btn-lg btn-block" data-act="pin" data-id="' + d.id + '">' + H.icon('pin', { size: 18 }) + 'Chốt món này</button>' +
       '<div class="result-sub">' +
-      '<a class="btn btn-ghost" href="#dish-' + d.id + '">' + (d.mode === 'out' ? 'Cách gọi món' : 'Xem công thức') + '</a>' +
+      '<a class="btn btn-ghost" href="#dish-' + d.id + '">Xem chi tiết</a>' +
       '<button type="button" class="btn btn-dark" data-act="spin">' + H.icon('refresh', { size: 18 }) + 'Quay lại</button>' +
       '</div></div>' +
       '</article>';
@@ -70,12 +69,76 @@
       '<button type="button" class="wheel-hub" data-act="spin" aria-label="Quay vòng quay">' + H.icon('sparkle', { size: 26, stroke: 2.2 }) + '</button></div>';
   }
 
+  // ───────────── chọn cách: quay may mắn hoặc tự chọn ─────────────
+  function modeSwitch() {
+    var m = H.ui.homeMode;
+    return '<div class="modeswitch" role="tablist" aria-label="Chọn cách chọn món">' +
+      '<button type="button" role="tab" class="seg-i' + (m === 'spin' ? ' on' : '') + '" aria-selected="' + (m === 'spin') + '" data-act="home-mode" data-v="spin">' + H.icon('wheel', { size: 18 }) + '<span>Quay may mắn</span></button>' +
+      '<button type="button" role="tab" class="seg-i' + (m === 'pick' ? ' on' : '') + '" aria-selected="' + (m === 'pick') + '" data-act="home-mode" data-v="pick">' + H.icon('list', { size: 18 }) + '<span>Tự chọn món</span></button></div>';
+  }
+
+  function mealChips(cls) {
+    return '<div class="chips' + (cls ? ' ' + cls : '') + '" role="group" aria-label="Chọn bữa">' + H.SLOTS.map(function (m) {
+      return H.ui.chip(m.emoji + ' ' + m.short, H.ui.meal === m.id, 'home-meal', { v: m.id });
+    }).join('') + '</div>';
+  }
+
+  // Khu vực chọn món chủ động: món hay chọn lên trước, mỗi món có nút "Chọn" để chốt ngay.
+  function pickInner() {
+    var slot = slotInfo(H.ui.meal), list = H.pickList(H.ui.meal, 6);
+    var h = '<div class="pb-head"><h2 id="pick-t">Tự chọn món cho ' + esc(slot.label.toLowerCase()) + '</h2>' +
+      '<p>Món hợp với bạn, món bạn hay chọn và hay nấu được xếp lên trước.</p></div>' + mealChips('');
+    if (!list.length) {
+      return h + H.ui.empty({
+        title: 'Chưa có món nào hợp',
+        text: 'Với bộ lọc hiện tại mình chưa tìm được món cho ' + slot.label.toLowerCase() + '. Thử nới bộ lọc nhé.',
+        action: '<button type="button" class="btn btn-primary" data-act="open-filters">Mở bộ lọc</button>'
+      });
+    }
+    h += '<ul class="pick-list">' + list.map(function (d) {
+      var often = H.habitCount(d.id) > 0;
+      return '<li class="pick-card"><a class="pk-main" href="#dish-' + d.id + '" aria-label="Xem chi tiết ' + esc(d.name) + '">' + H.ui.tile(d, 'md') +
+        '<span class="pk-t"><strong>' + esc(d.name) + '</strong>' +
+        '<small>' + (d.mode === 'out' ? '~' : '') + U.vnd(d.cost) + (d.time ? ' · ' + d.time + ' phút' : ' · ăn ngoài') + '</small>' +
+        '<span class="pk-tags">' + H.ui.careBadge(d.care) + (often ? '<span class="tag tag-soft">Hay chọn</span>' : '') + '</span></span></a>' +
+        '<button type="button" class="btn btn-primary btn-sm" data-act="pin" data-id="' + d.id + '" aria-label="Chọn món ' + esc(d.name) + '">Chọn</button></li>';
+    }).join('') + '</ul>';
+    return h + '<a class="btn btn-soft btn-block" href="#explore">Xem tất cả ' + H.countFit() + ' món hợp với bạn ' + H.icon('chev-r', { size: 16 }) + '</a>';
+  }
+
+  // ───────────── hành trình của bạn: đã quay bao nhiêu vòng, đã chốt những món nào ─────────────
+  function whenText(r) {
+    var d = U.parse(r.date), s = slotInfo(r.slot);
+    return U.WD_SHORT[d.getDay()] + ' ' + U.fmtDM(d) + (s ? ' · ' + s.short : '');
+  }
+  function statsInner() {
+    var st = H.historyStats();
+    var h = '<h2 id="jr-t">' + H.icon('trophy', { size: 18 }) + 'Hành trình của bạn</h2>' +
+      '<div class="jr-stats"><div class="jr-s"><b>' + st.spins + '</b><span>vòng đã quay</span></div>' +
+      '<div class="jr-s"><b>' + st.pinned + '</b><span>lần chốt món</span></div>' +
+      '<div class="jr-s"><b>' + st.kinds + '</b><span>món khác nhau</span></div></div>';
+    if (!st.pinned && !st.spins) {
+      return h + '<p class="hint">Quay hoặc chốt một món, mình ghi lại ở đây để bạn nhìn lại và gợi ý nhanh hơn lần sau.</p>';
+    }
+    if (st.top.length) {
+      var t = st.top[0], d = H.DISH_BY_ID[t[0]];
+      h += '<p class="jr-top">Hay chốt nhất: <a href="#dish-' + d.id + '">' + d.emoji + ' ' + esc(d.name) + '</a> <em>' + t[1] + ' lần</em></p>';
+    }
+    if (st.recent.length) {
+      h += '<p class="jr-l">Chốt gần đây</p><ul class="jr-recent">' + st.recent.map(function (r) {
+        var d = H.DISH_BY_ID[r.id];
+        return '<li><a href="#dish-' + d.id + '">' + H.ui.tile(d, 'xs') + '<span><strong>' + esc(d.name) + '</strong><small>' + esc(whenText(r)) + '</small></span></a></li>';
+      }).join('') + '</ul>';
+    }
+    return h;
+  }
+
   function tipCard() {
     var t = H.HABITS[U.hash(U.iso(new Date())) % H.HABITS.length];
     return '<section class="tipcard"><span class="tip-e" aria-hidden="true">' + t.emoji + '</span><div><p class="eyebrow">Mẹo hôm nay</p><h3>' + esc(t.title) + '</h3><p>' + esc(t.text) + '</p></div></section>';
   }
 
-  // Hướng dẫn 3 bước cho người mới: chính là luồng chính của ứng dụng.
+  // Hướng dẫn 3 bước cho người mới: chính là quy trình của ứng dụng.
   function tourCard() {
     var steps = H.tourSteps(), n = steps.filter(function (x) { return x.done; }).length;
     var first = -1;
@@ -91,7 +154,7 @@
 
   // Mỗi lần chỉ hiện MỘT thẻ ngữ cảnh để trang chủ không rối. Thứ tự ưu tiên: hướng dẫn cho người mới,
   // nhắc giờ ăn đã trễ hoặc sắp tới (trong 90 phút), đồ trong tủ lạnh cần chú ý, gợi ý bật nhắc giờ khi đang tắt, mẹo trong ngày.
-  // urgent = đặt phía trên vòng quay, ngược lại đặt phía dưới bữa hôm nay.
+  // urgent = đặt phía trên, ngược lại đặt phía cuối trang.
   function pickContext() {
     if (H.tourVisible()) return { urgent: true, html: tourCard() };
     var u = H.remind.nextUp();
@@ -106,6 +169,7 @@
   H.views.home = {
     title: 'Hôm nay ăn gì?',
     render: function () {
+      var spin = H.ui.homeMode !== 'pick';
       var pool = H.wheelPool(H.ui.meal);
       var pl = H.ui.profileLabel();
       var fit = H.countFit();
@@ -119,20 +183,22 @@
         H.icon('sliders', { size: 20 }) + '</button>' +
         H.ui.filterPills('home') +
         (ctx.urgent ? '<div id="ctx-box" class="ctx-box">' + ctx.html + '</div>' : '') +
+        modeSwitch() +
 
-        '<section class="hero" aria-labelledby="hero-title">' +
-        '<div class="hero-head"><div><h1 id="hero-title">Chưa biết ăn gì?</h1><p>Để Bé Cháo chọn một món lành cho bữa này.</p></div>' +
-        '<div class="hero-mascot">' + H.mascot({ size: 76 }) + '</div></div>' +
-        '<div class="chips on-hero" role="group" aria-label="Chọn bữa">' + H.SLOTS.map(function (m) {
-          return H.ui.chip(m.emoji + ' ' + m.short, H.ui.meal === m.id, 'home-meal', { v: m.id });
-        }).join('') + '</div>' +
-        '<div id="wheel-box">' + wheelInner(pool) + '</div>' +
-        '<button type="button" class="btn btn-white btn-xl btn-block" data-act="spin"' + (pool.length < 2 ? ' disabled' : '') + '>' + H.icon('wheel', { size: 22 }) + 'Quay ngay!</button>' +
-        '<div class="hero-links"><button type="button" data-act="open-wheel-list">' + H.icon('list', { size: 16 }) + 'Vòng quay (' + pool.length + ' món)</button></div>' +
-        '<div class="confetti" aria-hidden="true"></div></section>' +
+        (spin
+          ? '<section class="hero" aria-labelledby="hero-title">' +
+            '<div class="hero-head"><div><h1 id="hero-title">Chưa biết ăn gì?</h1><p>Để Bé Cháo chọn một món lành cho bữa này.</p></div>' +
+            '<div class="hero-mascot">' + H.mascot({ size: 76 }) + '</div></div>' +
+            mealChips('on-hero') +
+            '<div id="wheel-box">' + wheelInner(pool) + '</div>' +
+            '<button type="button" class="btn btn-white btn-xl btn-block" data-act="spin"' + (pool.length < 2 ? ' disabled' : '') + '>' + H.icon('wheel', { size: 22 }) + 'Quay ngay!</button>' +
+            '<div class="hero-links"><button type="button" data-act="open-wheel-list">' + H.icon('list', { size: 16 }) + 'Vòng quay (' + pool.length + ' món)</button></div>' +
+            '<div class="confetti" aria-hidden="true"></div></section>' +
+            '<section id="result-box" class="result-box" aria-live="polite">' + resultInner() + '</section>'
+          : '<section id="pick-box" class="pickbox" aria-labelledby="pick-t">' + pickInner() + '</section>') +
 
-        '<section id="result-box" class="result-box" aria-live="polite">' + resultInner() + '</section>' +
         '<section id="today-box" class="today">' + todayInner() + '</section>' +
+        '<section id="stats-box" class="journey" aria-labelledby="jr-t">' + statsInner() + '</section>' +
         (ctx.urgent ? '' : '<div id="ctx-box" class="ctx-box">' + ctx.html + '</div>') +
         '</div>' +
         H.ui.disclaimer() + '</div>';
@@ -146,11 +212,17 @@
     H.render({ keepScroll: true });
   };
 
+  H.actions['home-mode'] = function (el) {
+    if (H.ui.spinning) return;
+    H.ui.homeMode = el.dataset.v === 'pick' ? 'pick' : 'spin';
+    H.render({ keepScroll: true });
+  };
+
   H.actions['home-meal'] = function (el) {
     if (H.ui.spinning) return;
     H.ui.meal = el.dataset.v;
     H.ui.result = null;
-    H.render();
+    H.render({ keepScroll: true });
   };
 
   function confetti() {
@@ -168,7 +240,13 @@
 
   H.actions.spin = function () {
     if (H.ui.spinning) return;
-    if (H.route && H.route.name !== 'home') { H.go('home'); setTimeout(H.actions.spin, 260); return; }
+    // Đang ở trang khác hoặc đang ở chế độ tự chọn: về chế độ quay rồi mới quay.
+    if ((H.route && H.route.name !== 'home') || H.ui.homeMode === 'pick') {
+      H.ui.homeMode = 'spin';
+      if (H.route && H.route.name !== 'home') H.go('home'); else H.render();
+      setTimeout(H.actions.spin, 260);
+      return;
+    }
     var pool = H.wheelPool(H.ui.meal);
     if (pool.length < 2) {
       H.toast('Cần ít nhất 2 món trên vòng quay.', { icon: 'info' });
@@ -179,6 +257,7 @@
     if (rb) rb.classList.add('waiting');
     var started = H.wheel.spin(function (d) {
       H.ui.result = { id: d.id, source: 'spin' };
+      H.recordSpin();
       var box = document.getElementById('result-box');
       if (box) {
         box.classList.remove('waiting');
@@ -191,6 +270,8 @@
           box.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
         }
       }
+      var sb = document.getElementById('stats-box');
+      if (sb) sb.innerHTML = statsInner();
       var live = document.getElementById('sr-live');
       if (live) live.textContent = 'Kết quả vòng quay: ' + d.name;
       confetti();
