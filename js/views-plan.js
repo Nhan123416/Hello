@@ -130,7 +130,8 @@
     var n = H.pantryItems().length, warn = H.expiredItems().length + H.expiringItems(2).length;
     return '<section class="fridgecard"><span class="fc-e" aria-hidden="true">🧊</span><div class="fc-t"><strong>Tủ lạnh của tôi</strong>' +
       '<small>' + (n ? n + ' loại đang có' + (warn ? ', ' + warn + ' món cần chú ý' : '') + '. Danh sách đi chợ đã trừ những thứ này.' : 'Chưa ghi gì. Ghi đồ đang có để danh sách đi chợ tự trừ.') + '</small></div>' +
-      '<button type="button" class="btn btn-soft btn-sm" data-act="open-fridge">' + (n ? 'Quản lý' : 'Ghi đồ có sẵn') + '</button></section>';
+      '<div class="fc-acts"><button type="button" class="btn btn-soft btn-sm" data-act="open-fridge">' + (n ? 'Quản lý' : 'Ghi đồ có sẵn') + '</button>' +
+      '<button type="button" class="btn btn-ghost btn-sm" data-act="open-scan">' + H.icon('camera', { size: 16 }) + 'Quét</button></div></section>';
   }
 
   function shopTab() {

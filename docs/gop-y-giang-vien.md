@@ -56,7 +56,25 @@ nhiều đoạn và khớp với ảnh tóm tắt.
 
 ## Chỗ nên hỏi lại giảng viên
 
-- **Cộng đồng**: ghi âm chỉ nhắc "hỗ trợ cộng đồng" khi nhóm kể thêm chức năng, và ảnh tóm tắt không có mục này. Mình bỏ khỏi bản này vì bảng tin và bảng xếp hạng chỉ lưu trên máy nên chưa có ý nghĩa thật. Cần xác nhận đây có phải điều giảng viên muốn.
+- **Cộng đồng**: ghi âm chỉ nhắc "hỗ trợ cộng đồng" khi nhóm kể thêm chức năng, và ảnh tóm tắt không có mục này. Bản vòng 4 bỏ hẳn; sau góp ý của nhóm (phần dưới) cộng đồng quay lại **dưới dạng đánh giá món** nằm trong màn Món ăn, không còn là bảng tin riêng. Nên hỏi giảng viên xem cách đặt này có ổn không.
 - **Hướng dẫn đi chợ**: mình hiểu là "dự kiến sẽ mua gì cho món vừa chốt" và làm thành khối ngay trên trang món cùng một nút ở thanh dưới. Cần xác nhận có đúng ý, hay giảng viên muốn một màn hình riêng.
 - **Khối nhắc nhở** được coi là phần phụ: mình đặt ở đầu màn Thực đơn nhưng đã làm gọn (một dòng "Sắp tới" và ba mốc giờ); có thể gập lại nếu vẫn còn nặng.
 - **Độ tin cậy của bản chuyển chữ**: ghi âm nhiều tạp âm nên có đoạn nghe không chắc. Các ý ở trên chỉ giữ lại khi lặp lại ở nhiều đoạn và khớp với ảnh tóm tắt.
+
+## Góp ý thêm từ tin nhắn nhóm (vòng 5)
+
+Sau khi gọn lại còn ba màn hình, một bạn trong nhóm nhắn lại (ảnh chụp đoạn chat). Ý chính, diễn giải:
+
+- "Mình tính gọn hết luôn rồi phải không? Bỏ cả cái quét nguyên liệu (trong tủ lạnh)... Gọn app rồi nhưng hình như mất mấy tính năng mới luôn. **Mình nên giữ lại 1 đến 2 tính năng.**"
+- Hỏi lại là tính năng nào thì trả lời: **quét nguyên liệu bằng camera (sắp có)** và **cộng đồng**.
+- Về cộng đồng: đó là phần đánh giá; **thay vì chỉ chấm sao thì thêm bình luận và gửi ảnh món** được như trước.
+
+| Góp ý | Cách xử lý trong bản này |
+|---|---|
+| Giữ lại 1 đến 2 tính năng | Chỉ đưa lại đúng hai tính năng này. Không đưa lại bảng xếp hạng, vuốt chọn món, video; thanh điều hướng vẫn chỉ có **3 mục** theo góp ý của giảng viên |
+| Quét nguyên liệu bằng camera (sắp có), trong tủ lạnh | Nút **"Quét nguyên liệu bằng camera"** trong hộp Tủ lạnh (và nút "Quét" ở thẻ Tủ lạnh của tab Đi chợ): chụp hoặc chọn ảnh rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ. **Tự nhận diện bằng AI ghi rõ là "sắp có"** vì trang không có dịch vụ nhận diện hình ảnh; ảnh quét không được lưu lại |
+| Cộng đồng là đánh giá: thêm bình luận và gửi ảnh món | **Đánh giá món** gồm sao, bình luận và ảnh. Nằm ngay trong màn Món ăn (thanh chuyển "Danh sách món \| Cộng đồng") và ở cuối từng món. Ảnh được thu nhỏ rồi lưu trên máy; nút Chia sẻ gửi đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè |
+
+Điều **chưa** làm thật được và được ghi rõ trên giao diện: cộng đồng chung để mọi người cùng xem đánh giá của nhau (cần máy chủ, tài khoản và kiểm duyệt ảnh) và tự nhận ra nguyên liệu trong ảnh (cần AI nhận diện hình ảnh). Mình không thêm bài mẫu hay đánh giá giả để cộng đồng trông đông hơn.
+
+Kịch bản demo thêm: mở một món, bấm "Viết bình luận" hoặc "Gửi ảnh món", chọn ảnh, chấm sao rồi đăng; sang **Món ăn › Cộng đồng** xem lại và bấm Chia sẻ. Trong **Thực đơn › Đi chợ › Tủ lạnh**, bấm "Quét nguyên liệu bằng camera", chọn ảnh rồi chạm vài nguyên liệu và thêm vào tủ.

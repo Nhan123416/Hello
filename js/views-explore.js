@@ -103,6 +103,7 @@
       var so = H.SORTS.filter(function (x) { return x.id === H.ui.exploreSort; })[0] || H.SORTS[0];
       return '<div class="explore">' +
         H.ui.pageHead('MÓN ĂN', 'Món lành cho dạ dày', 'Mỗi món ghi rõ có hợp với bạn không, vì sao, và cần đi chợ mua gì.') +
+        H.community.switchHtml('explore') +
         '<div class="toolbar"><div class="search"><span class="search-ic">' + H.icon('search', { size: 18 }) + '</span>' +
         '<input id="explore-q" type="search" placeholder="Tìm món hoặc nguyên liệu" autocomplete="off" value="' + esc(H.ui.exploreQ) + '" data-input="explore-q" aria-label="Tìm món"></div>' +
         '<button type="button" class="btn btn-soft btn-filter" data-act="open-filters" data-ctx="explore" aria-label="Bộ lọc' + (active ? ', đang bật ' + active : '') + '">' + H.icon('sliders', { size: 18 }) + '<span class="btn-t">Bộ lọc</span>' + (active ? '<i class="count">' + active + '</i>' : '') + '</button></div>' +
@@ -357,8 +358,9 @@
     for (var i = 1; i <= 5; i++) {
       stars += '<button type="button" class="star' + (i <= r ? ' on' : '') + '" role="radio" aria-checked="' + (i === r) + '" data-act="rate" data-id="' + d.id + '" data-v="' + i + '" aria-label="' + i + ' sao' + (i === r ? ', bấm lại để bỏ chấm' : '') + '">' + H.icon('star', { size: 28, fill: i <= r }) + '</button>';
     }
-    return '<section class="rate"><h2>Bạn thấy món này thế nào?</h2><div class="stars" role="radiogroup" aria-label="Chấm sao cho ' + esc(d.name) + '">' + stars + '</div>' +
+    return '<section class="rate" id="reviews"><h2>Bạn thấy món này thế nào?</h2><div class="stars" role="radiogroup" aria-label="Chấm sao cho ' + esc(d.name) + '">' + stars + '</div>' +
       '<p class="hint">' + (r ? 'Bạn chấm ' + r + ' sao. ' : '') + 'Món 4 đến 5 sao được ưu tiên khi tự xếp thực đơn, món 1 đến 2 sao ít được chọn hơn.</p>' +
+      H.community.dishPart(d) +
       '<button type="button" class="link-btn excl-btn" data-act="toggle-excl-dish" data-id="' + d.id + '" aria-pressed="' + off + '">' + (off ? 'Đã bỏ khỏi vòng quay và kế hoạch. Đưa lại' : 'Không muốn ăn món này? Bỏ khỏi vòng quay và kế hoạch') + '</button></section>';
   }
   H.actions.rate = function (el) {

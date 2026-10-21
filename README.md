@@ -20,7 +20,7 @@ Thiết kế lại theo góp ý của giảng viên (phân tích đầy đủ �
 | | Màn hình | Làm gì |
 |---|---|---|
 | 1 | **Hôm nay** `#home` | Quay may mắn cho vui, hoặc **tự chọn món** từ danh sách món hợp với bạn. Phía dưới là **hành trình của bạn**: đã quay bao nhiêu vòng, đã chốt những món nào. |
-| 2 | **Món ăn** `#explore` | Danh sách và chi tiết món. **Cẩm nang nằm ngay trong từng món**: khối "Hợp với bạn không?" (hợp hay không và vì sao), dinh dưỡng, nguyên liệu nên hạn chế. Có nút **Chốt món** và **hướng dẫn đi chợ** cho món đó. |
+| 2 | **Món ăn** `#explore` | Danh sách và chi tiết món. **Cẩm nang nằm ngay trong từng món**: khối "Hợp với bạn không?" (hợp hay không và vì sao), dinh dưỡng, nguyên liệu nên hạn chế. Có nút **Chốt món** và **hướng dẫn đi chợ** cho món đó. Cạnh danh sách món có **Cộng đồng**: đánh giá bằng sao, bình luận và ảnh món. |
 | 3 | **Thực đơn** `#plan` | Thực đơn cả tuần và danh sách đi chợ; khối **nhắc nhở** (giờ đi chợ, giờ nấu, giờ ăn); **ô cảm nhận ngay dưới từng bữa** và phần "Nhìn lại tuần". |
 
 Những thứ trước đây là trang riêng đã được **gộp vào ba màn hình trên**:
@@ -30,10 +30,11 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 | Tab Cẩm nang | Vào từng món (khối "Hợp với bạn không?"); ô tìm món cũng tra được nguyên liệu; nút "Cẩm nang" mở hộp tra nguyên liệu, kiểm tra công thức, thay thế, lưu ý chung |
 | Nhật ký ăn uống | Dòng "Bụng bạn thấy sao?" dưới từng bữa trong Thực đơn, kèm "Nhìn lại tuần" |
 | Nhắc giờ ăn | Khối "Nhắc nhở" ở đầu màn Thực đơn |
-| Tủ lạnh | Thẻ trong tab Đi chợ của màn Thực đơn (danh sách đi chợ tự trừ đồ đang có) |
+| Tủ lạnh | Thẻ trong tab Đi chợ của màn Thực đơn (danh sách đi chợ tự trừ đồ đang có); trong hộp Tủ lạnh có **Quét nguyên liệu bằng camera** |
+| Cộng đồng (bảng tin, xếp hạng) | **Đánh giá món** (sao, bình luận, ảnh) trong màn Món ăn: cạnh danh sách món và ở cuối từng món |
 | Trang "Thêm" | Bỏ. Hồ sơ và cài đặt ở biểu tượng bánh răng trên cùng |
 
-**Đã bỏ** vì chưa làm được thật hoặc trùng việc: bảng tin cộng đồng và bảng xếp hạng minh hoạ (chỉ lưu trên máy), vuốt chọn món (trùng "Tự chọn món"), mục video chuyên gia (chờ danh sách video đã kiểm duyệt).
+**Đã bỏ** vì chưa làm được thật hoặc trùng việc: bảng tin viết tự do và bảng xếp hạng số liệu mẫu (thay bằng đánh giá món), vuốt chọn món (trùng "Tự chọn món"), mục video chuyên gia (chờ danh sách video đã kiểm duyệt).
 
 ## Tính năng
 
@@ -55,6 +56,7 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
   2. **Đi chợ cho món này**: nguyên liệu và số lượng cho một người, còn thiếu gì và khoảng bao nhiêu tiền, mẹo chọn mua, đồ thay thế khi thiếu.
   3. **Cách làm** và nút **Nấu từng bước** (đọc to, hẹn giờ), video hướng dẫn tìm trên YouTube.
   4. Thanh nút cố định: **Chốt món này**, **Hướng dẫn đi chợ**, **Yêu thích**. **Chấm sao** 1 đến 5: món 4 đến 5 sao và món yêu thích được ưu tiên khi tự xếp thực đơn.
+- **Cộng đồng = đánh giá món** (thanh chuyển "Danh sách món | Cộng đồng" ở đầu màn Món ăn, `#community`): thay vì chỉ chấm sao, bạn có thể **viết bình luận** và **gửi ảnh món**. Mỗi món có nút "Viết bình luận" và "Gửi ảnh món" ngay dưới phần chấm sao; màn Cộng đồng gom mọi đánh giá của bạn (lọc "Có ảnh", xem ảnh lớn, **Chia sẻ**, xoá). Chấm sao trong đánh giá cũng là điểm của món khi tự xếp thực đơn. **Đánh giá và ảnh chỉ lưu trên máy bạn** (ảnh được thu nhỏ còn tối đa 800px, tối đa 24 ảnh, lưu riêng khỏi dữ liệu chính); nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè qua hộp chia sẻ của điện thoại, hoặc sao chép nội dung. Cộng đồng chung cho mọi người cùng xem là "sắp có" vì cần máy chủ.
 - **Hộp Cẩm nang** (nút "Cẩm nang" ở đầu danh sách): tra 69 nguyên liệu (nên dùng / dùng ít / nên tránh, kèm lý do), **kiểm tra công thức bất kỳ** (dán danh sách nguyên liệu, mình đánh dấu phần nên tránh và gợi ý thay), bảng thay thế, "Tưởng lành mà không lành", thói quen ăn uống, dấu hiệu cần đi khám ngay.
 
 ### 3. Thực đơn
@@ -62,7 +64,7 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 - **Nhắc nhở** (đầu màn hình): bật/tắt, dòng "Sắp tới: ...", ba mốc **đi chợ**, **nấu** (tính theo thời gian nấu để kịp giờ ăn) và **ăn**. "Chỉnh giờ và cách nhắc" mở hộp đặt giờ ăn, bữa phụ, loại lời nhắc. Có "nhắc lại sau 10 phút", thông báo của trình duyệt (khi bạn cho phép) và **file lịch .ics 7 ngày** để điện thoại tự nhắc kể cả khi không mở trang.
 - **Cảm nhận sau bữa ăn**: đánh dấu "đã nấu / đã ăn" thì dưới bữa đó hiện dòng **"Bụng bạn thấy sao?"** (4 mức, một chạm) và ô nhận xét ngắn; bấm dòng "Triệu chứng" để chọn triệu chứng (ợ chua, đầy bụng, buồn nôn...) và ghi thêm món đã ăn. Khoảng 45 phút sau khi bấm "Đã ăn", lời nhắc hỏi bụng bạn thấy sao.
 - **Nhìn lại tuần**: đã ăn bao nhiêu bữa, bao nhiêu bữa thấy ổn hay khó chịu, các bữa theo từng ô; từ nhật ký 30 ngày chỉ ra **món nên cẩn thận** và **món hợp với bạn** (mỗi món cần ít nhất 2 lần ghi). Nút "+ Ghi bữa khác" cho bữa không có trong thực đơn.
-- **Đi chợ** (tab thứ hai): danh sách = cần cho các bữa chưa nấu − đồ đang có; bấm "đã mua" thì cộng vào tủ lạnh; **Mua online** (Bách hoá Xanh, Shopee, Tiki, Lazada, Google Maps). Thẻ **Tủ lạnh** mở hộp nhập nhanh bằng chữ ("trứng 6, gạo 1kg"), số lượng, hạn dùng, báo đồ sắp hỏng, gợi ý món nên nấu trước và nguyên liệu thay thế; đánh dấu "đã nấu" thì nguyên liệu tự trừ.
+- **Đi chợ** (tab thứ hai): danh sách = cần cho các bữa chưa nấu − đồ đang có; bấm "đã mua" thì cộng vào tủ lạnh; **Mua online** (Bách hoá Xanh, Shopee, Tiki, Lazada, Google Maps). Thẻ **Tủ lạnh** mở hộp nhập nhanh bằng chữ ("trứng 6, gạo 1kg"), số lượng, hạn dùng, báo đồ sắp hỏng, gợi ý món nên nấu trước và nguyên liệu thay thế; đánh dấu "đã nấu" thì nguyên liệu tự trừ. Trong hộp có **Quét nguyên liệu bằng camera** (thử nghiệm): bấm "Chụp ảnh" (mở camera sau trên điện thoại) hoặc chọn ảnh có sẵn, rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ. **Tự nhận ra nguyên liệu bằng AI là "sắp có"** (cần dịch vụ nhận diện hình ảnh); ảnh quét chỉ nằm trong bộ nhớ lúc hộp mở và không được lưu lại.
 - **Ngân sách thực tế**: nhập số tiền đã chi thật (có thể gõ "180k"), mình gợi ý **"Đặt ngân sách X đ/ngày?"** từ dữ liệu của chính bạn.
 
 ### Dùng chung
@@ -70,7 +72,7 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 - **Nhiều đối tượng**: chọn nhóm lúc bắt đầu hoặc trong Cài đặt > **Tôi là**: *Sinh viên* (≤ 20.000đ, ≤ 30 phút), *Người đi làm* (≤ 50.000đ, ≤ 30 phút, thực đơn có cả bữa ăn ngoài), *Người lớn tuổi* (≤ 45 phút, nêm nhạt, **chữ to**, giờ ăn sớm hơn), *Ăn lành mạnh*. Mỗi nhóm chỉ là **cài đặt sẵn**, vẫn đổi được từng mục.
 - **Người mới**: chào mừng đúng 2 bước (bạn thuộc nhóm nào → dạ dày đang thế nào); trang chủ có thẻ "Làm quen trong 3 bước" (quay hoặc tự chọn → xem món có hợp không rồi chốt → xem thực đơn và đi chợ) tự tích khi bạn làm xong.
 - **Chữ to** (Cài đặt > Cỡ chữ): mọi cỡ chữ tính theo rem nên tăng đồng loạt, đã kiểm tra không tràn ngang ở 360px.
-- Giao diện sáng / tối, **4 bộ màu** (Ngọc lam, Lá trà, Biển sâu, Mận chín), lưu dữ liệu trong trình duyệt (`localStorage`).
+- Giao diện sáng / tối, **4 bộ màu** (Ngọc lam, Lá trà, Biển sâu, Mận chín), lưu dữ liệu trong trình duyệt (`localStorage`: dữ liệu chính ở khoá `hnag.v1`, ảnh đánh giá ở khoá riêng `hnag.photos.v1`; Cài đặt cho xem số ảnh đã lưu và xoá hết ảnh).
 - **Về dự án** (`#about`, mở từ Cài đặt): vấn đề, nguyên nhân gốc rễ, câu hỏi thiết kế, quy trình ba màn hình, những gì đã gộp hoặc bỏ, việc làm được thật / chưa làm được.
 
 ## Chạy thử
@@ -98,6 +100,7 @@ docs/
 js/
   util.js             tiện ích (bỏ dấu, ngày tháng, sao chép...)
   icons.js            icon SVG + mascot "Bé Cháo"
+  photos.js           kho ảnh nhỏ trên máy: thu nhỏ ảnh bằng canvas, lưu riêng (hnag.photos.v1), giới hạn số ảnh và dung lượng
   data/
     ingredients.js    nguyên liệu, giá ước tính, dụng cụ, mẹo chọn mua theo nhóm
     dishes.js         các món (công thức, mức dịu, độ khó, nguyên liệu chính, mức vị tính sẵn)
@@ -111,16 +114,18 @@ js/
   pantry.js           tủ lạnh: nhập nhanh, thay thế, mua online (mở thành hộp từ tab Đi chợ)
   guide.js            cẩm nang gắn vào món: nguyên liệu → mục cẩm nang, dinh dưỡng, tra cứu, kiểm tra công thức, hộp Cẩm nang
   diary.js            dòng cảm nhận dưới từng bữa, "Nhìn lại tuần", hộp ghi chi tiết
+  community.js        Cộng đồng: đánh giá món (sao, bình luận, ảnh), màn Cộng đồng, hộp viết đánh giá, chia sẻ
+  scan.js             quét nguyên liệu bằng camera trong hộp Tủ lạnh (chụp ảnh rồi chạm chọn)
   cook.js             nấu từng bước: đọc to, hẹn giờ, giọng nói
   views-home.js       màn Hôm nay (vòng quay, tự chọn món, hành trình)
-  views-explore.js    màn Món ăn (danh sách, trang món: hợp với bạn không, đi chợ cho món)
+  views-explore.js    màn Món ăn (danh sách, trang món: hợp với bạn không, đi chợ cho món, đánh giá)
   views-plan.js       màn Thực đơn (tuần, đi chợ, nhắc nhở, nhìn lại tuần)
   views-about.js      Về dự án
   app.js              điều hướng (hash) và khởi động
 assets/favicon.svg
 ```
 
-Các địa chỉ: `#home`, `#explore`, `#dish-<mã>`, `#cook-<mã>`, `#plan`, `#plan-shop`, `#about`. Địa chỉ cũ vẫn mở đúng chỗ: `#guide…` (Cẩm nang mở thành hộp ở màn Món ăn), `#fridge` và `#plan-fridge` (tủ lạnh trong tab Đi chợ), `#remind` và `#plan-remind` (khối nhắc nhở ở màn Thực đơn), `#diary` (Thực đơn), `#community…`, `#rank`, `#more` (về màn Hôm nay).
+Các địa chỉ: `#home`, `#explore`, `#community`, `#dish-<mã>`, `#cook-<mã>`, `#plan`, `#plan-shop`, `#about`. Địa chỉ cũ vẫn mở đúng chỗ: `#guide…` (Cẩm nang mở thành hộp ở màn Món ăn), `#fridge` và `#plan-fridge` (tủ lạnh trong tab Đi chợ), `#remind` và `#plan-remind` (khối nhắc nhở ở màn Thực đơn), `#diary` (Thực đơn), `#community…` và `#rank` (màn Cộng đồng), `#more` (về màn Hôm nay).
 
 Mã dùng script thường (không module) nên chạy được cả khi mở bằng `file://`.
 
@@ -137,8 +142,9 @@ Mã dùng script thường (không module) nên chạy được cả khi mở b�
 
 Những thứ **chưa làm được vì cần máy chủ hoặc AI** (trang này chạy hoàn toàn trên máy người dùng nên không làm giả; các mục chỉ là chỗ giữ chỗ đã được bỏ khỏi giao diện):
 
-- **Kết bạn, bài viết và bảng xếp hạng cho mọi người cùng thấy**: cần tài khoản đăng nhập, cơ sở dữ liệu (ví dụ Supabase hoặc Firebase) và kiểm duyệt nội dung. Vì chưa làm được thật nên đã bỏ khỏi bản này.
-- **Nhập nguyên liệu bằng ảnh / quét mã**: cần dịch vụ nhận diện hình ảnh. Hiện có nhập nhanh bằng chữ và chọn từ danh mục.
+- **Cộng đồng chung cho mọi người cùng thấy** (đánh giá, bình luận, ảnh của nhau), kết bạn và bảng xếp hạng thật: cần tài khoản đăng nhập, cơ sở dữ liệu (ví dụ Supabase hoặc Firebase) và kiểm duyệt nội dung (đặc biệt với ảnh người dùng đăng). Hiện đánh giá chỉ lưu trên máy người viết và chia sẻ bằng nút Chia sẻ.
+- **Tự nhận ra nguyên liệu trong ảnh** (quét bằng AI) và **quét mã vạch**: cần dịch vụ nhận diện hình ảnh. Hiện bạn chụp ảnh rồi tự chạm chọn nguyên liệu; ngoài ra có nhập nhanh bằng chữ và chọn từ danh mục.
+- **Dung lượng ảnh**: ảnh đánh giá lưu trong `localStorage` (khoảng 5 MB cho cả trang) nên giới hạn 24 ảnh; xoá trình duyệt hoặc đổi thiết bị thì mất ảnh. Cần máy chủ lưu trữ nếu muốn giữ lâu dài.
 - **Nhắc đẩy khi đã đóng hẳn trình duyệt**: cần máy chủ gửi Web Push. Hiện nhắc khi tab còn mở, thông báo trình duyệt khi tab ở nền, và file lịch `.ics` cho điện thoại.
 - **Đặt hàng tự động** trên sàn thương mại: hiện chỉ mở trang tìm kiếm của cửa hàng.
 - **Giọng đọc và nhận giọng nói** phụ thuộc trình duyệt và thiết bị (một số máy chưa cài giọng tiếng Việt, iOS chưa hỗ trợ nghe liên tục).

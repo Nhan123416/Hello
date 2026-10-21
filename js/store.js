@@ -42,6 +42,7 @@
       remindLog: {},                       // { 'ngày:bữa:loại': { s: lúc hiện, z: hẹn lại lúc, d: 1 đã xử lý } }
       ate: {},                             // { 'ngày:bữa': { t: lúc bấm "Đã ăn", late: số phút lệch so với giờ ăn | null } }
       diary: [],                           // nhật ký ăn uống: [{ id, date, slot, feel 1-4, symptoms, dishes, note, ts }]
+      reviews: [],                         // đánh giá món (Cộng đồng): [{ id, dish, stars 0-5, text, photo, ts }]; ảnh nằm riêng trong H.photo
       cookPrefs: { read: false, rate: 1 }, // chế độ nấu từng bước: tự đọc to, tốc độ đọc
       cookAt: { id: '', step: 0 },         // món đang nấu dở và bước hiện tại (để quay lại nấu tiếp)
       timers: []                           // hẹn giờ khi nấu: [{ k, dish, step, label, end, secs }]
@@ -92,6 +93,8 @@
     // làm sạch kiểu dữ liệu
     ['excluded', 'favs', 'log', 'timers', 'diary'].forEach(function (k) { if (!Array.isArray(s[k])) s[k] = []; });
     s.diary = s.diary.map(cleanDiary).filter(Boolean).slice(-400);
+    if (!Array.isArray(s.reviews)) s.reviews = [];
+    s.reviews = s.reviews.map(cleanReview).filter(Boolean).slice(-300);
     s.cookPrefs = { read: !!(s.cookPrefs && s.cookPrefs.read), rate: [0.85, 1, 1.15].indexOf(s.cookPrefs && s.cookPrefs.rate) >= 0 ? s.cookPrefs.rate : 1 };
     if (!s.cookAt || typeof s.cookAt.id !== 'string') s.cookAt = { id: '', step: 0 };
     s.cookAt.step = Math.max(0, Math.floor(Number(s.cookAt.step)) || 0);
@@ -163,6 +166,21 @@
     };
   }
 
+  // Một đánh giá hợp lệ hoặc null: phải có món, và có bình luận hoặc ảnh (chỉ chấm sao thì lưu ở H.state.ratings).
+  function cleanReview(e) {
+    if (!e || typeof e !== 'object' || !H.DISH_BY_ID[e.dish]) return null;
+    var text = String(e.text || '').replace(/\r\n?/g, '\n').trim().slice(0, 500);
+    var photo = typeof e.photo === 'string' && H.photo.get(e.photo) ? e.photo : '';
+    if (!text && !photo) return null;
+    return {
+      id: typeof e.id === 'string' && e.id ? e.id.slice(0, 40) : 'r' + Date.now().toString(36) + U.rand(1000),
+      dish: e.dish,
+      stars: Number.isInteger(e.stars) && e.stars >= 1 && e.stars <= 5 ? e.stars : 0,
+      text: text, photo: photo,
+      ts: Number(e.ts) || Date.now()
+    };
+  }
+
   // Giờ phải dạng HH:MM hợp lệ, các cờ là boolean, số phút nằm trong khoảng cho phép.
   function sanitizeRemind(r) {
     var def = defaultRemind();
@@ -181,6 +199,7 @@
   H.now = function () { return H.nowFn ? H.nowFn() : new Date(); };
 
   H.state = load();
+  H.photo.keep(H.state.reviews.map(function (r) { return r.photo; }).filter(Boolean));   // ảnh không còn đánh giá nào dùng thì bỏ
   // dọn nhật ký nhắc và lượt "đã ăn" cũ hơn 4 ngày cho khỏi phình (khoá bắt đầu bằng ngày YYYY-MM-DD)
   (function () {
     var cutoff = U.iso(U.addDays(new Date(), -4));
@@ -200,6 +219,7 @@
   };
   H.resetAll = function () {
     try { localStorage.removeItem(KEY); } catch (e) { /* bỏ qua */ }
+    H.photo.clear();
     H.state = defaults();
     H.ui.meal = H.autoMeal();
   };
@@ -920,6 +940,35 @@
     H.save();
     return c;
   };
+  // ───────────── đánh giá món (Cộng đồng) ─────────────
+  // Thêm một đánh giá. Ảnh phải được lưu trước (H.photo.put) rồi truyền mã ảnh vào e.photo.
+  // Có chấm sao thì cũng cập nhật sao của món (dùng khi tự xếp thực đơn).
+  H.addReview = function (e) {
+    var c = cleanReview(Object.assign({}, e, { id: '', ts: Date.now() }));
+    if (!c) return null;
+    H.state.reviews.push(c);
+    while (H.state.reviews.length > 300) { var old = H.state.reviews.shift(); if (old.photo) H.photo.del(old.photo); }
+    if (c.stars) H.state.ratings[c.dish] = c.stars;
+    H.save();
+    return c;
+  };
+  H.deleteReview = function (id) {
+    var r = H.state.reviews.filter(function (x) { return x.id === id; })[0];
+    if (!r) return;
+    if (r.photo) H.photo.del(r.photo);
+    H.state.reviews = H.state.reviews.filter(function (x) { return x.id !== id; });
+    H.save();
+  };
+  // Xoá mọi ảnh đã lưu. Đánh giá còn bình luận thì giữ lại (bỏ ảnh), đánh giá chỉ có ảnh thì bỏ luôn.
+  H.clearPhotos = function () {
+    H.photo.clear();
+    H.state.reviews = H.state.reviews.map(function (r) { return Object.assign({}, r, { photo: '' }); }).filter(function (r) { return r.text; });
+    H.save();
+  };
+  H.reviewById = function (id) { return H.state.reviews.filter(function (x) { return x.id === id; })[0] || null; };
+  H.reviewsOf = function (dish) { return H.state.reviews.filter(function (r) { return r.dish === dish; }).sort(function (a, b) { return b.ts - a.ts; }); };
+  H.allReviews = function () { return H.state.reviews.slice().sort(function (a, b) { return b.ts - a.ts; }); };
+
   H.deleteDiary = function (id) { H.state.diary = H.state.diary.filter(function (x) { return x.id !== id; }); H.save(); };
   H.diaryFor = function (date, slot) { return H.state.diary.filter(function (x) { return x.date === date && x.slot === slot; })[0] || null; };
 

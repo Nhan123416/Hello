@@ -418,7 +418,8 @@
                 '<span class="swatch-name">' + esc(pl2.name) + '</span>' +
                 (on ? '<span class="swatch-tick" aria-hidden="true">' + H.icon('check', { size: 14, stroke: 3 }) + '</span>' : '') + '</button>';
             }).join('') + '</div></section>' +
-            '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Thực đơn, tủ lạnh, nhật ký và những món bạn hay chọn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
+            '<section class="fgroup"><h3>Dữ liệu</h3><p class="hint">Thực đơn, tủ lạnh, nhật ký, đánh giá và những món bạn hay chọn chỉ lưu trên thiết bị này (trong trình duyệt), chưa đồng bộ lên máy chủ.</p>' +
+            photoRow() +
             '<button type="button" class="btn btn-ghost btn-danger-ghost" data-act="reset-all">' + H.icon('trash', { size: 16 }) + ' Xoá toàn bộ dữ liệu trên máy này</button></section>' +
             '<section class="fgroup"><h3>Về trang này</h3><p class="hint">“Hôm nay ăn gì?” gợi ý món lành cho người bị đau dạ dày hoặc viêm loét dạ dày và cho bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi. Nội dung chỉ để tham khảo và chưa thay thế lời khuyên của bác sĩ. Giá món là ước tính.</p><div class="chips"><a class="btn btn-soft btn-sm" href="#about" data-act="close-sheet">Đọc ý tưởng dự án</a><button type="button" class="btn btn-soft btn-sm" data-act="share-site">' + H.icon('ext', { size: 16 }) + 'Mời bạn bè dùng thử</button></div></section>'
         };
@@ -478,10 +479,23 @@
     H.save();
     H.sheet.refresh();
   };
+  // Dòng "Ảnh đã lưu" trong Cài đặt: cho biết số ảnh và cho xoá hết ảnh (giữ lại bình luận).
+  function photoRow() {
+    var ph = H.photo.stats();
+    if (!ph.n) return '';
+    return '<p class="hint photo-row">Ảnh đã lưu trong đánh giá: <strong>' + ph.n + '/' + ph.max + ' ảnh</strong> (khoảng ' + ph.kb + ' KB). ' +
+      '<button type="button" class="link-btn" data-act="photos-clear">Xoá tất cả ảnh</button></p>';
+  }
+  H.actions['photos-clear'] = function () {
+    H.confirm({
+      title: 'Xoá tất cả ảnh đã lưu?', text: 'Ảnh trong các đánh giá sẽ bị xoá khỏi máy này. Bình luận vẫn được giữ lại.', ok: 'Xoá ảnh', danger: true,
+      onOk: function () { H.clearPhotos(); H.toast('Đã xoá ảnh đã lưu', { icon: 'trash' }); H.sheet.refresh(); }
+    });
+  };
   H.actions['reset-all'] = function () {
     H.confirm({
       title: 'Xoá toàn bộ dữ liệu?',
-      text: 'Kế hoạch tuần, tủ lạnh, nhật ký, thống kê hành trình và cài đặt sẽ về mặc định. Việc này không hoàn tác được.',
+      text: 'Kế hoạch tuần, tủ lạnh, nhật ký, đánh giá và ảnh, thống kê hành trình và cài đặt sẽ về mặc định. Việc này không hoàn tác được.',
       ok: 'Xoá hết', danger: true,
       onOk: function () {
         H.sheet.closeAll();

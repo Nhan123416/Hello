@@ -3,7 +3,7 @@
  * và liên kết mở trang tìm kiếm của các cửa hàng.
  *
  * Dữ liệu và phép tính nằm ở store.js (H.state.pantry, H.addStock, H.lowStock...). File này lo giao diện.
- * Nhập bằng ảnh / quét mã chưa làm được vì cần dịch vụ nhận diện hình ảnh và máy chủ, nên chỉ có màn giải thích.
+ * Quét nguyên liệu bằng camera nằm ở scan.js: chụp ảnh rồi chạm chọn món thấy trong ảnh. Tự nhận diện bằng AI chưa có (cần dịch vụ nhận diện hình ảnh).
  */
 (function (H) {
   'use strict';
@@ -157,6 +157,11 @@
       '<div class="quickadd"><input id="quick-q" class="input" type="text" placeholder="VD: trứng 6, gạo 1kg" autocomplete="off" enterkeyhint="done">' +
       '<button type="button" class="btn btn-primary" data-act="quick-add">Thêm</button></div>' +
       '<p class="hint quick-msg" id="quick-msg" role="status" aria-live="polite"></p></section>';
+
+    // Quét bằng camera: chụp ảnh rồi chạm chọn. Tự nhận diện bằng AI ghi rõ là sắp có.
+    h += '<button type="button" class="scanbtn" data-act="open-scan"><span class="sb-ic" aria-hidden="true">' + H.icon('camera', { size: 22 }) + '</span>' +
+      '<span class="sb-t"><strong>Quét nguyên liệu bằng camera <span class="soon">Thử nghiệm</span></strong><small>Chụp ảnh rồi chạm chọn thứ bạn thấy. Tự nhận diện bằng AI: sắp có.</small></span>' +
+      H.icon('chev-r', { size: 16 }) + '</button>';
 
     h += alertsHtml(matches);
 

@@ -20,7 +20,7 @@
   // Quy trình của người dùng, từng bước, và nơi làm từng việc. Đúng ba màn hình ở thanh điều hướng.
   var FLOW = [
     ['wheel', 'Hôm nay', 'Quay may mắn cho vui, hoặc tự chọn món. Phía dưới ghi lại bạn đã quay bao nhiêu vòng và đã chốt những món nào.', '#home'],
-    ['book', 'Món ăn', 'Mỗi món cho biết ngay có hợp với bạn không và vì sao (cẩm nang nằm trong từng món), rồi chốt món và xem hướng dẫn đi chợ.', '#explore'],
+    ['book', 'Món ăn', 'Mỗi món cho biết ngay có hợp với bạn không và vì sao (cẩm nang nằm trong từng món), rồi chốt món và xem hướng dẫn đi chợ. Cạnh danh sách món có Cộng đồng: đánh giá bằng sao, bình luận và ảnh món.', '#explore'],
     ['calendar', 'Thực đơn', 'Thực đơn cả tuần, danh sách đi chợ, khối nhắc nhở (giờ đi chợ, giờ nấu, giờ ăn) và ô ghi cảm nhận sau mỗi bữa.', '#plan']
   ];
 
@@ -29,10 +29,11 @@
     ['Cẩm nang', 'vào từng món ở màn Món ăn (khối “Hợp với bạn không?”). Phần tra nguyên liệu, kiểm tra công thức và lưu ý chung mở bằng nút “Cẩm nang”.'],
     ['Nhật ký ăn uống', 'thành một dòng cảm nhận ngay dưới từng bữa ở màn Thực đơn, kèm phần “Nhìn lại tuần”.'],
     ['Nhắc giờ ăn', 'thành khối “Nhắc nhở” ở màn Thực đơn.'],
-    ['Tủ lạnh', 'vào tab Đi chợ của màn Thực đơn, để danh sách đi chợ tự trừ đồ đang có.']
+    ['Tủ lạnh', 'vào tab Đi chợ của màn Thực đơn, để danh sách đi chợ tự trừ đồ đang có. Trong hộp Tủ lạnh có “Quét nguyên liệu bằng camera”.'],
+    ['Cộng đồng', 'thành phần đánh giá món (sao, bình luận, ảnh) ngay trong màn Món ăn: cạnh danh sách món và ở cuối từng món.']
   ];
   var DROPPED = [
-    'Bảng tin cộng đồng và bảng xếp hạng minh hoạ: chỉ lưu trên máy nên chưa có ý nghĩa thật.',
+    'Bảng tin viết tự do và bảng xếp hạng số liệu mẫu: thay bằng đánh giá món có bình luận và ảnh.',
     'Vuốt chọn món: trùng việc với “Tự chọn món” ở trang Hôm nay.',
     'Mục video chuyên gia: đang chờ danh sách video đã kiểm duyệt.',
     'Trang “Thêm” và các nút phụ: không còn cần khi mọi thứ đã nằm trong ba màn hình.'
@@ -44,12 +45,14 @@
     'Xếp thực đơn tuần, lặp lại thực đơn tuần trước, danh sách đi chợ trừ đồ trong tủ lạnh, tự trừ nguyên liệu khi đánh dấu “đã nấu”.',
     'Cẩm nang gắn vào từng nguyên liệu của món; tra nguyên liệu, kiểm tra công thức bất kỳ và gợi ý thay thế.',
     'Nhớ món bạn hay chọn và hay nấu, số vòng đã quay, món đã chốt; nhớ số tiền chi thật khi đi chợ để gợi ý ngân sách sát thực tế.',
+    'Đánh giá món bằng sao, bình luận và ảnh (ảnh được thu nhỏ và chỉ lưu trên máy bạn); chia sẻ một đánh giá cho bạn bè qua hộp chia sẻ của điện thoại.',
+    'Chụp hoặc chọn ảnh tủ lạnh rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ lạnh (ảnh không được lưu lại).',
     'Ghi cảm nhận sau từng bữa và nhìn lại tuần; mình chỉ ra món hay làm bạn khó chịu và món hợp với bạn.',
     'Nhắc giờ khi tab còn mở, thông báo của trình duyệt (nếu bạn cho phép), file lịch .ics cho điện thoại.'
   ];
   var LATER = [
-    'Kết bạn, cộng đồng chia sẻ và bảng xếp hạng thật: cần tài khoản và máy chủ.',
-    'Chụp ảnh tủ lạnh hoặc quét mã để nhập nguyên liệu: cần dịch vụ nhận diện hình ảnh (AI).',
+    'Cộng đồng chung để mọi người cùng xem đánh giá và ảnh của nhau, kết bạn, bảng xếp hạng thật: cần tài khoản, máy chủ và kiểm duyệt nội dung.',
+    'Tự nhận ra nguyên liệu trong ảnh chụp tủ lạnh (quét bằng AI): cần dịch vụ nhận diện hình ảnh. Hiện bạn chụp ảnh rồi tự chạm chọn.',
     'Nhắc đẩy khi đã đóng hẳn trình duyệt: cần máy chủ gửi thông báo (hiện dùng file lịch .ics thay thế).',
     'Đặt hàng tự động trên Shopee, Tiki, Bách hoá Xanh: hiện chỉ mở trang tìm kiếm của cửa hàng.',
     'Video của bác sĩ, chuyên gia dinh dưỡng: cần danh sách video đã kiểm duyệt.'

@@ -6,7 +6,8 @@
   var main;
 
   // Ba màn hình chính, theo đúng quy trình của người dùng: Hôm nay (quay hoặc tự chọn món) -> Món ăn (xem món có hợp không,
-  // chốt, đi chợ) -> Thực đơn (cả tuần, nhắc nhở, ghi cảm nhận sau khi ăn). Mọi thứ khác nằm trong ba màn này hoặc trong hộp thoại.
+  // chốt, đi chợ; kèm Cộng đồng = đánh giá món) -> Thực đơn (cả tuần, nhắc nhở, ghi cảm nhận sau khi ăn). Mọi thứ khác nằm trong
+  // ba màn này hoặc trong hộp thoại.
   var NAV = [
     { id: 'home', label: 'Hôm nay', icon: 'wheel', href: '#home' },
     { id: 'explore', label: 'Món ăn', icon: 'book', href: '#explore' },
@@ -14,7 +15,7 @@
   ];
 
   // Màn hình nào thì sáng mục điều hướng nào ("" là không sáng mục nào).
-  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', about: '' };
+  var NAV_OF = { home: 'home', explore: 'explore', community: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', about: '' };
 
   // Địa chỉ cũ (từ các bản trước) được chuyển về màn hình mới. open: hộp thoại cần mở ngay; canon: địa chỉ sau khi chuyển.
   function parseHash() {
@@ -32,7 +33,8 @@
       return { name: 'explore', open: 'guide', guideTab: { congthuc: 'congthuc', thaythe: 'thaythe', luuy: 'luuy', tuonglanh: 'luuy' }[t] || 'tra', canon: '#explore' };
     }
     if (h === 'explore' || h === 'about') return { name: h };
-    return { name: 'home', canon: '#home' };   // địa chỉ không còn dùng nữa (cộng đồng, xếp hạng, trang Thêm...)
+    if (h === 'community' || h.indexOf('community-') === 0 || h === 'rank') return { name: 'community', canon: '#community' };   // bảng tin, xếp hạng cũ: nay là đánh giá món
+    return { name: 'home', canon: '#home' };   // địa chỉ không còn dùng nữa (trang Thêm...)
   }
 
   function chrome() {
@@ -104,6 +106,15 @@
   });
 
   document.addEventListener('input', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-input]') : null;
+    if (!el) return;
+    var fn = H.inputs[el.getAttribute('data-input')];
+    if (fn) fn(el, e);
+  });
+
+  // Ô chọn file (ảnh) báo bằng "change"; một số trình duyệt di động không bắn "input" cho ô này. Hàm xử lý nhận e.type để bỏ qua lần còn lại.
+  document.addEventListener('change', function (e) {
+    if (!e.target || e.target.type !== 'file') return;
     var el = e.target.closest ? e.target.closest('[data-input]') : null;
     if (!el) return;
     var fn = H.inputs[el.getAttribute('data-input')];
