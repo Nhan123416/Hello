@@ -1,6 +1,5 @@
 /*
- * Cộng đồng: đánh giá món bằng sao, bình luận và ảnh món. Nằm ngay trong màn "Món ăn" (cạnh danh sách món)
- * và ở cuối trang từng món. Đánh giá chỉ lưu trên máy bạn; nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ)
+ * Cộng đồng: đánh giá món bằng sao, bình luận và ảnh món. Nằm trong mục "Cá nhân" (cạnh hồ sơ) và ở cuối trang từng món. Đánh giá chỉ lưu trên máy bạn; nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ)
  * cho bạn bè qua hộp chia sẻ của điện thoại. Cộng đồng chung cho mọi người cùng xem cần máy chủ nên chưa có.
  */
 (function (H) {
@@ -49,18 +48,6 @@
     return h;
   }
 
-  // ───────────── thanh chuyển Danh sách món | Cộng đồng ─────────────
-  C.switchHtml = function (cur) {
-    var n = H.state.reviews.length;
-    function item(id, href, icon, label) {
-      var on = cur === id;
-      return '<a class="seg-i' + (on ? ' on' : '') + '" href="' + href + '"' + (on ? ' aria-current="page"' : '') + '>' + H.icon(icon, { size: 18 }) + '<span>' + label + '</span></a>';
-    }
-    return '<nav class="modeswitch exsw" aria-label="Món ăn hoặc cộng đồng">' +
-      item('explore', '#explore', 'book', 'Danh sách món') +
-      item('community', '#community', 'users', 'Cộng đồng' + (n ? ' · ' + n : '')) + '</nav>';
-  };
-
   // ───────────── trang một món: nút viết bình luận, gửi ảnh và các đánh giá của món ─────────────
   C.dishPart = function (d) {
     var list = H.reviewsOf(d.id);
@@ -81,8 +68,8 @@
       var all = H.allReviews(), withPhoto = all.filter(function (r) { return r.photo; });
       var list = filter === 'photo' ? withPhoto : all;
       var h = '<div class="explore community">' +
-        H.ui.pageHead('MÓN ĂN', 'Cộng đồng', 'Đánh giá, bình luận và ảnh những món bạn đã nấu.') +
-        C.switchHtml('community') +
+        H.ui.pageHead('CÁ NHÂN', 'Cộng đồng', 'Đánh giá, bình luận và ảnh những món bạn đã nấu.') +
+        H.me.switchHtml('community') +
         '<p class="note">' + H.icon('info', { size: 16 }) + '<span><strong>Đánh giá lưu trên máy bạn.</strong> Bấm Chia sẻ để gửi một đánh giá cho bạn bè. Cộng đồng chung cho mọi người cùng xem: <strong>sắp có</strong> (cần máy chủ).</span></p>' +
         '<div class="cm-bar"><button type="button" class="btn btn-primary" data-act="rv-new">' + H.icon('edit', { size: 18 }) + 'Viết đánh giá</button>' +
         fileBtn('Gửi ảnh món', 'btn btn-soft', 'rv-quick', '', false) + '</div>';
@@ -259,7 +246,7 @@
     var r = H.reviewById(el.dataset.id);
     if (!r) return;
     var d = H.DISH_BY_ID[r.dish], url = location.href.split('#')[0];
-    var text = d.emoji + ' ' + d.name + (r.stars ? ' · ' + r.stars + '/5 sao' : '') + (r.text ? '\n' + r.text : '') + '\n— từ “Hôm nay ăn gì?”' + (/^https?:/.test(url) ? ' ' + url : '');
+    var text = d.emoji + ' ' + d.name + (r.stars ? ' · ' + r.stars + '/5 sao' : '') + (r.text ? '\n' + r.text : '') + '\n— ' + (H.state.profile.name ? H.state.profile.name + ', ' : '') + 'từ “Hôm nay ăn gì?”' + (/^https?:/.test(url) ? ' ' + url : '');
     function copyIt() {
       U.copy(text).then(function (ok) {
         if (ok) H.toast('Đã sao chép đánh giá, dán vào Zalo hay Messenger nhé', { icon: 'copy', ms: 3600 });

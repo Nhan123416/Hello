@@ -1,7 +1,7 @@
 # Hôm nay ăn gì? 🥣
 
 Web gợi ý món ăn lành cho **người bị đau dạ dày / viêm loét dạ dày** đang tự nấu ăn, và cho bất kỳ ai muốn ăn nhẹ bụng: sinh viên ở trọ, người đi làm bận rộn, người lớn tuổi.
-Giao diện kiểu app "chọn món bằng vòng quay" (mobile-first, bo tròn, sáng/tối) nhưng có bảng màu riêng (ngọc lam + vàng bơ, đổi được trong Cài đặt), nội dung xoay quanh một câu hỏi: **mua gì và nấu thế nào để không làm dạ dày nặng thêm?**
+Giao diện kiểu app "chọn món bằng vòng quay" (mobile-first, bo tròn, sáng/tối) nhưng có bảng màu riêng (lá trà + vàng bơ, khớp với poster của nhóm; đổi được trong Cá nhân), nội dung xoay quanh một câu hỏi: **mua gì và nấu thế nào để không làm dạ dày nặng thêm?**
 
 > ⚠️ Nội dung chỉ mang tính tham khảo, không thay thế chẩn đoán và điều trị của bác sĩ. Hãy để bác sĩ hoặc chuyên gia dinh dưỡng duyệt lại nội dung trước khi công bố rộng rãi.
 
@@ -13,15 +13,16 @@ Giao diện kiểu app "chọn món bằng vòng quay" (mobile-first, bo tròn, 
 | **Đối tượng** | Người bị đau dạ dày / viêm loét dạ dày tự nấu ăn (sinh viên, người đi làm, người lớn tuổi) và người không đau nhưng muốn ăn lành mạnh. |
 | **HMW** | Làm sao để họ tự tin mua đúng nguyên liệu và nấu an toàn, không phải lo "lỡ ăn sai"? |
 
-## Ba màn hình chính
+## Ba màn hình chính và mục Cá nhân
 
-Thiết kế lại theo góp ý của giảng viên (phân tích đầy đủ ở [`docs/gop-y-giang-vien.md`](docs/gop-y-giang-vien.md)): *đứng ở vị trí người dùng cuối, đi theo quy trình từng bước, tiết chế thông tin, mỗi thứ chỉ có một chỗ*. Thanh điều hướng chỉ còn **3 mục**, đúng một mạch **chọn món → biết món có hợp không rồi chốt → đi chợ, nấu, ăn → ghi cảm nhận**:
+Thiết kế lại theo góp ý của giảng viên (phân tích đầy đủ ở [`docs/gop-y-giang-vien.md`](docs/gop-y-giang-vien.md)): *đứng ở vị trí người dùng cuối, đi theo quy trình từng bước, tiết chế thông tin, mỗi thứ chỉ có một chỗ*. Luồng chính chỉ có **3 màn hình**, đúng một mạch **chọn món → biết món có hợp không rồi chốt → đi chợ, nấu, ăn → ghi cảm nhận**. Mục thứ tư, **Cá nhân**, không thuộc luồng chính: là nơi giữ hồ sơ người dùng, Cộng đồng và cài đặt (theo góp ý của nhóm).
 
-| | Màn hình | Làm gì |
+| | Mục | Làm gì |
 |---|---|---|
 | 1 | **Hôm nay** `#home` | Quay may mắn cho vui, hoặc **tự chọn món** từ danh sách món hợp với bạn. Phía dưới là **hành trình của bạn**: đã quay bao nhiêu vòng, đã chốt những món nào. |
-| 2 | **Món ăn** `#explore` | Danh sách và chi tiết món. **Cẩm nang nằm ngay trong từng món**: khối "Hợp với bạn không?" (hợp hay không và vì sao), dinh dưỡng, nguyên liệu nên hạn chế. Có nút **Chốt món** và **hướng dẫn đi chợ** cho món đó. Cạnh danh sách món có **Cộng đồng**: đánh giá bằng sao, bình luận và ảnh món. |
+| 2 | **Món ăn** `#explore` | Danh sách và chi tiết món. **Cẩm nang nằm ngay trong từng món**: khối "Hợp với bạn không?" (hợp hay không và vì sao), dinh dưỡng, nguyên liệu nên hạn chế. Có nút **Chốt món** và **hướng dẫn đi chợ** cho món đó. Cuối mỗi món có chỗ chấm sao, viết bình luận và gửi ảnh món. |
 | 3 | **Thực đơn** `#plan` | Thực đơn cả tuần và danh sách đi chợ; khối **nhắc nhở** (giờ đi chợ, giờ nấu, giờ ăn); **ô cảm nhận ngay dưới từng bữa** và phần "Nhìn lại tuần". |
+| 4 | **Cá nhân** `#me` | **Hồ sơ người dùng** cơ bản (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu), **Cộng đồng** (đánh giá món có sao, bình luận và ảnh, `#community`) và **cài đặt** (nhắc giờ, cỡ chữ, giao diện, màu, dữ liệu). |
 
 Những thứ trước đây là trang riêng đã được **gộp vào ba màn hình trên**:
 
@@ -31,8 +32,8 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 | Nhật ký ăn uống | Dòng "Bụng bạn thấy sao?" dưới từng bữa trong Thực đơn, kèm "Nhìn lại tuần" |
 | Nhắc giờ ăn | Khối "Nhắc nhở" ở đầu màn Thực đơn |
 | Tủ lạnh | Thẻ trong tab Đi chợ của màn Thực đơn (danh sách đi chợ tự trừ đồ đang có); trong hộp Tủ lạnh có **Quét nguyên liệu bằng camera** |
-| Cộng đồng (bảng tin, xếp hạng) | **Đánh giá món** (sao, bình luận, ảnh) trong màn Món ăn: cạnh danh sách món và ở cuối từng món |
-| Trang "Thêm" | Bỏ. Hồ sơ và cài đặt ở biểu tượng bánh răng trên cùng |
+| Cộng đồng (bảng tin, xếp hạng) | **Đánh giá món** (sao, bình luận, ảnh) trong mục **Cá nhân**, và ở cuối từng món |
+| Trang "Thêm", hộp Cài đặt, nút bánh răng | Mục **Cá nhân**: hồ sơ, Cộng đồng và cài đặt ở một chỗ |
 
 **Đã bỏ** vì chưa làm được thật hoặc trùng việc: bảng tin viết tự do và bảng xếp hạng số liệu mẫu (thay bằng đánh giá món), vuốt chọn món (trùng "Tự chọn món"), mục video chuyên gia (chờ danh sách video đã kiểm duyệt).
 
@@ -56,7 +57,7 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
   2. **Đi chợ cho món này**: nguyên liệu và số lượng cho một người, còn thiếu gì và khoảng bao nhiêu tiền, mẹo chọn mua, đồ thay thế khi thiếu.
   3. **Cách làm** và nút **Nấu từng bước** (đọc to, hẹn giờ), video hướng dẫn tìm trên YouTube.
   4. Thanh nút cố định: **Chốt món này**, **Hướng dẫn đi chợ**, **Yêu thích**. **Chấm sao** 1 đến 5: món 4 đến 5 sao và món yêu thích được ưu tiên khi tự xếp thực đơn.
-- **Cộng đồng = đánh giá món** (thanh chuyển "Danh sách món | Cộng đồng" ở đầu màn Món ăn, `#community`): thay vì chỉ chấm sao, bạn có thể **viết bình luận** và **gửi ảnh món**. Mỗi món có nút "Viết bình luận" và "Gửi ảnh món" ngay dưới phần chấm sao; màn Cộng đồng gom mọi đánh giá của bạn (lọc "Có ảnh", xem ảnh lớn, **Chia sẻ**, xoá). Chấm sao trong đánh giá cũng là điểm của món khi tự xếp thực đơn. **Đánh giá và ảnh chỉ lưu trên máy bạn** (ảnh được thu nhỏ còn tối đa 800px, tối đa 24 ảnh, lưu riêng khỏi dữ liệu chính); nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè qua hộp chia sẻ của điện thoại, hoặc sao chép nội dung. Cộng đồng chung cho mọi người cùng xem là "sắp có" vì cần máy chủ.
+- **Chấm sao, bình luận và gửi ảnh món** ngay cuối trang mỗi món; các đánh giá của bạn gom ở **Cá nhân › Cộng đồng**.
 - **Hộp Cẩm nang** (nút "Cẩm nang" ở đầu danh sách): tra 69 nguyên liệu (nên dùng / dùng ít / nên tránh, kèm lý do), **kiểm tra công thức bất kỳ** (dán danh sách nguyên liệu, mình đánh dấu phần nên tránh và gợi ý thay), bảng thay thế, "Tưởng lành mà không lành", thói quen ăn uống, dấu hiệu cần đi khám ngay.
 
 ### 3. Thực đơn
@@ -67,13 +68,18 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 - **Đi chợ** (tab thứ hai): danh sách = cần cho các bữa chưa nấu − đồ đang có; bấm "đã mua" thì cộng vào tủ lạnh; **Mua online** (Bách hoá Xanh, Shopee, Tiki, Lazada, Google Maps). Thẻ **Tủ lạnh** mở hộp nhập nhanh bằng chữ ("trứng 6, gạo 1kg"), số lượng, hạn dùng, báo đồ sắp hỏng, gợi ý món nên nấu trước và nguyên liệu thay thế; đánh dấu "đã nấu" thì nguyên liệu tự trừ. Trong hộp có **Quét nguyên liệu bằng camera** (thử nghiệm): bấm "Chụp ảnh" (mở camera sau trên điện thoại) hoặc chọn ảnh có sẵn, rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ. **Tự nhận ra nguyên liệu bằng AI là "sắp có"** (cần dịch vụ nhận diện hình ảnh); ảnh quét chỉ nằm trong bộ nhớ lúc hộp mở và không được lưu lại.
 - **Ngân sách thực tế**: nhập số tiền đã chi thật (có thể gõ "180k"), mình gợi ý **"Đặt ngân sách X đ/ngày?"** từ dữ liệu của chính bạn.
 
+### 4. Cá nhân
+- **Hồ sơ người dùng cơ bản** (`#me`): thẻ đầu trang có ảnh đại diện (chữ cái đầu của tên), **tên hiển thị** (không bắt buộc, tối đa 24 ký tự, chỉ lưu trên máy), nhóm người dùng, tình trạng dạ dày, giới hạn ngân sách và thời gian nấu, ăn chay, cùng ba con số của bạn: số vòng đã quay, số lần chốt món, số đánh giá. Bên dưới là **Tôi là** (4 nhóm, đổi có hộp xác nhận) và **Hồ sơ dạ dày** (mở bộ lọc để đổi tình trạng, mức độ, dụng cụ, ngân sách, thời gian).
+- **Cộng đồng = đánh giá món** (thanh chuyển "Hồ sơ | Cộng đồng", `#community`): thay vì chỉ chấm sao, bạn có thể **viết bình luận** và **gửi ảnh món**. Mỗi món có nút "Viết bình luận" và "Gửi ảnh món" ngay dưới phần chấm sao; màn Cộng đồng gom mọi đánh giá của bạn (lọc "Có ảnh", xem ảnh lớn, **Chia sẻ**, xoá). Chấm sao trong đánh giá cũng là điểm của món khi tự xếp thực đơn. **Đánh giá và ảnh chỉ lưu trên máy bạn** (ảnh được thu nhỏ còn tối đa 800px, tối đa 24 ảnh, lưu riêng khỏi dữ liệu chính); nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè qua hộp chia sẻ của điện thoại, hoặc sao chép nội dung. Cộng đồng chung cho mọi người cùng xem là "sắp có" vì cần máy chủ.
+- **Cài đặt**: nhắc giờ ăn (mở hộp chỉnh giờ), cỡ chữ, giao diện sáng / tối / theo thiết bị, **màu giao diện**, dữ liệu (xoá toàn bộ, xoá ảnh đã lưu) và liên kết tới trang "Về dự án", mời bạn bè dùng thử.
+
 ### Dùng chung
 - **Hồ sơ dạ dày**: tình trạng (đợt cấp / đang đỡ / ổn định / **không đau dạ dày, ăn lành mạnh**) × mức độ (nhẹ / vừa / nặng). Mỗi món có mức "dịu" 1 đến 3 và chỉ hiện khi đủ dịu với hồ sơ.
-- **Nhiều đối tượng**: chọn nhóm lúc bắt đầu hoặc trong Cài đặt > **Tôi là**: *Sinh viên* (≤ 20.000đ, ≤ 30 phút), *Người đi làm* (≤ 50.000đ, ≤ 30 phút, thực đơn có cả bữa ăn ngoài), *Người lớn tuổi* (≤ 45 phút, nêm nhạt, **chữ to**, giờ ăn sớm hơn), *Ăn lành mạnh*. Mỗi nhóm chỉ là **cài đặt sẵn**, vẫn đổi được từng mục.
+- **Nhiều đối tượng**: chọn nhóm lúc bắt đầu hoặc trong Cá nhân > **Tôi là**: *Sinh viên* (≤ 20.000đ, ≤ 30 phút), *Người đi làm* (≤ 50.000đ, ≤ 30 phút, thực đơn có cả bữa ăn ngoài), *Người lớn tuổi* (≤ 45 phút, nêm nhạt, **chữ to**, giờ ăn sớm hơn), *Ăn lành mạnh*. Mỗi nhóm chỉ là **cài đặt sẵn**, vẫn đổi được từng mục.
 - **Người mới**: chào mừng đúng 2 bước (bạn thuộc nhóm nào → dạ dày đang thế nào); trang chủ có thẻ "Làm quen trong 3 bước" (quay hoặc tự chọn → xem món có hợp không rồi chốt → xem thực đơn và đi chợ) tự tích khi bạn làm xong.
-- **Chữ to** (Cài đặt > Cỡ chữ): mọi cỡ chữ tính theo rem nên tăng đồng loạt, đã kiểm tra không tràn ngang ở 360px.
-- Giao diện sáng / tối, **4 bộ màu** (Ngọc lam, Lá trà, Biển sâu, Mận chín), lưu dữ liệu trong trình duyệt (`localStorage`: dữ liệu chính ở khoá `hnag.v1`, ảnh đánh giá ở khoá riêng `hnag.photos.v1`; Cài đặt cho xem số ảnh đã lưu và xoá hết ảnh).
-- **Về dự án** (`#about`, mở từ Cài đặt): vấn đề, nguyên nhân gốc rễ, câu hỏi thiết kế, quy trình ba màn hình, những gì đã gộp hoặc bỏ, việc làm được thật / chưa làm được.
+- **Chữ to** (Cá nhân > Cỡ chữ): mọi cỡ chữ tính theo rem nên tăng đồng loạt, đã kiểm tra không tràn ngang ở 360px.
+- Giao diện sáng / tối, **4 bộ màu** (**Lá trà** là mặc định, Ngọc lam, Biển sâu, Mận chín), lưu dữ liệu trong trình duyệt (`localStorage`: dữ liệu chính ở khoá `hnag.v1`, ảnh đánh giá ở khoá riêng `hnag.photos.v1`; Cá nhân cho xem số ảnh đã lưu và xoá hết ảnh).
+- **Về dự án** (`#about`, mở từ Cá nhân): vấn đề, nguyên nhân gốc rễ, câu hỏi thiết kế, quy trình ba màn hình, những gì đã gộp hoặc bỏ, việc làm được thật / chưa làm được.
 
 ## Chạy thử
 
@@ -109,12 +115,13 @@ js/
   store.js            trạng thái, localStorage, lọc món, xếp thực đơn, thói quen, thống kê hành trình, cảm nhận từng bữa, tủ lạnh, đi chợ
   ui.js               ô minh hoạ, sheet / hộp thoại, toast, hộp gập nhớ trạng thái
   wheel.js            vòng quay (SVG)
-  sheets.js           bộ lọc, chốt món, chọn món, cài đặt, chào mừng 2 bước
+  sheets.js           bộ lọc, chốt món, chọn món, chào mừng 2 bước; các thao tác cài đặt (đổi nhóm, chữ, giao diện, màu, xoá dữ liệu)
   remind.js           lời nhắc ăn đúng giờ, khối nhắc nhở, hộp chỉnh giờ, file .ics
   pantry.js           tủ lạnh: nhập nhanh, thay thế, mua online (mở thành hộp từ tab Đi chợ)
   guide.js            cẩm nang gắn vào món: nguyên liệu → mục cẩm nang, dinh dưỡng, tra cứu, kiểm tra công thức, hộp Cẩm nang
   diary.js            dòng cảm nhận dưới từng bữa, "Nhìn lại tuần", hộp ghi chi tiết
   community.js        Cộng đồng: đánh giá món (sao, bình luận, ảnh), màn Cộng đồng, hộp viết đánh giá, chia sẻ
+  me.js               mục Cá nhân: thẻ hồ sơ, đặt tên, hồ sơ dạ dày, cài đặt (nhắc giờ, chữ, giao diện, màu, dữ liệu)
   scan.js             quét nguyên liệu bằng camera trong hộp Tủ lạnh (chụp ảnh rồi chạm chọn)
   cook.js             nấu từng bước: đọc to, hẹn giờ, giọng nói
   views-home.js       màn Hôm nay (vòng quay, tự chọn món, hành trình)
@@ -125,7 +132,7 @@ js/
 assets/favicon.svg
 ```
 
-Các địa chỉ: `#home`, `#explore`, `#community`, `#dish-<mã>`, `#cook-<mã>`, `#plan`, `#plan-shop`, `#about`. Địa chỉ cũ vẫn mở đúng chỗ: `#guide…` (Cẩm nang mở thành hộp ở màn Món ăn), `#fridge` và `#plan-fridge` (tủ lạnh trong tab Đi chợ), `#remind` và `#plan-remind` (khối nhắc nhở ở màn Thực đơn), `#diary` (Thực đơn), `#community…` và `#rank` (màn Cộng đồng), `#more` (về màn Hôm nay).
+Các địa chỉ: `#home`, `#explore`, `#me`, `#community`, `#dish-<mã>`, `#cook-<mã>`, `#plan`, `#plan-shop`, `#about`. Địa chỉ cũ vẫn mở đúng chỗ: `#guide…` (Cẩm nang mở thành hộp ở màn Món ăn), `#fridge` và `#plan-fridge` (tủ lạnh trong tab Đi chợ), `#remind` và `#plan-remind` (khối nhắc nhở ở màn Thực đơn), `#diary` (Thực đơn), `#community…` và `#rank` (màn Cộng đồng trong Cá nhân), `#more`, `#profile` và `#settings` (mục Cá nhân).
 
 Mã dùng script thường (không module) nên chạy được cả khi mở bằng `file://`.
 
@@ -134,7 +141,7 @@ Mã dùng script thường (không module) nên chạy được cả khi mở b�
 - **Thêm món**: thêm một object vào `RAW` trong `js/data/dishes.js`. Chi phí, món chay, năng lượng, độ khó, nguyên liệu chính và mức vị được tính tự động từ `ing`; `base: 'com'` tự thêm gạo và bước nấu cơm mềm. Món ăn ngoài khai báo thêm `prot: [...]` cho nguyên liệu chính. Mức vị của món không được vượt `H.FLAVOR_CAPS[care]`.
 - **Thêm nguyên liệu**: `js/data/ingredients.js` (đơn vị, giá, có phải đồ có sẵn trong bếp không), rồi thêm hạn dùng (`H.SHELF_DAYS`), gói thường mua (`H.PACK`), từ khoá nhập nhanh (`H.ING_ALIASES`) và đồ thay thế (`H.SUBS`) trong `extras.js`. Nếu là nguồn đạm mới, thêm vào `H.PROTEINS` (extras.js) và `PROTEIN_OF` (dishes.js). Để khối "Hợp với bạn không?" nhận ra nguyên liệu mới, thêm một dòng vào `FOOD_OF` trong `js/guide.js` (mã nguyên liệu → mã mục trong `H.FOODS`; nguyên liệu chưa có dòng này thì khối cẩm nang của món bỏ qua nguyên liệu đó).
 - **Thêm nhóm người dùng**: `H.PERSONAS` trong `extras.js` (ngân sách và thời gian phải nằm trong `COST_STEPS` / `TIME_STEPS`; `text: 'large'` để bật chữ to, `salt: 1` để mặc định nêm nhạt).
-- **Đổi bảng màu**: sửa `--p-base` và `--accent-base` trong `css/tokens.css`; mọi màu nền, chữ, viền đều sinh từ hai màu này (cả giao diện tối). Muốn thêm lựa chọn trong Cài đặt thì thêm vào `H.PALETTES` (extras.js) và một dòng `:root[data-palette="..."]` ở cuối tokens.css.
+- **Đổi bảng màu**: màu mặc định là **lá trà**; sửa `--p-base` (màu chủ đạo) và `--accent-base` (màu nhấn) ở đầu `css/tokens.css`, mọi màu nền, chữ, viền đều sinh từ hai màu này (cả giao diện tối). Khi chốt màu theo poster, đổi thêm bốn chỗ cho khớp: mục đầu của `H.PALETTES` (extras.js, gồm `bgLight` và `bgDark` cho thanh trình duyệt), `<meta name="theme-color">` trong index.html, màu nền trong `assets/favicon.svg` và `--w1` đến `--w8` (màu các ô của vòng quay) nếu muốn đổi tông. Muốn thêm lựa chọn trong Cá nhân thì thêm vào `H.PALETTES` và một dòng `:root[data-palette="..."]` ở cuối tokens.css. Người dùng cũ chưa từng tự chọn màu sẽ tự chuyển sang bộ mặc định mới.
 - **Thêm mục cẩm nang**: `H.FOODS` trong `js/data/guide.js`. `alias` là các cách gọi khác; "Kiểm tra công thức" dùng chính các alias này để nhận diện.
 - **Mẹo chọn mua**: trường `buy` của từng nhóm trong `H.CATEGORIES` (`js/data/ingredients.js`).
 

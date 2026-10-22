@@ -56,7 +56,7 @@ nhiều đoạn và khớp với ảnh tóm tắt.
 
 ## Chỗ nên hỏi lại giảng viên
 
-- **Cộng đồng**: ghi âm chỉ nhắc "hỗ trợ cộng đồng" khi nhóm kể thêm chức năng, và ảnh tóm tắt không có mục này. Bản vòng 4 bỏ hẳn; sau góp ý của nhóm (phần dưới) cộng đồng quay lại **dưới dạng đánh giá món** nằm trong màn Món ăn, không còn là bảng tin riêng. Nên hỏi giảng viên xem cách đặt này có ổn không.
+- **Cộng đồng**: ghi âm chỉ nhắc "hỗ trợ cộng đồng" khi nhóm kể thêm chức năng, và ảnh tóm tắt không có mục này. Bản vòng 4 bỏ hẳn; sau góp ý của nhóm (phần dưới) cộng đồng quay lại **dưới dạng đánh giá món** (từ vòng 6 nằm trong mục Cá nhân), không còn là bảng tin riêng. Nên hỏi giảng viên xem cách đặt này có ổn không.
 - **Hướng dẫn đi chợ**: mình hiểu là "dự kiến sẽ mua gì cho món vừa chốt" và làm thành khối ngay trên trang món cùng một nút ở thanh dưới. Cần xác nhận có đúng ý, hay giảng viên muốn một màn hình riêng.
 - **Khối nhắc nhở** được coi là phần phụ: mình đặt ở đầu màn Thực đơn nhưng đã làm gọn (một dòng "Sắp tới" và ba mốc giờ); có thể gập lại nếu vẫn còn nặng.
 - **Độ tin cậy của bản chuyển chữ**: ghi âm nhiều tạp âm nên có đoạn nghe không chắc. Các ý ở trên chỉ giữ lại khi lặp lại ở nhiều đoạn và khớp với ảnh tóm tắt.
@@ -73,8 +73,26 @@ Sau khi gọn lại còn ba màn hình, một bạn trong nhóm nhắn lại (�
 |---|---|
 | Giữ lại 1 đến 2 tính năng | Chỉ đưa lại đúng hai tính năng này. Không đưa lại bảng xếp hạng, vuốt chọn món, video; thanh điều hướng vẫn chỉ có **3 mục** theo góp ý của giảng viên |
 | Quét nguyên liệu bằng camera (sắp có), trong tủ lạnh | Nút **"Quét nguyên liệu bằng camera"** trong hộp Tủ lạnh (và nút "Quét" ở thẻ Tủ lạnh của tab Đi chợ): chụp hoặc chọn ảnh rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ. **Tự nhận diện bằng AI ghi rõ là "sắp có"** vì trang không có dịch vụ nhận diện hình ảnh; ảnh quét không được lưu lại |
-| Cộng đồng là đánh giá: thêm bình luận và gửi ảnh món | **Đánh giá món** gồm sao, bình luận và ảnh. Nằm ngay trong màn Món ăn (thanh chuyển "Danh sách món \| Cộng đồng") và ở cuối từng món. Ảnh được thu nhỏ rồi lưu trên máy; nút Chia sẻ gửi đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè |
+| Cộng đồng là đánh giá: thêm bình luận và gửi ảnh món | **Đánh giá món** gồm sao, bình luận và ảnh. Ở vòng 5 nằm trong màn Món ăn (thanh chuyển "Danh sách món \| Cộng đồng") và ở cuối từng món; từ vòng 6 chuyển sang mục Cá nhân (xem phần dưới). Ảnh được thu nhỏ rồi lưu trên máy; nút Chia sẻ gửi đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè |
 
 Điều **chưa** làm thật được và được ghi rõ trên giao diện: cộng đồng chung để mọi người cùng xem đánh giá của nhau (cần máy chủ, tài khoản và kiểm duyệt ảnh) và tự nhận ra nguyên liệu trong ảnh (cần AI nhận diện hình ảnh). Mình không thêm bài mẫu hay đánh giá giả để cộng đồng trông đông hơn.
 
 Kịch bản demo thêm: mở một món, bấm "Viết bình luận" hoặc "Gửi ảnh món", chọn ảnh, chấm sao rồi đăng; sang **Món ăn › Cộng đồng** xem lại và bấm Chia sẻ. Trong **Thực đơn › Đi chợ › Tủ lạnh**, bấm "Quét nguyên liệu bằng camera", chọn ảnh rồi chạm vài nguyên liệu và thêm vào tủ.
+
+## Góp ý thêm từ tin nhắn nhóm (vòng 6)
+
+Một bạn trong nhóm nhắn tiếp (ảnh chụp đoạn chat). Ý chính, diễn giải:
+
+- **Cộng đồng nên vào một mục "Cá nhân"**, và trong mục Cá nhân thêm **hồ sơ người dùng** với những thứ cơ bản thôi, như trước đây đã làm.
+- **Sửa màu prototype về màu lá trà**: màu hiện tại đang lạc quẻ so với poster. Chờ bạn làm poster chỉnh xong rồi sửa lại cho khớp.
+
+| Góp ý | Cách xử lý trong bản này |
+|---|---|
+| Mục "Cá nhân" chứa Cộng đồng | Thêm mục thứ tư **Cá nhân** (`#me`) ở thanh điều hướng. Cộng đồng chuyển từ màn Món ăn sang đây (thanh chuyển "Hồ sơ \| Cộng đồng"); màn Món ăn gọn lại như cũ |
+| Hồ sơ người dùng cơ bản | Thẻ hồ sơ: ảnh đại diện, **tên hiển thị** (không bắt buộc), nhóm, tình trạng dạ dày, giới hạn ngân sách và thời gian nấu, ba con số (vòng quay, lần chốt, đánh giá). Phía dưới là Tôi là, Hồ sơ dạ dày và các cài đặt trước đây nằm trong hộp Cài đặt (nay bỏ nút bánh răng và hộp đó, mỗi thứ chỉ còn một chỗ) |
+| Màu lá trà | **Lá trà `#4F7942` + vàng bơ `#F2C94C`** là màu mặc định; vòng quay đổi sang sắc "vườn trà", nút bánh răng của thực đơn dùng màu nhấn thay cho màu chàm, favicon và màu thanh trình duyệt đổi theo. Người dùng cũ chưa từng tự chọn màu tự chuyển sang bộ này; ngọc lam và hai bộ khác vẫn chọn được trong Cá nhân |
+
+Hai điều cần xác nhận:
+
+- **Mã màu lá trà**: mình chưa thấy poster nên chọn một xanh lá hơi vàng, đủ đậm để chữ trắng trên nút vẫn rõ (tương phản đã kiểm tra ở cả bốn bộ màu, sáng và tối). Khi poster chốt, chỉ cần đổi hai dòng `--p-base` và `--accent-base` ở đầu `css/tokens.css` (README có liệt kê thêm vài chỗ nhỏ cần khớp).
+- **Bốn mục thay vì ba**: giảng viên muốn rút lại ba chức năng chính. Mình coi Cá nhân là mục hồ sơ chứ không phải một bước của luồng (chọn món → chốt → đi chợ → ghi cảm nhận), nhưng cần hỏi lại giảng viên. Nếu muốn đúng ba mục ở thanh dưới, có thể chuyển Cá nhân thành biểu tượng ở góc trên bên phải, giữ nguyên nội dung.

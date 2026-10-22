@@ -16,8 +16,9 @@
       v: 1,
       onboarded: false,
       theme: 'auto',                       // auto | light | dark
-      palette: 'ngoc-lam',                 // xem H.PALETTES
-      profile: { who: '', stage: 'doi', severity: 'vua', veg: false, tools: ['noi-com', 'bep', 'chao'], flavor: { cay: null, man: null, chua: null, beo: null } },
+      palette: H.PALETTES[0].id,           // xem H.PALETTES (mặc định: Lá trà)
+      paletteSet: false,                   // đã tự chọn bộ màu trong Cá nhân (chưa chọn thì theo bộ mặc định mới)
+      profile: { who: '', name: '', stage: 'doi', severity: 'vua', veg: false, tools: ['noi-com', 'bep', 'chao'], flavor: { cay: null, man: null, chua: null, beo: null } },
       textSize: 'normal',                  // normal | large (chữ to cho người lớn tuổi)
       tour: { hidden: false, spun: false, shopped: false },   // thẻ "Làm quen trong 3 bước" ở trang chủ
       spins: 0,                            // tổng số lần đã quay vòng quay (hiện ở thẻ thống kê trang chủ)
@@ -146,6 +147,10 @@
     s.profile.veg = !!s.profile.veg;
     if (['auto', 'light', 'dark'].indexOf(s.theme) < 0) s.theme = 'auto';
     if (!H.PALETTES.some(function (p) { return p.id === s.palette; })) s.palette = H.PALETTES[0].id;
+    s.paletteSet = !!s.paletteSet;
+    // bản cũ mặc định là Ngọc lam: ai chưa tự chọn màu thì chuyển sang bộ mặc định mới (Lá trà); ai đã chọn bộ khác thì giữ nguyên
+    if (!s.paletteSet && s.palette === 'ngoc-lam') s.palette = H.PALETTES[0].id;
+    s.profile.name = cleanName(s.profile.name);
     s.budget = Math.max(0, Number(s.budget) || 0);
     return s;
   }
@@ -165,6 +170,10 @@
       ts: Number(e.ts) || Date.now()
     };
   }
+
+  // Tên hiển thị: bỏ ký tự điều khiển, gộp khoảng trắng, tối đa 24 ký tự.
+  function cleanName(v) { return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 24); }
+  H.cleanName = cleanName;
 
   // Một đánh giá hợp lệ hoặc null: phải có món, và có bình luận hoặc ảnh (chỉ chấm sao thì lưu ở H.state.ratings).
   function cleanReview(e) {

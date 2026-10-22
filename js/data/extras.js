@@ -6,8 +6,8 @@
 
   // ───────────── Bộ màu giao diện (xem css/tokens.css) ─────────────
   H.PALETTES = [
+    { id: 'la-tra', name: 'Lá trà', p: '#4F7942', accent: '#F2C94C', bgLight: '#F4F7F4', bgDark: '#0C1714' },
     { id: 'ngoc-lam', name: 'Ngọc lam', p: '#0E7C86', accent: '#FFC93C', bgLight: '#F0F7F8', bgDark: '#07181B' },
-    { id: 'la-tra', name: 'Lá trà', p: '#2F7D4F', accent: '#F2C94C', bgLight: '#F2F7F4', bgDark: '#0A1816' },
     { id: 'bien-sau', name: 'Biển sâu', p: '#2F5DA8', accent: '#FFC857', bgLight: '#F2F5FA', bgDark: '#0A151E' },
     { id: 'man-chin', name: 'Mận chín', p: '#8E3A8C', accent: '#FFC857', bgLight: '#F8F3F8', bgDark: '#12121B' }
   ];

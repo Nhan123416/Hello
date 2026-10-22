@@ -1,4 +1,4 @@
-/* Trang "Về dự án": vấn đề, nguyên nhân, câu hỏi thiết kế, quy trình ba màn hình và những gì đã gộp lại hoặc bỏ đi theo góp ý. */
+/* Trang "Về dự án": vấn đề, nguyên nhân, câu hỏi thiết kế, quy trình ba màn hình, mục Cá nhân và những gì đã gộp lại hoặc bỏ đi theo góp ý. */
 (function (H) {
   'use strict';
 
@@ -20,7 +20,7 @@
   // Quy trình của người dùng, từng bước, và nơi làm từng việc. Đúng ba màn hình ở thanh điều hướng.
   var FLOW = [
     ['wheel', 'Hôm nay', 'Quay may mắn cho vui, hoặc tự chọn món. Phía dưới ghi lại bạn đã quay bao nhiêu vòng và đã chốt những món nào.', '#home'],
-    ['book', 'Món ăn', 'Mỗi món cho biết ngay có hợp với bạn không và vì sao (cẩm nang nằm trong từng món), rồi chốt món và xem hướng dẫn đi chợ. Cạnh danh sách món có Cộng đồng: đánh giá bằng sao, bình luận và ảnh món.', '#explore'],
+    ['book', 'Món ăn', 'Mỗi món cho biết ngay có hợp với bạn không và vì sao (cẩm nang nằm trong từng món), rồi chốt món và xem hướng dẫn đi chợ.', '#explore'],
     ['calendar', 'Thực đơn', 'Thực đơn cả tuần, danh sách đi chợ, khối nhắc nhở (giờ đi chợ, giờ nấu, giờ ăn) và ô ghi cảm nhận sau mỗi bữa.', '#plan']
   ];
 
@@ -30,13 +30,14 @@
     ['Nhật ký ăn uống', 'thành một dòng cảm nhận ngay dưới từng bữa ở màn Thực đơn, kèm phần “Nhìn lại tuần”.'],
     ['Nhắc giờ ăn', 'thành khối “Nhắc nhở” ở màn Thực đơn.'],
     ['Tủ lạnh', 'vào tab Đi chợ của màn Thực đơn, để danh sách đi chợ tự trừ đồ đang có. Trong hộp Tủ lạnh có “Quét nguyên liệu bằng camera”.'],
-    ['Cộng đồng', 'thành phần đánh giá món (sao, bình luận, ảnh) ngay trong màn Món ăn: cạnh danh sách món và ở cuối từng món.']
+    ['Cộng đồng', 'thành phần đánh giá món (sao, bình luận, ảnh): nằm trong mục Cá nhân và ở cuối trang từng món.'],
+    ['Hồ sơ và cài đặt', 'về mục Cá nhân (trước đây là hộp Cài đặt và trang Thêm): tên, nhóm người dùng, hồ sơ dạ dày, nhắc giờ, cỡ chữ, màu và dữ liệu.']
   ];
   var DROPPED = [
     'Bảng tin viết tự do và bảng xếp hạng số liệu mẫu: thay bằng đánh giá món có bình luận và ảnh.',
     'Vuốt chọn món: trùng việc với “Tự chọn món” ở trang Hôm nay.',
     'Mục video chuyên gia: đang chờ danh sách video đã kiểm duyệt.',
-    'Trang “Thêm” và các nút phụ: không còn cần khi mọi thứ đã nằm trong ba màn hình.'
+    'Trang “Thêm” và nút bánh răng: nội dung chia về ba màn hình và mục Cá nhân.'
   ];
 
   // Việc nào làm thật được ngay trên trang này, việc nào cần máy chủ hoặc AI.
@@ -45,6 +46,7 @@
     'Xếp thực đơn tuần, lặp lại thực đơn tuần trước, danh sách đi chợ trừ đồ trong tủ lạnh, tự trừ nguyên liệu khi đánh dấu “đã nấu”.',
     'Cẩm nang gắn vào từng nguyên liệu của món; tra nguyên liệu, kiểm tra công thức bất kỳ và gợi ý thay thế.',
     'Nhớ món bạn hay chọn và hay nấu, số vòng đã quay, món đã chốt; nhớ số tiền chi thật khi đi chợ để gợi ý ngân sách sát thực tế.',
+    'Hồ sơ người dùng cơ bản (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu) và các cài đặt trong mục Cá nhân.',
     'Đánh giá món bằng sao, bình luận và ảnh (ảnh được thu nhỏ và chỉ lưu trên máy bạn); chia sẻ một đánh giá cho bạn bè qua hộp chia sẻ của điện thoại.',
     'Chụp hoặc chọn ảnh tủ lạnh rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ lạnh (ảnh không được lưu lại).',
     'Ghi cảm nhận sau từng bữa và nhìn lại tuần; mình chỉ ra món hay làm bạn khó chịu và món hợp với bạn.',
@@ -62,7 +64,7 @@
     title: 'Về dự án',
     render: function () {
       return '<div class="about">' +
-        '<a class="back" href="#home">' + H.icon('chev-l', { size: 18 }) + 'Hôm nay</a>' +
+        '<a class="back" href="#me">' + H.icon('chev-l', { size: 18 }) + 'Cá nhân</a>' +
         H.ui.pageHead('VỀ DỰ ÁN', 'Vì sao có “Hôm nay ăn gì?”', 'Một công cụ nhỏ giúp người đau dạ dày tự nấu ăn đúng cách, và giúp bất kỳ ai muốn ăn nhẹ bụng, ở mọi lứa tuổi.') +
 
         '<section class="about-card"><h2>Vấn đề</h2>' +
@@ -82,7 +84,7 @@
           return '<li><a class="row" href="' + f[3] + '"><span class="row-ic">' + H.icon(f[0], { size: 20 }) + '</span>' +
             '<span class="row-main"><strong>' + (i + 1) + '. ' + esc(f[1]) + '</strong><small>' + esc(f[2]) + '</small></span>' + H.icon('chev-r', { size: 18 }) + '</a></li>';
         }).join('') + '</ol>' +
-        '<p class="hint">Người dùng đi một mạch: chọn món, biết món có hợp không rồi chốt, đi chợ, nấu và ăn, ghi lại cảm nhận. Mỗi màn hình chỉ giữ phần chính của bước đó; phần phụ gập lại hoặc mở trong hộp thoại khi cần.</p></section>' +
+        '<p class="hint">Người dùng đi một mạch: chọn món, biết món có hợp không rồi chốt, đi chợ, nấu và ăn, ghi lại cảm nhận. Mỗi màn hình chỉ giữ phần chính của bước đó; phần phụ gập lại hoặc mở trong hộp thoại khi cần. Mục thứ tư, <strong>Cá nhân</strong>, không thuộc luồng chính: hồ sơ người dùng, Cộng đồng (đánh giá món) và cài đặt.</p></section>' +
 
         '<div class="about-grid">' +
         '<section class="about-card"><h2>Đã gộp lại theo góp ý</h2><ul class="about-list">' + MERGED.map(function (m) { return '<li><strong>' + esc(m[0]) + '</strong> ' + esc(m[1]) + '</li>'; }).join('') + '</ul></section>' +
@@ -92,7 +94,7 @@
         '<section class="block"><h2>Ai dùng được?</h2><ul class="about-solutions">' + H.PERSONAS.map(function (p) {
           return '<li class="row who-row"><span class="row-ic" aria-hidden="true">' + p.emoji + '</span><span class="row-main"><strong>' + esc(p.name) + '</strong><small>' + esc(p.desc) + '</small></span></li>';
         }).join('') + '</ul>' +
-        '<p class="hint">Chọn nhóm của bạn lúc bắt đầu (hoặc trong Cài đặt), mình đặt sẵn ngân sách, thời gian nấu, giờ ăn và cỡ chữ cho hợp. Ai không đau dạ dày cũng dùng được: chọn “Ăn lành mạnh” để có thực đơn nhẹ bụng, ít dầu mỡ.</p></section>' +
+        '<p class="hint">Chọn nhóm của bạn lúc bắt đầu (hoặc trong Cá nhân), mình đặt sẵn ngân sách, thời gian nấu, giờ ăn và cỡ chữ cho hợp. Ai không đau dạ dày cũng dùng được: chọn “Ăn lành mạnh” để có thực đơn nhẹ bụng, ít dầu mỡ.</p></section>' +
 
         '<div class="about-grid">' +
         '<section class="about-card"><h2>Đối tượng hưởng lợi</h2><p>Người bị đau dạ dày hoặc viêm loét dạ dày đang tự nấu ăn (sinh viên, người đi làm, người lớn tuổi), cùng những ai muốn ăn lành mạnh, nhưng thiếu kiến thức y khoa để làm đúng.</p></section>' +

@@ -6,16 +6,17 @@
   var main;
 
   // Ba màn hình chính, theo đúng quy trình của người dùng: Hôm nay (quay hoặc tự chọn món) -> Món ăn (xem món có hợp không,
-  // chốt, đi chợ; kèm Cộng đồng = đánh giá món) -> Thực đơn (cả tuần, nhắc nhở, ghi cảm nhận sau khi ăn). Mọi thứ khác nằm trong
-  // ba màn này hoặc trong hộp thoại.
+  // chốt, đi chợ) -> Thực đơn (cả tuần, nhắc nhở, ghi cảm nhận sau khi ăn). Mục thứ tư, Cá nhân, không thuộc luồng chính:
+  // hồ sơ người dùng, Cộng đồng (đánh giá món) và cài đặt. Mọi thứ khác nằm trong các màn này hoặc trong hộp thoại.
   var NAV = [
     { id: 'home', label: 'Hôm nay', icon: 'wheel', href: '#home' },
     { id: 'explore', label: 'Món ăn', icon: 'book', href: '#explore' },
-    { id: 'plan', label: 'Thực đơn', icon: 'calendar', href: '#plan' }
+    { id: 'plan', label: 'Thực đơn', icon: 'calendar', href: '#plan' },
+    { id: 'me', label: 'Cá nhân', icon: 'user', href: '#me' }
   ];
 
   // Màn hình nào thì sáng mục điều hướng nào ("" là không sáng mục nào).
-  var NAV_OF = { home: 'home', explore: 'explore', community: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', about: '' };
+  var NAV_OF = { home: 'home', explore: 'explore', dish: 'explore', cook: 'explore', plan: 'plan', me: 'me', community: 'me', about: 'me' };
 
   // Địa chỉ cũ (từ các bản trước) được chuyển về màn hình mới. open: hộp thoại cần mở ngay; canon: địa chỉ sau khi chuyển.
   function parseHash() {
@@ -32,9 +33,10 @@
       var t = h.slice(6);
       return { name: 'explore', open: 'guide', guideTab: { congthuc: 'congthuc', thaythe: 'thaythe', luuy: 'luuy', tuonglanh: 'luuy' }[t] || 'tra', canon: '#explore' };
     }
-    if (h === 'explore' || h === 'about') return { name: h };
-    if (h === 'community' || h.indexOf('community-') === 0 || h === 'rank') return { name: 'community', canon: '#community' };   // bảng tin, xếp hạng cũ: nay là đánh giá món
-    return { name: 'home', canon: '#home' };   // địa chỉ không còn dùng nữa (trang Thêm...)
+    if (h === 'explore' || h === 'about' || h === 'me') return { name: h };
+    if (h === 'community' || h.indexOf('community-') === 0 || h === 'rank') return { name: 'community', canon: '#community' };   // bảng tin, xếp hạng cũ: nay là đánh giá món trong Cá nhân
+    if (h === 'profile' || h === 'settings' || h === 'more') return { name: 'me', canon: '#me' };   // hồ sơ, cài đặt và trang Thêm cũ: nay là Cá nhân
+    return { name: 'home', canon: '#home' };   // địa chỉ không còn dùng nữa
   }
 
   function chrome() {
@@ -48,8 +50,7 @@
       '<span class="brand-t"><strong>Hôm nay ăn gì?</strong><small id="brand-date"></small></span></a>' +
       '<nav class="topnav" aria-label="Điều hướng chính">' + NAV.map(function (n) {
         return '<a href="' + n.href + '" data-nav="' + n.id + '">' + H.icon(n.icon, { size: 18 }) + n.label + '</a>';
-      }).join('') + '</nav>' +
-      '<div class="topacts"><button type="button" class="btn-icon" data-act="open-settings" aria-label="Cài đặt">' + H.icon('gear', { size: 22 }) + '</button></div></div>';
+      }).join('') + '</nav></div>';
     bar.innerHTML = NAV.map(function (n) {
       return '<a href="' + n.href + '" data-nav="' + n.id + '">' + H.icon(n.icon, { size: 22 }) + '<span>' + n.label + '</span></a>';
     }).join('');

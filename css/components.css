@@ -40,8 +40,8 @@
 .btn-icon.round { border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--line-2); width: 36px; height: 36px; }
 .btn-icon.round:hover { box-shadow: inset 0 0 0 1.5px var(--brand); }
 .btn-icon.round.on { background: var(--leaf-ink); color: var(--on-leaf); box-shadow: none; }
-.btn-icon.round.gear { background: var(--grape); color: #fff; box-shadow: 0 4px 10px color-mix(in srgb, var(--grape) 40%, transparent); }
-.btn-icon.round.gear:hover { background: var(--grape); filter: brightness(1.12); color: #fff; box-shadow: 0 4px 10px color-mix(in srgb, var(--grape) 40%, transparent); }
+.btn-icon.round.gear { background: var(--accent); color: var(--on-accent); box-shadow: 0 4px 10px color-mix(in srgb, var(--accent) 45%, transparent); }
+.btn-icon.round.gear:hover { background: var(--accent); filter: brightness(1.06); color: var(--on-accent); box-shadow: 0 4px 10px color-mix(in srgb, var(--accent) 45%, transparent); }
 .row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 
 .link { display: inline-flex; align-items: center; gap: 2px; font-weight: 700; font-size: .875rem; text-decoration: none; color: var(--brand-deep); }
