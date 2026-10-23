@@ -75,7 +75,7 @@ Sau khi gọn lại còn ba màn hình, một bạn trong nhóm nhắn lại (�
 | Quét nguyên liệu bằng camera (sắp có), trong tủ lạnh | Nút **"Quét nguyên liệu bằng camera"** trong hộp Tủ lạnh (và nút "Quét" ở thẻ Tủ lạnh của tab Đi chợ): chụp hoặc chọn ảnh rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ. **Tự nhận diện bằng AI ghi rõ là "sắp có"** vì trang không có dịch vụ nhận diện hình ảnh; ảnh quét không được lưu lại |
 | Cộng đồng là đánh giá: thêm bình luận và gửi ảnh món | **Đánh giá món** gồm sao, bình luận và ảnh. Ở vòng 5 nằm trong màn Món ăn (thanh chuyển "Danh sách món \| Cộng đồng") và ở cuối từng món; từ vòng 6 chuyển sang mục Cá nhân (xem phần dưới). Ảnh được thu nhỏ rồi lưu trên máy; nút Chia sẻ gửi đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè |
 
-Điều **chưa** làm thật được và được ghi rõ trên giao diện: cộng đồng chung để mọi người cùng xem đánh giá của nhau (cần máy chủ, tài khoản và kiểm duyệt ảnh) và tự nhận ra nguyên liệu trong ảnh (cần AI nhận diện hình ảnh). Mình không thêm bài mẫu hay đánh giá giả để cộng đồng trông đông hơn.
+Điều **chưa** làm thật được và được ghi rõ trên giao diện: cộng đồng chung để mọi người cùng xem đánh giá của nhau (cần máy chủ, tài khoản và kiểm duyệt ảnh) và tự nhận ra nguyên liệu trong ảnh (cần AI nhận diện hình ảnh). Ở vòng 5 mình chưa thêm bài mẫu nào để cộng đồng trông đông hơn; vòng 7 nhóm đề nghị có vài bài đăng sẵn, xem phần cuối (làm có nhãn rõ ràng).
 
 Kịch bản demo thêm: mở một món, bấm "Viết bình luận" hoặc "Gửi ảnh món", chọn ảnh, chấm sao rồi đăng; sang **Món ăn › Cộng đồng** xem lại và bấm Chia sẻ. Trong **Thực đơn › Đi chợ › Tủ lạnh**, bấm "Quét nguyên liệu bằng camera", chọn ảnh rồi chạm vài nguyên liệu và thêm vào tủ.
 
@@ -96,3 +96,22 @@ Hai điều cần xác nhận:
 
 - **Mã màu lá trà**: mình chưa thấy poster nên chọn một xanh lá hơi vàng, đủ đậm để chữ trắng trên nút vẫn rõ (tương phản đã kiểm tra ở cả bốn bộ màu, sáng và tối). Khi poster chốt, chỉ cần đổi hai dòng `--p-base` và `--accent-base` ở đầu `css/tokens.css` (README có liệt kê thêm vài chỗ nhỏ cần khớp).
 - **Bốn mục thay vì ba**: giảng viên muốn rút lại ba chức năng chính. Mình coi Cá nhân là mục hồ sơ chứ không phải một bước của luồng (chọn món → chốt → đi chợ → ghi cảm nhận), nhưng cần hỏi lại giảng viên. Nếu muốn đúng ba mục ở thanh dưới, có thể chuyển Cá nhân thành biểu tượng ở góc trên bên phải, giữ nguyên nội dung.
+
+## Góp ý thêm từ tin nhắn nhóm (vòng 7)
+
+Một bạn trong nhóm xem bản vòng 6 rồi nhắn (ảnh chụp đoạn chat). Ý chính, diễn giải:
+
+- Nhìn chung **thấy ổn hết**.
+- Nhưng nếu **bổ sung chỗ Cộng đồng có một vài bài đã đăng sẵn (giống bản đầu)** thì **hay hơn**: kiểu **có ảnh chụp và đánh giá từ trước**.
+
+| Góp ý | Cách xử lý trong bản này |
+|---|---|
+| Cộng đồng có vài bài đã đăng sẵn, giống bản đầu | Màn Cộng đồng và cuối từng món có **6 bài mẫu** (chấm sao + bình luận, 5 bài kèm tranh), xếp sau đánh giá của bạn. Mỗi bài viết theo góc nhìn một nhóm người dùng (sinh viên, người đi làm, người lớn tuổi, ăn lành mạnh): cách nấu, cảm nhận sau bữa ăn, cả những bài chỉ 3 đến 4 sao cho tự nhiên. Bản đầu cũng có "mẹo mẫu" gắn nhãn như vậy |
+| Có ảnh chụp | Trong dự án chưa có ảnh món nào do nhóm tự chụp, và ảnh lấy trên mạng thì chưa rõ bản quyền, nên mỗi bài kèm **tranh minh hoạ vẽ bằng mã (SVG)**: ghi "Tranh minh hoạ" ngay trên ảnh và khi xem lớn. Có ảnh chụp thật thì bỏ vào `assets/community/` và ghi đường dẫn vào trường `img` của bài (xem README), nhãn tự đổi thành "Ảnh của nhóm" |
+
+**Cách giữ trung thực** (khác với "đánh giá giả"): mỗi thẻ có nhãn **"Bài mẫu"**, viền nét đứt và có dòng giải thích "không phải lời kể hay ảnh chụp của người dùng thật"; gọi theo nhóm người dùng chứ **không đặt tên, ngày giờ hay số lượt thích giả**; bài mẫu **không lưu vào máy, không tính vào sao hay gợi ý món, không có Chia sẻ hay Xoá**, và người dùng **ẩn được bằng một nút** (nhớ lựa chọn). Phần "Cộng đồng chung cho mọi người cùng xem" vẫn ghi là sắp có vì cần máy chủ; khi có thì xoá bài mẫu và dùng bài thật.
+
+Hai điều cần xác nhận:
+
+- **Ảnh**: nếu nhóm có ảnh món tự chụp (đã nấu và chụp, đồng ý cho dùng) thì gửi để thay các tranh minh hoạ. Ảnh lấy từ trang khác chỉ nên dùng khi bản quyền rõ ràng.
+- **Khi demo**: nói rõ với người xem đây là bài mẫu để minh hoạ giao diện, vì web chưa có cộng đồng thật. Nếu giảng viên thấy bài mẫu gây hiểu nhầm, tắt bằng nút "Ẩn bài mẫu" hoặc để mảng `H.COMMUNITY_SEED` rỗng.

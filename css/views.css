@@ -898,3 +898,21 @@ button.alertcard { width: 100%; text-align: left; font: inherit; font-size: .875
 .me .fgroup .hint { margin-top: 8px; }
 .me .fgroup .btn-danger-ghost { margin-top: 4px; }
 @media (min-width: 900px) { .me-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+
+/* ═════════════ VÒNG 7: BÀI MẪU TRONG CỘNG ĐỒNG ═════════════ */
+/* thẻ bài mẫu: viền nét đứt, nền nhạt, để khác hẳn đánh giá thật của bạn */
+.rvcard.sample { background: var(--surface-2); border: 1.5px dashed var(--line-2); box-shadow: none; }
+.rv-photo { position: relative; }
+.rv-art { position: absolute; left: 8px; bottom: 8px; padding: 2px 10px; border-radius: 999px; background: rgba(0, 0, 0, .58); color: #fff; font: 700 .6875rem/1.5 var(--f-body); letter-spacing: .03em; }
+.rv-who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.rv-who strong { min-width: 0; font-size: .875rem; overflow-wrap: anywhere; }
+.rv-who .rv-tag { margin-left: auto; }
+.rv-av { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--brand-50); border: 1px solid var(--brand-100); font: 1rem/1 var(--f-emoji); }
+.rv-tag { flex: none; padding: 1px 10px; border-radius: 999px; background: var(--brand-100); color: var(--brand-deep); font: 700 .6875rem/1.6 var(--f-body); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+/* dòng giải thích bài mẫu kèm nút Ẩn/Hiện */
+.cm-samples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 12px; padding: 8px 12px; border-radius: var(--r-md); background: var(--surface-2); border: 1.5px dashed var(--line-2); color: var(--ink-2); font-size: .875rem; }
+.cm-samples p { flex: 1 1 260px; min-width: 0; }
+.cm-samples .rv-tag { vertical-align: 1px; }
+.cm-samples .link-btn { flex: none; font-size: .875rem; }
+.cm-samples.off p { flex: 1 1 auto; }
+.rv-zoom + .hint { margin-top: 10px; }

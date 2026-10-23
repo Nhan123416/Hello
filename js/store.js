@@ -44,6 +44,7 @@
       ate: {},                             // { 'ngày:bữa': { t: lúc bấm "Đã ăn", late: số phút lệch so với giờ ăn | null } }
       diary: [],                           // nhật ký ăn uống: [{ id, date, slot, feel 1-4, symptoms, dishes, note, ts }]
       reviews: [],                         // đánh giá món (Cộng đồng): [{ id, dish, stars 0-5, text, photo, ts }]; ảnh nằm riêng trong H.photo
+      hideSamples: false,                  // đã ẩn các bài mẫu của trang trong Cộng đồng (xem js/data/community.js)
       cookPrefs: { read: false, rate: 1 }, // chế độ nấu từng bước: tự đọc to, tốc độ đọc
       cookAt: { id: '', step: 0 },         // món đang nấu dở và bước hiện tại (để quay lại nấu tiếp)
       timers: []                           // hẹn giờ khi nấu: [{ k, dish, step, label, end, secs }]
@@ -151,6 +152,7 @@
     // bản cũ mặc định là Ngọc lam: ai chưa tự chọn màu thì chuyển sang bộ mặc định mới (Lá trà); ai đã chọn bộ khác thì giữ nguyên
     if (!s.paletteSet && s.palette === 'ngoc-lam') s.palette = H.PALETTES[0].id;
     s.profile.name = cleanName(s.profile.name);
+    s.hideSamples = !!s.hideSamples;
     s.budget = Math.max(0, Number(s.budget) || 0);
     return s;
   }

@@ -22,7 +22,7 @@ Thiết kế lại theo góp ý của giảng viên (phân tích đầy đủ �
 | 1 | **Hôm nay** `#home` | Quay may mắn cho vui, hoặc **tự chọn món** từ danh sách món hợp với bạn. Phía dưới là **hành trình của bạn**: đã quay bao nhiêu vòng, đã chốt những món nào. |
 | 2 | **Món ăn** `#explore` | Danh sách và chi tiết món. **Cẩm nang nằm ngay trong từng món**: khối "Hợp với bạn không?" (hợp hay không và vì sao), dinh dưỡng, nguyên liệu nên hạn chế. Có nút **Chốt món** và **hướng dẫn đi chợ** cho món đó. Cuối mỗi món có chỗ chấm sao, viết bình luận và gửi ảnh món. |
 | 3 | **Thực đơn** `#plan` | Thực đơn cả tuần và danh sách đi chợ; khối **nhắc nhở** (giờ đi chợ, giờ nấu, giờ ăn); **ô cảm nhận ngay dưới từng bữa** và phần "Nhìn lại tuần". |
-| 4 | **Cá nhân** `#me` | **Hồ sơ người dùng** cơ bản (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu), **Cộng đồng** (đánh giá món có sao, bình luận và ảnh, `#community`) và **cài đặt** (nhắc giờ, cỡ chữ, giao diện, màu, dữ liệu). |
+| 4 | **Cá nhân** `#me` | **Hồ sơ người dùng** cơ bản (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu), **Cộng đồng** (đánh giá món có sao, bình luận và ảnh, kèm vài bài mẫu có nhãn, `#community`) và **cài đặt** (nhắc giờ, cỡ chữ, giao diện, màu, dữ liệu). |
 
 Những thứ trước đây là trang riêng đã được **gộp vào ba màn hình trên**:
 
@@ -32,7 +32,7 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 | Nhật ký ăn uống | Dòng "Bụng bạn thấy sao?" dưới từng bữa trong Thực đơn, kèm "Nhìn lại tuần" |
 | Nhắc giờ ăn | Khối "Nhắc nhở" ở đầu màn Thực đơn |
 | Tủ lạnh | Thẻ trong tab Đi chợ của màn Thực đơn (danh sách đi chợ tự trừ đồ đang có); trong hộp Tủ lạnh có **Quét nguyên liệu bằng camera** |
-| Cộng đồng (bảng tin, xếp hạng) | **Đánh giá món** (sao, bình luận, ảnh) trong mục **Cá nhân**, và ở cuối từng món |
+| Cộng đồng (bảng tin, xếp hạng) | **Đánh giá món** (sao, bình luận, ảnh) trong mục **Cá nhân**, và ở cuối từng món; có sẵn vài **bài mẫu** gắn nhãn cho đỡ trống |
 | Trang "Thêm", hộp Cài đặt, nút bánh răng | Mục **Cá nhân**: hồ sơ, Cộng đồng và cài đặt ở một chỗ |
 
 **Đã bỏ** vì chưa làm được thật hoặc trùng việc: bảng tin viết tự do và bảng xếp hạng số liệu mẫu (thay bằng đánh giá món), vuốt chọn món (trùng "Tự chọn món"), mục video chuyên gia (chờ danh sách video đã kiểm duyệt).
@@ -70,7 +70,8 @@ Những thứ trước đây là trang riêng đã được **gộp vào ba màn
 
 ### 4. Cá nhân
 - **Hồ sơ người dùng cơ bản** (`#me`): thẻ đầu trang có ảnh đại diện (chữ cái đầu của tên), **tên hiển thị** (không bắt buộc, tối đa 24 ký tự, chỉ lưu trên máy), nhóm người dùng, tình trạng dạ dày, giới hạn ngân sách và thời gian nấu, ăn chay, cùng ba con số của bạn: số vòng đã quay, số lần chốt món, số đánh giá. Bên dưới là **Tôi là** (4 nhóm, đổi có hộp xác nhận) và **Hồ sơ dạ dày** (mở bộ lọc để đổi tình trạng, mức độ, dụng cụ, ngân sách, thời gian).
-- **Cộng đồng = đánh giá món** (thanh chuyển "Hồ sơ | Cộng đồng", `#community`): thay vì chỉ chấm sao, bạn có thể **viết bình luận** và **gửi ảnh món**. Mỗi món có nút "Viết bình luận" và "Gửi ảnh món" ngay dưới phần chấm sao; màn Cộng đồng gom mọi đánh giá của bạn (lọc "Có ảnh", xem ảnh lớn, **Chia sẻ**, xoá). Chấm sao trong đánh giá cũng là điểm của món khi tự xếp thực đơn. **Đánh giá và ảnh chỉ lưu trên máy bạn** (ảnh được thu nhỏ còn tối đa 800px, tối đa 24 ảnh, lưu riêng khỏi dữ liệu chính); nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè qua hộp chia sẻ của điện thoại, hoặc sao chép nội dung. Cộng đồng chung cho mọi người cùng xem là "sắp có" vì cần máy chủ.
+- **Cộng đồng = đánh giá món** (thanh chuyển "Hồ sơ | Cộng đồng", `#community`): thay vì chỉ chấm sao, bạn có thể **viết bình luận** và **gửi ảnh món**. Mỗi món có nút "Viết bình luận" và "Gửi ảnh món" ngay dưới phần chấm sao; màn Cộng đồng gom mọi đánh giá của bạn (lọc "Có ảnh" và "Của tôi", xem ảnh lớn, **Chia sẻ**, xoá) và **6 bài mẫu** (xem ngay dưới). Chấm sao trong đánh giá cũng là điểm của món khi tự xếp thực đơn. **Đánh giá và ảnh chỉ lưu trên máy bạn** (ảnh được thu nhỏ còn tối đa 800px, tối đa 24 ảnh, lưu riêng khỏi dữ liệu chính); nút Chia sẻ gửi một đánh giá (kèm ảnh nếu máy hỗ trợ) cho bạn bè qua hộp chia sẻ của điện thoại, hoặc sao chép nội dung. Cộng đồng chung cho mọi người cùng xem là "sắp có" vì cần máy chủ.
+- **Bài mẫu trong Cộng đồng** (theo góp ý của nhóm: "có vài bài đã đăng sẵn, có ảnh và đánh giá trước đó", như bản đầu): màn Cộng đồng và cuối từng món có **6 bài mẫu** (sao + bình luận, 5 bài kèm tranh). Để không làm giả cộng đồng, mỗi bài mẫu đều: có nhãn **"Bài mẫu"**, thẻ viền nét đứt và dòng giải thích "không phải lời kể hay ảnh chụp của người dùng thật"; gọi theo **nhóm người dùng** (sinh viên, người đi làm, người lớn tuổi, ăn lành mạnh), không đặt tên, ngày giờ hay số lượt thích giả; ảnh là **tranh minh hoạ vẽ bằng SVG**, ghi rõ "Tranh minh hoạ" (không phải ảnh chụp món thật); **không lưu vào máy**, không tính vào sao hay gợi ý món, không có Chia sẻ hay Xoá; **ẩn hoặc hiện bằng một nút** (nhớ lựa chọn). Đánh giá của bạn luôn đứng trên bài mẫu.
 - **Cài đặt**: nhắc giờ ăn (mở hộp chỉnh giờ), cỡ chữ, giao diện sáng / tối / theo thiết bị, **màu giao diện**, dữ liệu (xoá toàn bộ, xoá ảnh đã lưu) và liên kết tới trang "Về dự án", mời bạn bè dùng thử.
 
 ### Dùng chung
@@ -112,6 +113,7 @@ js/
     dishes.js         các món (công thức, mức dịu, độ khó, nguyên liệu chính, mức vị tính sẵn)
     guide.js          cẩm nang: nên/tránh, thay thế, cảnh báo, thói quen, tình trạng dạ dày
     extras.js         bộ màu, thang lọc, mức vị và ngưỡng khoá, nhóm người dùng, nguyên liệu thay thế, hạn dùng, gói thường mua, cửa hàng
+    community.js      bài mẫu của Cộng đồng (`H.COMMUNITY_SEED`) và 5 tranh minh hoạ món ăn vẽ bằng SVG (`H.sampleImg`)
   store.js            trạng thái, localStorage, lọc món, xếp thực đơn, thói quen, thống kê hành trình, cảm nhận từng bữa, tủ lạnh, đi chợ
   ui.js               ô minh hoạ, sheet / hộp thoại, toast, hộp gập nhớ trạng thái
   wheel.js            vòng quay (SVG)
@@ -120,7 +122,7 @@ js/
   pantry.js           tủ lạnh: nhập nhanh, thay thế, mua online (mở thành hộp từ tab Đi chợ)
   guide.js            cẩm nang gắn vào món: nguyên liệu → mục cẩm nang, dinh dưỡng, tra cứu, kiểm tra công thức, hộp Cẩm nang
   diary.js            dòng cảm nhận dưới từng bữa, "Nhìn lại tuần", hộp ghi chi tiết
-  community.js        Cộng đồng: đánh giá món (sao, bình luận, ảnh), màn Cộng đồng, hộp viết đánh giá, chia sẻ
+  community.js        Cộng đồng: đánh giá món (sao, bình luận, ảnh), bài mẫu, màn Cộng đồng, hộp viết đánh giá, chia sẻ
   me.js               mục Cá nhân: thẻ hồ sơ, đặt tên, hồ sơ dạ dày, cài đặt (nhắc giờ, chữ, giao diện, màu, dữ liệu)
   scan.js             quét nguyên liệu bằng camera trong hộp Tủ lạnh (chụp ảnh rồi chạm chọn)
   cook.js             nấu từng bước: đọc to, hẹn giờ, giọng nói
@@ -142,6 +144,7 @@ Mã dùng script thường (không module) nên chạy được cả khi mở b�
 - **Thêm nguyên liệu**: `js/data/ingredients.js` (đơn vị, giá, có phải đồ có sẵn trong bếp không), rồi thêm hạn dùng (`H.SHELF_DAYS`), gói thường mua (`H.PACK`), từ khoá nhập nhanh (`H.ING_ALIASES`) và đồ thay thế (`H.SUBS`) trong `extras.js`. Nếu là nguồn đạm mới, thêm vào `H.PROTEINS` (extras.js) và `PROTEIN_OF` (dishes.js). Để khối "Hợp với bạn không?" nhận ra nguyên liệu mới, thêm một dòng vào `FOOD_OF` trong `js/guide.js` (mã nguyên liệu → mã mục trong `H.FOODS`; nguyên liệu chưa có dòng này thì khối cẩm nang của món bỏ qua nguyên liệu đó).
 - **Thêm nhóm người dùng**: `H.PERSONAS` trong `extras.js` (ngân sách và thời gian phải nằm trong `COST_STEPS` / `TIME_STEPS`; `text: 'large'` để bật chữ to, `salt: 1` để mặc định nêm nhạt).
 - **Đổi bảng màu**: màu mặc định là **lá trà**; sửa `--p-base` (màu chủ đạo) và `--accent-base` (màu nhấn) ở đầu `css/tokens.css`, mọi màu nền, chữ, viền đều sinh từ hai màu này (cả giao diện tối). Khi chốt màu theo poster, đổi thêm bốn chỗ cho khớp: mục đầu của `H.PALETTES` (extras.js, gồm `bgLight` và `bgDark` cho thanh trình duyệt), `<meta name="theme-color">` trong index.html, màu nền trong `assets/favicon.svg` và `--w1` đến `--w8` (màu các ô của vòng quay) nếu muốn đổi tông. Muốn thêm lựa chọn trong Cá nhân thì thêm vào `H.PALETTES` và một dòng `:root[data-palette="..."]` ở cuối tokens.css. Người dùng cũ chưa từng tự chọn màu sẽ tự chuyển sang bộ mặc định mới.
+- **Thêm, sửa hoặc thay bài mẫu**: mảng `H.COMMUNITY_SEED` trong `js/data/community.js`. Mỗi bài gồm `id` (duy nhất, dạng `mau-N`), `who` (mã nhóm trong `H.PERSONAS`: `sv`, `dilam`, `caotuoi`, `khoe`), `dish` (mã món), `stars` (1 đến 5), `text` và `art` (tên một tranh minh hoạ trong `H.SAMPLE_ART`, hoặc rỗng nếu chỉ có chữ). **Dùng ảnh chụp thật của nhóm**: bỏ ảnh (JPEG, tỉ lệ 4:3, nhẹ dưới khoảng 150 KB) vào `assets/community/` rồi ghi đường dẫn vào trường `img` của bài (ví dụ `img: 'assets/community/chao-ga.jpg'`); khi có `img` thì không dùng `art`, và nhãn trên ảnh tự đổi từ "Tranh minh hoạ" thành "Ảnh của nhóm". Khi có đánh giá thật từ máy chủ, xoá các bài mẫu (để mảng rỗng) là xong.
 - **Thêm mục cẩm nang**: `H.FOODS` trong `js/data/guide.js`. `alias` là các cách gọi khác; "Kiểm tra công thức" dùng chính các alias này để nhận diện.
 - **Mẹo chọn mua**: trường `buy` của từng nhóm trong `H.CATEGORIES` (`js/data/ingredients.js`).
 
@@ -149,7 +152,7 @@ Mã dùng script thường (không module) nên chạy được cả khi mở b�
 
 Những thứ **chưa làm được vì cần máy chủ hoặc AI** (trang này chạy hoàn toàn trên máy người dùng nên không làm giả; các mục chỉ là chỗ giữ chỗ đã được bỏ khỏi giao diện):
 
-- **Cộng đồng chung cho mọi người cùng thấy** (đánh giá, bình luận, ảnh của nhau), kết bạn và bảng xếp hạng thật: cần tài khoản đăng nhập, cơ sở dữ liệu (ví dụ Supabase hoặc Firebase) và kiểm duyệt nội dung (đặc biệt với ảnh người dùng đăng). Hiện đánh giá chỉ lưu trên máy người viết và chia sẻ bằng nút Chia sẻ.
+- **Cộng đồng chung cho mọi người cùng thấy** (đánh giá, bình luận, ảnh của nhau), kết bạn và bảng xếp hạng thật: cần tài khoản đăng nhập, cơ sở dữ liệu (ví dụ Supabase hoặc Firebase) và kiểm duyệt nội dung (đặc biệt với ảnh người dùng đăng). Hiện đánh giá chỉ lưu trên máy người viết và chia sẻ bằng nút Chia sẻ; các **bài mẫu** chỉ là chỗ giữ chỗ có nhãn, sẽ được thay bằng bài thật khi có máy chủ.
 - **Tự nhận ra nguyên liệu trong ảnh** (quét bằng AI) và **quét mã vạch**: cần dịch vụ nhận diện hình ảnh. Hiện bạn chụp ảnh rồi tự chạm chọn nguyên liệu; ngoài ra có nhập nhanh bằng chữ và chọn từ danh mục.
 - **Dung lượng ảnh**: ảnh đánh giá lưu trong `localStorage` (khoảng 5 MB cho cả trang) nên giới hạn 24 ảnh; xoá trình duyệt hoặc đổi thiết bị thì mất ảnh. Cần máy chủ lưu trữ nếu muốn giữ lâu dài.
 - **Nhắc đẩy khi đã đóng hẳn trình duyệt**: cần máy chủ gửi Web Push. Hiện nhắc khi tab còn mở, thông báo trình duyệt khi tab ở nền, và file lịch `.ics` cho điện thoại.

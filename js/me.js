@@ -1,5 +1,5 @@
 /*
- * Cá nhân: hồ sơ người dùng (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu), Cộng đồng (đánh giá món của bạn, xem community.js)
+ * Cá nhân: hồ sơ người dùng (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu), Cộng đồng (đánh giá món của bạn và vài bài mẫu, xem community.js)
  * và cài đặt (nhắc giờ ăn, cỡ chữ, giao diện, màu, dữ liệu). Đây không phải một bước trong luồng chính
  * (Hôm nay -> Món ăn -> Thực đơn): là nơi chỉnh những thứ thuộc về riêng bạn, nên nằm ở mục thứ tư của thanh điều hướng.
  */
@@ -11,7 +11,7 @@
 
   // ───────────── thanh chuyển Hồ sơ | Cộng đồng ─────────────
   M.switchHtml = function (cur) {
-    var n = H.state.reviews.length;
+    var n = H.community.count();   // đánh giá của bạn cộng bài mẫu đang hiện
     function item(id, href, icon, label) {
       var on = cur === id;
       return '<a class="seg-i' + (on ? ' on' : '') + '" href="' + href + '"' + (on ? ' aria-current="page"' : '') + '>' + H.icon(icon, { size: 18 }) + '<span>' + label + '</span></a>';

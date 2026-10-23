@@ -30,7 +30,7 @@
     ['Nhật ký ăn uống', 'thành một dòng cảm nhận ngay dưới từng bữa ở màn Thực đơn, kèm phần “Nhìn lại tuần”.'],
     ['Nhắc giờ ăn', 'thành khối “Nhắc nhở” ở màn Thực đơn.'],
     ['Tủ lạnh', 'vào tab Đi chợ của màn Thực đơn, để danh sách đi chợ tự trừ đồ đang có. Trong hộp Tủ lạnh có “Quét nguyên liệu bằng camera”.'],
-    ['Cộng đồng', 'thành phần đánh giá món (sao, bình luận, ảnh): nằm trong mục Cá nhân và ở cuối trang từng món.'],
+    ['Cộng đồng', 'thành phần đánh giá món (sao, bình luận, ảnh): nằm trong mục Cá nhân và ở cuối trang từng món, có sẵn vài bài mẫu (gắn nhãn “Bài mẫu”, ẩn được) cho đỡ trống.'],
     ['Hồ sơ và cài đặt', 'về mục Cá nhân (trước đây là hộp Cài đặt và trang Thêm): tên, nhóm người dùng, hồ sơ dạ dày, nhắc giờ, cỡ chữ, màu và dữ liệu.']
   ];
   var DROPPED = [
@@ -48,12 +48,13 @@
     'Nhớ món bạn hay chọn và hay nấu, số vòng đã quay, món đã chốt; nhớ số tiền chi thật khi đi chợ để gợi ý ngân sách sát thực tế.',
     'Hồ sơ người dùng cơ bản (tên, nhóm, hồ sơ dạ dày, ngân sách, thời gian nấu) và các cài đặt trong mục Cá nhân.',
     'Đánh giá món bằng sao, bình luận và ảnh (ảnh được thu nhỏ và chỉ lưu trên máy bạn); chia sẻ một đánh giá cho bạn bè qua hộp chia sẻ của điện thoại.',
+    'Vài bài mẫu trong Cộng đồng, kèm tranh minh hoạ do nhóm làm web viết và vẽ để bạn hình dung một đánh giá trông thế nào. Mỗi bài có nhãn “Bài mẫu”, không phải lời kể hay ảnh chụp của người dùng thật, không tính vào sao hay gợi ý món, và ẩn được bằng một nút.',
     'Chụp hoặc chọn ảnh tủ lạnh rồi chạm vào những thứ thấy trong ảnh để thêm vào tủ lạnh (ảnh không được lưu lại).',
     'Ghi cảm nhận sau từng bữa và nhìn lại tuần; mình chỉ ra món hay làm bạn khó chịu và món hợp với bạn.',
     'Nhắc giờ khi tab còn mở, thông báo của trình duyệt (nếu bạn cho phép), file lịch .ics cho điện thoại.'
   ];
   var LATER = [
-    'Cộng đồng chung để mọi người cùng xem đánh giá và ảnh của nhau, kết bạn, bảng xếp hạng thật: cần tài khoản, máy chủ và kiểm duyệt nội dung.',
+    'Cộng đồng chung để mọi người cùng xem đánh giá và ảnh của nhau, kết bạn, bảng xếp hạng thật: cần tài khoản, máy chủ và kiểm duyệt nội dung. Khi đó các bài mẫu sẽ được thay bằng bài và ảnh chụp thật.',
     'Tự nhận ra nguyên liệu trong ảnh chụp tủ lạnh (quét bằng AI): cần dịch vụ nhận diện hình ảnh. Hiện bạn chụp ảnh rồi tự chạm chọn.',
     'Nhắc đẩy khi đã đóng hẳn trình duyệt: cần máy chủ gửi thông báo (hiện dùng file lịch .ics thay thế).',
     'Đặt hàng tự động trên Shopee, Tiki, Bách hoá Xanh: hiện chỉ mở trang tìm kiếm của cửa hàng.',
